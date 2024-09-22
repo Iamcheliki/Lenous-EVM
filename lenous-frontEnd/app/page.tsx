@@ -8,7 +8,7 @@ import TrustSection from "./_components/home/TrustSection";
 import SideSection from "./_components/home/SideSection";
 import FAQSection from "./_components/home/FAQSection";
 
-export default async function Home() {
+export default function Home() {
   return (
     <main className="min-h-screen italic ">
       <HeroSection />
