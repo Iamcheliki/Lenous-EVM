@@ -6,7 +6,7 @@ import ExchnageSection from "./_components/home/ExchangeSection";
 import ExploreSection from "./_components/home/ExploreSection";
 import TrustSection from "./_components/home/TrustSection";
 import SideSection from "./_components/home/SideSection";
-import FAQSection from "./_components/home/FaqSection";
+import FAQSection from "./_components/home/FAQSection";
 
 export default async function Home() {
   return (

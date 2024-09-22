@@ -1,26 +1,32 @@
 import { TokenData } from "@/app/_libs/types/token";
 import { tokenList } from "@/app/_libs/utils/constants/TokenList";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-const fetchTokenData = async (tokens: string): Promise<TokenData[]> => {
-  try {
-    const response = await fetch(
-      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokens}`
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch token data");
-    }
-    const data: TokenData[] = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching token data:", error);
-    return [];
-  }
-};
-
-export default async function MarketSection() {
+export default function MarketSection() {
   const tokenIds = tokenList.map((token) => token.id).join(",");
-  const tokensPrice = await fetchTokenData(tokenIds);
+  const [tokensPrice, setTokensPrice] = useState<TokenData[]>([]);
+
+  const fetchTokenData = async (tokens: string) => {
+    try {
+      const response = await fetch(
+        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokens}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch token data");
+      }
+      const data: TokenData[] = await response.json();
+      setTokensPrice([...data]);
+    } catch (error) {
+      console.error("Error fetching token data:", error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    fetchTokenData(tokenIds);
+  }, []);
+
   return (
     <>
       <div className="text-center text-white mt-36">
