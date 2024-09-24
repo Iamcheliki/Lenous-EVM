@@ -14,7 +14,8 @@ export default function ExchnageSection() {
               Try Our Crypto Exchange Now
             </div>
             <div className="text-2xl font-extralight mt-10">
-              Start trading to get up to 11,200 USDT in rewards!
+              Start trading to get up to 
+              <b className="font-black">11,200 USDT</b> in rewards!
             </div>
             <Link
               className="inline-block mt-4 py-2 px-6 bg-radial-gradient-25-5 rounded-full"

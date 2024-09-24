@@ -40,9 +40,7 @@ const NavBar = () => {
           <ul className="flex  text-neutral-light">
             {menuData.map((item) => (
               <li
-                className={
-                  "p-4 " + (pathName === item.href ? "text-primary" : "")
-                }
+                className={"p-4 " + (pathName === item.href ?? "text-primary")}
               >
                 <Link href={item.href}>{item.name}</Link>
               </li>

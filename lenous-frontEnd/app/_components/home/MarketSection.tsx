@@ -76,14 +76,19 @@ export default function MarketSection() {
       </div>
       <div className="index-container grid grid-cols-3 gap-8 text-white mt-28">
         {/* column 1 */}
-        <div className="rounded-6xl border border-white-bg-15 p-10">
-          <div className="text-center text-white text-4xl">
-            <div className="font-extralight">HOT LIST</div>
-            <div>H</div>
+        <div className="rounded-6xl p-10 flex flex-col gap-16 border border-white-bg-15 items-center">
+          <div className="text-center text-white text-4xl relative w-fit">
+            <span
+              className="absolute font-black text-[#EF4444] -top-1 -left-2 -z-[1]"
+              style={{ textShadow: "1px 2px 14px #ef4444c9" }}
+            >
+              H
+            </span>
+            <p className="font-extralight">HOT LIST</p>
           </div>
           <div>
             {tokensPrice.slice(0, 5).map((token) => (
-              <div key={token.id} className="flex justify-between pt-6">
+              <div key={token.id} className="flex justify-between pt-6 gap-20">
                 <div className="flex items-center">
                   <div className="pr-2">
                     <Image
@@ -115,10 +120,15 @@ export default function MarketSection() {
           </div>
         </div>
         {/* column 2 */}
-        <div className="rounded-6xl border border-white-bg-15 p-10">
-          <div className="text-center text-white text-4xl">
-            <div className="font-extralight">NEW COINS</div>
-            <div>H</div>
+        <div className="rounded-6xl p-10 flex flex-col gap-16 border border-white-bg-15 items-center">
+          <div className="text-center text-white text-4xl relative">
+            <span
+              className="absolute font-black text-[#00D17A] -top-1 -left-2 -z-[1]"
+              style={{ textShadow: "1px 2px 14px #00D17Ac9" }}
+            >
+              N
+            </span>
+            <p className="font-extralight">NEW COINS</p>
           </div>
           <div>
             {tokensPrice.slice(5, 10).map((token) => (
@@ -154,10 +164,15 @@ export default function MarketSection() {
           </div>
         </div>
         {/* column 3 */}
-        <div className="rounded-6xl border border-white-bg-15 p-10">
-          <div className="text-center text-white text-4xl">
-            <div className="font-extralight">TOP GAINERS</div>
-            <div>H</div>
+        <div className="rounded-6xl p-10 flex flex-col gap-16 border border-white-bg-15 items-center">
+          <div className="text-center text-white text-4xl relative">
+            <span
+              className="absolute font-black text-[#A855F7] -top-1 -left-2 -z-[1]"
+              style={{ textShadow: "1px 2px 14px #A855F7c9" }}
+            >
+              T
+            </span>
+            <p className="font-extralight">TOP GAINERS</p>
           </div>
           <div>
             {tokensPrice.slice(10, 15).map((token) => (
