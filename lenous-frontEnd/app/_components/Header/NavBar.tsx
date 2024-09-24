@@ -1,8 +1,32 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import RightNav from './RightNav';
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import RightNav from "./RightNav";
+import { usePathname } from "next/navigation";
+
+const menuData = [
+  {
+    href: "/",
+    name: "Home",
+  },
+  {
+    href: "/trade",
+    name: "Trade",
+  },
+  {
+    href: "/swap",
+    name: "Swap",
+  },
+  {
+    href: "/pool",
+    name: "Pool",
+  },
+];
 
 const NavBar = () => {
+  const pathName = usePathname();
+  console.log("router path", pathName);
   return (
     <div className="container flex justify-between items-center py-3">
       <div className="headerLeft flex items-center">
@@ -14,18 +38,15 @@ const NavBar = () => {
         />
         <div className="mainMenu ml-8">
           <ul className="flex  text-neutral-light">
-            <li className="p-4">
-              <Link href="/">Home</Link>
-            </li>
-            <li className="p-4">
-              <Link href="/trade">Trade</Link>
-            </li>
-            <li className="p-4">
-              <Link href="/swap">Swap</Link>
-            </li>
-            <li className="p-4">
-              <Link href="/pools">Pools</Link>
-            </li>
+            {menuData.map((item) => (
+              <li
+                className={
+                  "p-4 " + (pathName === item.href ? "text-primary" : "")
+                }
+              >
+                <Link href={item.href}>{item.name}</Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
