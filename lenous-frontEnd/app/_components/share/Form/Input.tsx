@@ -1,5 +1,5 @@
-import React from 'react';
-import { UseFormRegister, FieldErrors } from 'react-hook-form';
+import React from "react";
+import { UseFormRegister, FieldErrors } from "react-hook-form";
 
 interface FormPutProps {
   register: UseFormRegister<any>;
@@ -28,7 +28,7 @@ const Input: React.FC<FormPutProps> = (props) => {
     className,
   } = props;
   return (
-    <>
+    <div className="relative py-4 w-full">
       {label && (
         <label
           className="block uppercase tracking-wide text-xs font-bold mb-2 "
@@ -40,17 +40,17 @@ const Input: React.FC<FormPutProps> = (props) => {
       )}
 
       <input
-        type={type || 'text'}
-        className={`appearance-none block w-full text-xs border border-light-gray-200 rounded-2xl py-3 px-4 mb-3 leading-tight focus:outline-none ${className} `}
+        type={type || "text"}
+        className={`appearance-none block w-full text-xs border border-light-gray-200 rounded-2xl py-3 px-4 leading-tight focus:outline-none ${className} `}
         {...register(`${name}`)}
         defaultValue={defaultValue}
         placeholder={placeholder || label}
         disabled={disabled}
       />
-      <p className="inputValidation text-xs text-red-800">
+      <p className="inputValidation text-xs text-red absolute bottom-0 left-0">
         {errors[name]?.message}
       </p>
-    </>
+    </div>
   );
 };
 export default Input;

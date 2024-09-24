@@ -12,49 +12,47 @@ interface MenuItem {
 
 export const menuItems: MenuItem[] = [
   {
-    title: 'Platform',
+    title: 'PRODUCTS',
     submenu: [
-      { title: 'Home', link: '/' },
-      { title: 'Swap Lite', link: '#' },
-      { title: 'Swap Advance', link: '#' },
-      { title: 'Pools', link: '#' },
+      { title: 'dApp', link: '/' },
+      { title: 'Wallet', link: '#' },
+      { title: 'Portfolio', link: '#' },
+      { title: 'Swap Protocol', link: '#' },
+      { title: 'Liquidity Protocol', link: '#' },
+      { title: 'Lenous Protocol', link: '#' },
     ],
   },
   {
-    title: 'Trade',
+    title: 'GOVERNANCE',
     submenu: [
-      { title: 'Super Chart Lite', link: '#' },
-      { title: 'Convert', link: '#' },
-      { title: 'smart Exchange', link: '#' },
-      { title: 'Spot Exchange', link: '#' },
-      { title: 'Trading Bots', link: '#' },
+      { title: 'Proposals', link: '#' },
+      { title: 'DAO', link: '#' },
+      { title: 'Forum', link: '#' },
     ],
   },
   {
-    title: 'Support',
+    title: 'DEVELOPMENT',
     submenu: [
-      { title: 'About us', link: '#' },
-      { title: 'Contact Us', link: '#' },
-      { title: 'Feedback', link: '#' },
-    ],
-  },
-  {
-    title: 'Website',
-    submenu: [
-      { title: 'Lenous', link: '#' },
-      { title: 'Products', link: '#' },
+      { title: 'Audit', link: '#' },
+      { title: 'Github', link: '#' },
+      { title: 'Bug Boinity', link: '#' },
       { title: 'Docs', link: '#' },
-      { title: 'Inteligent Protocol', link: '#' },
     ],
   },
   {
-    title: 'Follow Us',
+    title: 'ABOUT',
     submenu: [
-      { title: 'FaceBook', link: '#', iconName: 'facebook' },
-      { title: 'Instagram', link: '#', iconName: 'instagram' },
-      { title: 'X', link: '#', iconName: 'x' },
-      { title: 'Linkedin', link: '#', iconName: 'linkedin' },
-      { title: 'Youtube', link: '#', iconName: 'youtube' },
+      { title: 'Security', link: '#' },
+      { title: 'Foundation', link: '#' },
+      { title: 'Stakeholders', link: '#' },
+    ],
+  },
+  {
+    title: 'SUPPORT',
+    submenu: [
+      { title: 'Contact us', link: '#',},
+      { title: 'Help Center', link: '#', },
+      { title: 'Privacy Policies', link: '#', },
     ],
   },
 ];

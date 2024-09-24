@@ -1,25 +1,25 @@
-'use client';
-import React from 'react';
-import NewsLetter from './NewsLetter';
-import { menuItems } from '@/app/_libs/utils/constants/footerMenus';
-import Icon from '../UI/icon';
-import Link from 'next/link';
-import RightsFooter from './RightsFooter';
+"use client";
+import React from "react";
+import NewsLetter from "./NewsLetter";
+import { menuItems } from "@/app/_libs/utils/constants/footerMenus";
+import Icon from "../UI/icon";
+import Link from "next/link";
+import RightsFooter from "./RightsFooter";
 
 export default function Footer() {
   return (
     <>
       <div className="flex gap-20 items-start text-white container pt-32">
-        <div className="w-[440px]">
-          <NewsLetter />
-        </div>
         <div className="flex flex-grow justify-between ">
           {menuItems.map((menuItem, index) => (
             <div key={index}>
-              <h4 className="font-bold leading-8 pb-2">{menuItem.title}</h4>
+              <h4 className="leading-8 pb-2 text-primary">{menuItem.title}</h4>
               <ul>
                 {menuItem.submenu.map((submenuItem, subIndex) => (
-                  <li key={subIndex} className="font-light py-2 leading-7">
+                  <li
+                    key={subIndex}
+                    className="font-light py-2 leading-7 italic"
+                  >
                     <Link href={submenuItem.link} className="flex items-center">
                       {submenuItem.iconName && (
                         <div className="pr-2">
@@ -33,6 +33,9 @@ export default function Footer() {
               </ul>
             </div>
           ))}
+        </div>
+        <div className="w-[440px]">
+          <NewsLetter />
         </div>
       </div>
       <RightsFooter />
