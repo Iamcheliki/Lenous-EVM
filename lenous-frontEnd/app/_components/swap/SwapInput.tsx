@@ -44,7 +44,13 @@ const SwapInput: React.FC<props> = ({
         </div>
         <div className="flex justify-between bg-third-layer-bg p-4 rounded-xl">
           <div className="flex justify-start w-52">
-            <Image src={token.img} alt={token.name} width="64" height="64" />
+            <Image
+              src={token.img}
+              alt={token.name}
+              width="64"
+              height="64"
+              className="w-[64px] h-[64px] object-contain"
+            />
             <div className="pl-4 cursor-pointer" onClick={changeToken}>
               <div className="flex items-center">
                 <span className="pr-4">{token.ticker} </span>

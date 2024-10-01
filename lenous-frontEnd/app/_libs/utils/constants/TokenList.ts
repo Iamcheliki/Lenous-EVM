@@ -2,7 +2,7 @@ export const tokenList = [
   {
     id: 'ethereum',
     ticker: 'ETH',
-    img: 'https://cdn.moralis.io/eth/eth.png',
+    img: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
     name: 'Ethereum',
     address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', // Placeholder for native ETH
     decimals: 18,

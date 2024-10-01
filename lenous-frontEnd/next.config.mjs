@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['cdn.moralis.io', 'coin-images.coingecko.com'],
+    domains: ['cdn.moralis.io', 'coin-images.coingecko.com', 'cryptologos.cc'],
   },
   webpack(config) {
     config.module.rules.push({
