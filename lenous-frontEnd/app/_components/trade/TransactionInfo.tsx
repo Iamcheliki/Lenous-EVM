@@ -1,12 +1,12 @@
-import React from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
-import Icon from '../UI/icon';
+import React from "react";
+import { useAccount, useDisconnect } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import Icon from "../UI/icon";
 
 interface TransactionInfoProps {
-  submitOrder: () => void;
-  orderId: string | null;
-  fetchOrderDetails: (orderId: string) => Promise<void>;
+  submitOrder?: () => void;
+  orderId?: string | null;
+  fetchOrderDetails?: (orderId: string) => Promise<void>;
 }
 
 const TransactionInfo: React.FC<TransactionInfoProps> = ({
@@ -21,7 +21,8 @@ const TransactionInfo: React.FC<TransactionInfoProps> = ({
   // Fetch order details when orderId changes
   React.useEffect(() => {
     if (orderId) {
-      fetchOrderDetails(orderId);
+      // fetchOrderDetails(orderId);
+      console.log("hello");
     }
   }, [orderId, fetchOrderDetails]);
 
@@ -77,7 +78,7 @@ const TransactionInfo: React.FC<TransactionInfoProps> = ({
             disabled={isConnecting}
           >
             {isConnecting ? (
-              'Connecting...'
+              "Connecting..."
             ) : (
               <div className="flex justify-center">
                 <Icon name="warning" />

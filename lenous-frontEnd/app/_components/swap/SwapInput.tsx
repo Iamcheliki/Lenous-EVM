@@ -1,6 +1,6 @@
-import React, { ChangeEvent } from 'react';
-import Image from 'next/image';
-import Icon from '../UI/icon';
+import React, { ChangeEvent } from "react";
+import Image from "next/image";
+import Icon from "../UI/icon";
 
 interface Token {
   ticker: string;
@@ -30,6 +30,7 @@ const SwapInput: React.FC<props> = ({
   onChange,
   tokenPrice,
 }) => {
+  console.log("token", token);
   return (
     <div>
       <div className="tokenSwapWrap text-white">

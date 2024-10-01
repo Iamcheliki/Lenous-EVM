@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { ethers, providers, BigNumber } from 'ethers';
-import OrderbookABI from '@/app/_libs/utils/abis/Orderbook.json';
-import { useEthersProvider } from '@/app/_libs/utils/ethers';
-import { useWatchContractEvent } from 'wagmi';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { useAccount, useDisconnect } from 'wagmi';
-import Icon from '../UI/icon';
-import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
+import React, { useEffect, useState } from "react";
+import { ethers, providers, BigNumber } from "ethers";
+// import OrderbookABI from '@/app/_libs/utils/abis/Orderbook.json';
+import { useEthersProvider } from "@/app/_libs/utils/ethers";
+import { useWatchContractEvent } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useAccount, useDisconnect } from "wagmi";
+import Icon from "../UI/icon";
+// import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
 interface OrderPlacedEventArgs {
   orderId: BigNumber;
@@ -44,11 +44,11 @@ const formatNumber = (value: number, decimals: number): string => {
     maximumFractionDigits: decimals,
   };
 
-  const formatter = new Intl.NumberFormat('en-US', options);
+  const formatter = new Intl.NumberFormat("en-US", options);
   let formatted = formatter.format(value);
 
   if (value % 1 === 0) {
-    formatted = formatted.replace(/\.0+$/, ''); // Remove trailing '.0'
+    formatted = formatted.replace(/\.0+$/, ""); // Remove trailing '.0'
   }
 
   return formatted;
@@ -63,138 +63,138 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
   const { openConnectModal } = useConnectModal();
   const { disconnect } = useDisconnect();
 
-  useWatchContractEvent({
-    address: ORDERBOOK_ADDRESS,
-    abi: OrderbookABI,
-    eventName: 'OrderPlaced',
-    onLogs(logs) {
-      console.log('New logs!', logs);
-    },
-  });
+  // useWatchContractEvent({
+  //   address: ORDERBOOK_ADDRESS,
+  //   abi: OrderbookABI,
+  //   eventName: 'OrderPlaced',
+  //   onLogs(logs) {
+  //     console.log('New logs!', logs);
+  //   },
+  // });
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const contract = new ethers.Contract(
-          ORDERBOOK_ADDRESS,
-          OrderbookABI,
-          provider
-        );
-        const fromBlock = 0;
-        const toBlock = await provider.getBlockNumber();
-        console.log('Fetching from block', fromBlock, 'to block', toBlock);
-        const chunkSize = 800;
-        const fetchedOrders: Order[] = [];
-        const maxOrders = 5; // Limit the number of orders to fetch
-        for (
-          let startBlock = fromBlock;
-          startBlock <= toBlock && fetchedOrders.length < maxOrders;
-          startBlock += chunkSize
-        ) {
-          const endBlock = Math.min(startBlock + chunkSize - 1, toBlock);
-          console.log(
-            'Fetching events from block',
-            startBlock,
-            'to block',
-            endBlock
-          );
-          // Query for OrderPlaced events
-          const events = await contract.queryFilter(
-            contract.filters.OrderPlaced(
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null
-            ),
-            startBlock,
-            endBlock
-          );
-          console.log('Fetched events', events);
-          const newOrders = events.map((event) => {
-            const args = event.args as OrderPlacedEventArgs;
-            const price = parseFloat(ethers.utils.formatUnits(args.price, 6));
-            const amount = parseFloat(ethers.utils.formatUnits(args.amount, 6));
-            return {
-              orderId: args.orderId.toString(),
-              trader: args.trader,
-              orderType: args.orderType.toString(), // '1' for buy, '2' for sell
-              price: formatNumber(price, 3), // Format with 3 decimal places and commas
-              amount: formatNumber(amount, 3),
-              total: '0', // Will be updated later
-              stoploss: ethers.utils.formatUnits(args.stoploss, 6),
-              takeprofit: ethers.utils.formatUnits(args.takeprofit, 6),
-              expiration: new Date(
-                args.expiration.toNumber() * 1000
-              ).toLocaleString(),
-              asset: args.asset,
-              progress: 0, // will be calculated later
-            };
-          });
-          fetchedOrders.push(...newOrders);
-          if (fetchedOrders.length >= maxOrders) {
-            break; // Exit loop if we have fetched enough orders
-          }
-        }
-        // Calculate running totals for each order type
-        const buyOrders = fetchedOrders.filter(
-          (order) => order.orderType === '1'
-        );
-        const sellOrders = fetchedOrders.filter(
-          (order) => order.orderType === '2'
-        );
-        let runningTotalBuy = 0;
-        let runningTotalSell = 0;
-        const updatedBuyOrders = buyOrders.map((order) => {
-          runningTotalBuy += parseFloat(order.amount);
-          return {
-            ...order,
-            total: formatNumber(runningTotalBuy, 3), // Running total for buy orders
-          };
-        });
-        const updatedSellOrders = sellOrders.map((order) => {
-          runningTotalSell += parseFloat(order.amount);
-          return {
-            ...order,
-            total: formatNumber(runningTotalSell, 3), // Running total for sell orders
-          };
-        });
-        // Combine buy and sell orders, sorted by type
-        const sortedOrders = [
-          ...updatedBuyOrders, // Buy orders first
-          ...updatedSellOrders, // Sell orders after
-        ];
-        // Calculate progress
-        const totalAmount = sortedOrders.reduce(
-          (total, order) => total + parseFloat(order.amount),
-          0
-        );
-        const updatedOrders = sortedOrders.map((order) => ({
-          ...order,
-          progress:
-            totalAmount === 0
-              ? 0
-              : (parseFloat(order.amount) / totalAmount) * 100,
-        }));
-        // Reverse the orders to show recent first
-        setOrders(updatedOrders.reverse().slice(0, maxOrders));
-      } catch (err) {
-        console.error('Error fetching orders', err);
-        setError(
-          err instanceof Error ? err.message : 'An unknown error occurred'
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrders();
-  }, []);
+  // useEffect(() => {
+  //   const fetchOrders = async () => {
+  //     setLoading(true);
+  //     setError(null);
+  //     try {
+  //       const contract = new ethers.Contract(
+  //         ORDERBOOK_ADDRESS,
+  //         OrderbookABI,
+  //         provider
+  //       );
+  //       const fromBlock = 0;
+  //       const toBlock = await provider.getBlockNumber();
+  //       console.log('Fetching from block', fromBlock, 'to block', toBlock);
+  //       const chunkSize = 800;
+  //       const fetchedOrders: Order[] = [];
+  //       const maxOrders = 5; // Limit the number of orders to fetch
+  //       for (
+  //         let startBlock = fromBlock;
+  //         startBlock <= toBlock && fetchedOrders.length < maxOrders;
+  //         startBlock += chunkSize
+  //       ) {
+  //         const endBlock = Math.min(startBlock + chunkSize - 1, toBlock);
+  //         console.log(
+  //           'Fetching events from block',
+  //           startBlock,
+  //           'to block',
+  //           endBlock
+  //         );
+  //         // Query for OrderPlaced events
+  //         const events = await contract.queryFilter(
+  //           contract.filters.OrderPlaced(
+  //             null,
+  //             null,
+  //             null,
+  //             null,
+  //             null,
+  //             null,
+  //             null,
+  //             null,
+  //             null
+  //           ),
+  //           startBlock,
+  //           endBlock
+  //         );
+  //         console.log('Fetched events', events);
+  //         const newOrders = events.map((event) => {
+  //           const args = event.args as OrderPlacedEventArgs;
+  //           const price = parseFloat(ethers.utils.formatUnits(args.price, 6));
+  //           const amount = parseFloat(ethers.utils.formatUnits(args.amount, 6));
+  //           return {
+  //             orderId: args.orderId.toString(),
+  //             trader: args.trader,
+  //             orderType: args.orderType.toString(), // '1' for buy, '2' for sell
+  //             price: formatNumber(price, 3), // Format with 3 decimal places and commas
+  //             amount: formatNumber(amount, 3),
+  //             total: '0', // Will be updated later
+  //             stoploss: ethers.utils.formatUnits(args.stoploss, 6),
+  //             takeprofit: ethers.utils.formatUnits(args.takeprofit, 6),
+  //             expiration: new Date(
+  //               args.expiration.toNumber() * 1000
+  //             ).toLocaleString(),
+  //             asset: args.asset,
+  //             progress: 0, // will be calculated later
+  //           };
+  //         });
+  //         fetchedOrders.push(...newOrders);
+  //         if (fetchedOrders.length >= maxOrders) {
+  //           break; // Exit loop if we have fetched enough orders
+  //         }
+  //       }
+  //       // Calculate running totals for each order type
+  //       const buyOrders = fetchedOrders.filter(
+  //         (order) => order.orderType === '1'
+  //       );
+  //       const sellOrders = fetchedOrders.filter(
+  //         (order) => order.orderType === '2'
+  //       );
+  //       let runningTotalBuy = 0;
+  //       let runningTotalSell = 0;
+  //       const updatedBuyOrders = buyOrders.map((order) => {
+  //         runningTotalBuy += parseFloat(order.amount);
+  //         return {
+  //           ...order,
+  //           total: formatNumber(runningTotalBuy, 3), // Running total for buy orders
+  //         };
+  //       });
+  //       const updatedSellOrders = sellOrders.map((order) => {
+  //         runningTotalSell += parseFloat(order.amount);
+  //         return {
+  //           ...order,
+  //           total: formatNumber(runningTotalSell, 3), // Running total for sell orders
+  //         };
+  //       });
+  //       // Combine buy and sell orders, sorted by type
+  //       const sortedOrders = [
+  //         ...updatedBuyOrders, // Buy orders first
+  //         ...updatedSellOrders, // Sell orders after
+  //       ];
+  //       // Calculate progress
+  //       const totalAmount = sortedOrders.reduce(
+  //         (total, order) => total + parseFloat(order.amount),
+  //         0
+  //       );
+  //       const updatedOrders = sortedOrders.map((order) => ({
+  //         ...order,
+  //         progress:
+  //           totalAmount === 0
+  //             ? 0
+  //             : (parseFloat(order.amount) / totalAmount) * 100,
+  //       }));
+  //       // Reverse the orders to show recent first
+  //       setOrders(updatedOrders.reverse().slice(0, maxOrders));
+  //     } catch (err) {
+  //       console.error('Error fetching orders', err);
+  //       setError(
+  //         err instanceof Error ? err.message : 'An unknown error occurred'
+  //       );
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchOrders();
+  // }, []);
 
   if (loading) return <p>Loading...</p>;
 
@@ -205,19 +205,19 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
           <thead className="text-neutral-light h-10">
             <tr>
               <th className="px-2">
-                Price{' '}
+                Price{" "}
                 <span className="px-2 py-1 bg-teal-500 bg-opacity-25 rounded-full text-white text-sm font-[Inter] italic font-light">
                   USDC
                 </span>
               </th>
               <th>
-                Size{' '}
+                Size{" "}
                 <span className="px-2 py-1 bg-teal-500 bg-opacity-25 rounded-full text-white text-sm font-[Inter] italic font-light">
                   USDC
                 </span>
               </th>
               <th>
-                Total{' '}
+                Total{" "}
                 <span className="px-2 py-1 bg-teal-500 bg-opacity-25 rounded-full text-white text-sm font-[Inter] italic font-light">
                   USDC
                 </span>
@@ -229,8 +229,8 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
               <tr
                 key={order.orderId}
                 style={{
-                  position: 'relative',
-                  height: '20px',
+                  position: "relative",
+                  height: "20px",
                 }}
               >
                 <td>{order.price}</td>
@@ -238,15 +238,15 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
                 <td>{order.total}</td>
                 <td
                   style={{
-                    position: 'absolute',
+                    position: "absolute",
                     width: `${order.progress}%`,
-                    top: '4px',
-                    bottom: '4px',
+                    top: "4px",
+                    bottom: "4px",
                     right: 0,
                     background:
-                      order.orderType === '1'
-                        ? ' linear-gradient(90deg, rgba(20, 184, 166, 0.15) 100%, rgba(20, 184, 166, 0) 0)' // Progress bar color for buy orders
-                        : 'rgba(255, 0, 0, 0.5)', // Progress bar color for sell orders
+                      order.orderType === "1"
+                        ? " linear-gradient(90deg, rgba(20, 184, 166, 0.15) 100%, rgba(20, 184, 166, 0) 0)" // Progress bar color for buy orders
+                        : "rgba(255, 0, 0, 0.5)", // Progress bar color for sell orders
                   }}
                 ></td>
               </tr>
@@ -272,7 +272,7 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
             disabled={isConnecting}
           >
             {isConnecting ? (
-              'Connecting...'
+              "Connecting..."
             ) : (
               <div className="flex justify-center">
                 <Icon name="warning" />

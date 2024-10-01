@@ -1,5 +1,5 @@
-import React from 'react';
-import SelectOption from '../share/SelectOption';
+import React from "react";
+// import SelectOption from "../share/SelectOption";
 
 interface Props {
   marginType: number;
@@ -8,10 +8,11 @@ interface Props {
 
 const MarginType: React.FC<Props> = ({ marginType, setMarginType }) => {
   const options = [
-    { value: 'Cross', label: 'Cross' },
-    { value: 'Isolated', label: 'Isolated' },
+    { value: "Cross", label: "Cross" },
+    { value: "Isolated", label: "Isolated" },
   ];
   const handleSelectChange = () => {};
-  return <SelectOption options={options} onChange={handleSelectChange} />;
+  // return <SelectOption options={options} onChange={handleSelectChange} />;
+  return <></>;
 };
 export default MarginType;

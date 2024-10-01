@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import Leverage from './Leverage';
-import IsBuyOrSell from './IsBuyOrSell';
-import OrderType from './OrderType';
-import LimitOrder from './LimitOrder';
-import MarketOrder from './MarketOrder';
-import MarginType from './MarginType';
+import Leverage from "./Leverage";
+import IsBuyOrSell from "./IsBuyOrSell";
+import OrderType from "./OrderType";
+import LimitOrder from "./LimitOrder";
+import MarketOrder from "./MarketOrder";
+import MarginType from "./MarginType";
 
 const PlaceOrder: React.FC = () => {
   const [marginType, setMarginType] = useState<number>(0);
-  const [orderType, setOrderType] = useState<'limit' | 'market'>('market');
-  const [actionType, setActionType] = useState<'buy' | 'sell'>('buy');
+  const [orderType, setOrderType] = useState<"limit" | "market">("market");
+  const [actionType, setActionType] = useState<"buy" | "sell">("buy");
   const [leverage, setLeverage] = useState<number>(1);
 
   return (
@@ -32,19 +32,20 @@ const PlaceOrder: React.FC = () => {
       <div className="mb-4">
         <OrderType orderType={orderType} setOrderType={setOrderType} />
         <div className="w-full h-0 border-neutral-light border-b"></div>
-        {orderType === 'market' && (
+        {orderType === "market" && (
           <MarketOrder
             marginType={marginType}
             leverage={leverage}
             actionType={actionType}
           />
         )}
-        {orderType === 'limit' && (
-          <LimitOrder
-            marginType={marginType}
-            leverage={leverage}
-            actionType={actionType}
-          />
+        {orderType === "limit" && (
+          // <LimitOrder
+          //   marginType={marginType}
+          //   leverage={leverage}
+          //   actionType={actionType}
+          // />
+          <></>
         )}
       </div>
     </div>

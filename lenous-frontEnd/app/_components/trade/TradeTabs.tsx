@@ -1,30 +1,30 @@
-'use client';
-import React, { useState } from 'react';
-import PositionTable from './positions/PositionTable';
-import Icon from '../UI/icon';
+"use client";
+import React, { useState } from "react";
+// import PositionTable from './positions/PositionTable';
+import Icon from "../UI/icon";
 
 export default function TradeTabs() {
   const [activeTab, setActiveTab] = useState(1);
   const tabs = [
     {
       id: 1,
-      label: 'positions',
-      content: '',
+      label: "positions",
+      content: "",
     },
     {
       id: 2,
-      label: 'History',
-      content: '',
+      label: "History",
+      content: "",
     },
     {
       id: 3,
-      label: 'Strategy',
-      content: '',
+      label: "Strategy",
+      content: "",
     },
     {
       id: 4,
-      label: 'Assets',
-      content: '',
+      label: "Assets",
+      content: "",
     },
   ];
   return (
@@ -35,7 +35,7 @@ export default function TradeTabs() {
             <button
               key={tab.id}
               className={`pr-20 py-2 text-lg  font-medium focus:outline-none rounded-t-3xl ${
-                activeTab === tab.id ? 'text-primary' : 'text-neutral-light'
+                activeTab === tab.id ? "text-primary" : "text-neutral-light"
               }`}
               onClick={() => setActiveTab(tab.id)}
             >
@@ -57,9 +57,7 @@ export default function TradeTabs() {
       </div>
       <div className=" mt-12 min-h-[350px]">
         {/* {tabs.map((tab) => ( */}
-        <div>
-          <PositionTable />
-        </div>
+        <div>{/* <PositionTable /> */}</div>
         {/* ))} */}
       </div>
     </div>
