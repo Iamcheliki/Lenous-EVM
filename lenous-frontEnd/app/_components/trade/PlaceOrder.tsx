@@ -9,7 +9,7 @@ import MarginType from "./MarginType";
 
 const PlaceOrder: React.FC = () => {
   const [marginType, setMarginType] = useState<number>(0);
-  const [orderType, setOrderType] = useState<"limit" | "market">("market");
+  const [orderType, setOrderType] = useState<"limit" | "market">("limit");
   const [actionType, setActionType] = useState<"buy" | "sell">("buy");
   const [leverage, setLeverage] = useState<number>(1);
 
@@ -40,14 +40,17 @@ const PlaceOrder: React.FC = () => {
           />
         )}
         {orderType === "limit" && (
-          // <LimitOrder
-          //   marginType={marginType}
-          //   leverage={leverage}
-          //   actionType={actionType}
-          // />
-          <></>
+          <LimitOrder
+            marginType={marginType}
+            leverage={leverage}
+            actionType={actionType}
+          />
         )}
       </div>
+      <button className="bg-[#EAB3081a] mt-16 w-full rounded-2xl text-white py-[10px] font-poppins italic flex gap-2 items-center justify-center">
+        <span className="bg-[url('/icons/warningIcon.svg')] bg-no-repeat bg-center block w-[28px] h-[28px] bg-contain" />
+        Connect Wallet
+      </button>
     </div>
   );
 };

@@ -1,5 +1,5 @@
-import React from 'react';
-import SelectOption from '../share/SelectOption';
+import React from "react";
+// import SelectOption from '../share/SelectOption';
 
 interface Props {
   hasTime: boolean;
@@ -8,12 +8,12 @@ interface Props {
 
 const TimeInfForce: React.FC<Props> = ({ setHasTime, hasTime }) => {
   const options = [
-    { value: '1', label: 'Good Til Time' },
-    { value: '2', label: 'Immediate Or Cancel' },
+    { value: "1", label: "Good Til Time" },
+    { value: "2", label: "Immediate Or Cancel" },
   ];
 
   const handleSelectChange = (value: string) => {
-    if (value === '1') {
+    if (value === "1") {
       setHasTime(true);
     } else {
       setHasTime(false);
@@ -22,11 +22,11 @@ const TimeInfForce: React.FC<Props> = ({ setHasTime, hasTime }) => {
 
   return (
     <div>
-      <SelectOption
+      {/* <SelectOption
         options={options}
         onChange={handleSelectChange}
         label={'Time in Force'}
-      />
+      /> */}
     </div>
   );
 };

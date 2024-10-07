@@ -1,10 +1,10 @@
-'use client';
-import React from 'react';
-import Icon from '../UI/icon';
-import StopLimit from './StopLimit';
-import { useState } from 'react';
-import PlaceOrder from './PlaceOrder';
-import OrderBook from './OrderBook';
+"use client";
+import React from "react";
+import Icon from "../UI/icon";
+import StopLimit from "./StopLimit";
+import { useState } from "react";
+import PlaceOrder from "./PlaceOrder";
+import OrderBook from "./OrderBook";
 
 export default function TradeMenu() {
   const [activeMenu, setActiveMenu] = useState(0);
@@ -12,34 +12,34 @@ export default function TradeMenu() {
   const menuItems = [
     {
       id: 2,
-      name: 'market',
-      icon: 'market',
+      name: "market",
+      icon: "market",
       content: <PlaceOrder />,
     },
 
     {
       id: 4,
-      name: 'Order Book',
-      icon: 'orderBook',
+      name: "Order Book",
+      icon: "orderBook",
       content: <OrderBook />,
     },
 
     {
       id: 6,
-      name: 'Margin Ratio',
-      icon: 'marginRatio',
+      name: "Margin Ratio",
+      icon: "marginRatio",
       content: <div>Margin Ratio Component</div>,
     },
     {
       id: 7,
-      name: 'Assets',
-      icon: 'assets',
+      name: "Assets",
+      icon: "assets",
       content: <div>Assets Component</div>,
     },
     {
       id: 8,
-      name: 'Help',
-      icon: 'help',
+      name: "Help",
+      icon: "help",
       content: <div>Help Component</div>,
     },
   ];
@@ -47,7 +47,7 @@ export default function TradeMenu() {
     <>
       <div
         className={`activeMenu relative h-[538px] overflow-y-auto overflow-x-hidden ${
-          activeMenu != 0 ? 'w-[400px] pt-4 p-4' : ''
+          activeMenu != 0 ? "w-[400px] pt-4 p-4" : ""
         } bg-dark-gray `}
       >
         {menuItems.find((item) => item.id === activeMenu)?.content}

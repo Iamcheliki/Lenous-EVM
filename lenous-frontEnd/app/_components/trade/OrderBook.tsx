@@ -35,7 +35,7 @@ interface Order {
 }
 
 interface OrderbookProps {
-  userAddress: string;
+  userAddress?: string;
 }
 
 const formatNumber = (value: number, decimals: number): string => {

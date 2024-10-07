@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import SelectOption from '../share/SelectOption';
+import React, { useState } from "react";
+// import SelectOption from '../share/SelectOption';
 
 interface TimeProps {
   setTime: (time: { type: string; amount: number }) => void;
@@ -7,13 +7,13 @@ interface TimeProps {
 
 export default function Time({ setTime }: TimeProps) {
   const [amount, setAmount] = useState<number>(28);
-  const [timeType, setTimeType] = useState<string>('Mins');
+  const [timeType, setTimeType] = useState<string>("Mins");
 
   const options = [
-    { value: 'Days', label: 'Days' },
-    { value: 'Mins', label: 'Mins' },
-    { value: 'Hours', label: 'Hours' },
-    { value: 'Weeks', label: 'Weeks' },
+    { value: "Days", label: "Days" },
+    { value: "Mins", label: "Mins" },
+    { value: "Hours", label: "Hours" },
+    { value: "Weeks", label: "Weeks" },
   ];
 
   const handleSelectChange = (value: string) => {
@@ -38,7 +38,7 @@ export default function Time({ setTime }: TimeProps) {
           className="inline-block w-16 bg-transparent text-white"
         />
       </div>
-      <SelectOption options={options} onChange={handleSelectChange} />
+      {/* <SelectOption options={options} onChange={handleSelectChange} /> */}
     </div>
   );
 }
