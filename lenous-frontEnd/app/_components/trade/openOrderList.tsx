@@ -25,16 +25,89 @@ const orderList: Order[] = [
     sl: "",
     liqRisk: 2.58,
   },
+  {
+    id: "12345",
+    market: {
+      logo: "/icons/dogecoin.svg",
+      title: "DOGEUSDT",
+      type: "Isolated",
+      leverage: 5,
+    },
+    side: "Long",
+    amount: 5409,
+    unit: "DOGE",
+    avgEntry: 0.140506,
+    markPrice: 0.140506,
+    liqPrice: 0.087859,
+    marginPosition: 296.77191888,
+    marginUnit: "USDT",
+    marginRate: 38.67,
+    cmlPnl: 4.96566456,
+    cmlUnit: "USDT",
+    pnlPercentage: 3.26,
+    tp: "",
+    sl: "",
+    liqRisk: 2.58,
+  },
+  {
+    id: "12345",
+    market: {
+      logo: "/icons/dogecoin.svg",
+      title: "DOGEUSDT",
+      type: "Isolated",
+      leverage: 5,
+    },
+    side: "Long",
+    amount: 5409,
+    unit: "DOGE",
+    avgEntry: 0.140506,
+    markPrice: 0.140506,
+    liqPrice: 0.087859,
+    marginPosition: 296.77191888,
+    marginUnit: "USDT",
+    marginRate: 38.67,
+    cmlPnl: 4.96566456,
+    cmlUnit: "USDT",
+    pnlPercentage: 3.26,
+    tp: "",
+    sl: "",
+    liqRisk: 2.58,
+  },
+];
+
+const tableTitleList = [
+  "Market",
+  "Side",
+  "Amount",
+  "Avg. Entry",
+  "Mark Price",
+  " Liq. Price",
+  "Position Margin / Margin Rate",
+  "Cml. PNL / PNL%",
+  "TP /SL",
+  "Liq. Risk%",
+  "Close",
 ];
 
 export default function OpenOrderList() {
   return (
-    <div>
-      {orderList.map((item) => (
-        <div key={item.id}>
-          <OpenOrder order={item} />
-        </div>
-      ))}
+    <div className="w-full">
+      <table className="w-full">
+        <thead className="font-poppins text-neutral-light italic">
+          <tr>
+            {tableTitleList.map((item) => (
+              <td key={item} className="pb-4 pt-8">
+                {item}
+              </td>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="font-poppins italic text-white align-top">
+          {orderList.map((item) => (
+            <OpenOrder order={item} />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
