@@ -10,7 +10,7 @@ export default function OrderBookTable({ orders }: Props) {
           <tr>
             <td className="w-[33%] text-right">
               <p>
-                Price{" "}
+                Price
                 <span className="bg-platform-bg-gradient rounded-xl py-1 px-2 inline-block ml-1">
                   USD
                 </span>
@@ -18,7 +18,7 @@ export default function OrderBookTable({ orders }: Props) {
             </td>
             <td className="w-[33%] text-right">
               <p>
-                Size{" "}
+                Size
                 <span className="bg-platform-bg-gradient rounded-xl py-1 px-2 inline-block ml-1">
                   ETH
                 </span>
@@ -26,7 +26,7 @@ export default function OrderBookTable({ orders }: Props) {
             </td>
             <td className="w-[33%] text-right">
               <p>
-                Total{" "}
+                Total
                 <span className="bg-platform-bg-gradient rounded-xl py-1 px-2 inline-block ml-1">
                   ETH
                 </span>

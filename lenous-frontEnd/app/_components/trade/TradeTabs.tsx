@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 // import PositionTable from './positions/PositionTable';
 import Icon from "../UI/icon";
+import OpenOrderList from "./openOrderList";
 
 export default function TradeTabs() {
   const [activeTab, setActiveTab] = useState(1);
@@ -56,9 +57,8 @@ export default function TradeTabs() {
         </div>
       </div>
       <div className=" mt-12 min-h-[350px]">
-        {/* {tabs.map((tab) => ( */}
-        <div>{/* <PositionTable /> */}</div>
-        {/* ))} */}
+        {/* {tabs.find((item) => item.id === activeTab)?.content} */}
+        <OpenOrderList />
       </div>
     </div>
   );
