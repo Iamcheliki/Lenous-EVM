@@ -1,4 +1,5 @@
 "use client";
+
 import HeroSection from "./_components/home/HeroSection";
 import FindSection from "./_components/home/FindSection";
 import MarketSection from "./_components/home/MarketSection";

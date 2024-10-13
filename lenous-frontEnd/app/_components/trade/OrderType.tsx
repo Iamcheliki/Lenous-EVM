@@ -1,29 +1,30 @@
-import React from 'react';
+import { Order_Type, OrderToPlace } from "@/app/types/order";
+import React from "react";
 
 interface Props {
-  orderType: 'limit' | 'market';
-  setOrderType: (value: 'limit' | 'market') => void;
+  order: OrderToPlace;
+  setOrder: (order: OrderToPlace) => void;
 }
 
-const OrderType: React.FC<Props> = ({ setOrderType, orderType }) => {
+const OrderType: React.FC<Props> = ({ order, setOrder }) => {
   return (
     <div className="flex space-x-4 pb-5 italic ">
       <button
-        onClick={() => setOrderType('limit')}
+        onClick={() => setOrder({ ...order, type: Order_Type.Limit })}
         className={`px-4 py-2  italic ${
-          orderType === 'limit'
-            ? ' text-primary underline'
-            : 'text-neutral-light'
+          order.type === Order_Type.Limit
+            ? " text-primary underline"
+            : "text-neutral-light"
         }`}
       >
         Limit
       </button>
       <button
-        onClick={() => setOrderType('market')}
+        onClick={() => setOrder({ ...order, type: Order_Type.Market })}
         className={`px-4 py-2 italic  ${
-          orderType === 'market'
-            ? ' text-primary underline'
-            : 'text-neutral-light'
+          order.type === Order_Type.Market
+            ? " text-primary underline"
+            : "text-neutral-light"
         }`}
       >
         Market

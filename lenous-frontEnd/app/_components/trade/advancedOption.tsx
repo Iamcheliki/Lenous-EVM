@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface AdvancedOptionProps {
   label: string;
@@ -17,19 +17,21 @@ export default function AdvancedOption({
   const handleToggleSelect = () => {
     setOpenSelect(!openSelect);
   };
+
   return (
     <div className="relative">
       <div
-        className=" flex justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins italic"
+        className="flex items-center justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins cursor-pointer italic"
         onClick={handleToggleSelect}
       >
         <div>
           <h3 className="text-neutral-light text-sm">{label}</h3>
           <p className="text-white text-md">{option}</p>
         </div>
+        <span className="bg-[url('/icons/arrowDown.svg')] bg-no-repeat bg-center bg-contain w-[14px] h-[14px] block" />
       </div>
       {openSelect && (
-        <div className="absolute top-[calc(100%+10px)] left-0 right-0 bg-[#38363E] z-10 rounded-2xl flex flex-col overflow-hidden">
+        <div className="absolute top-[80%] left-0 right-0 w-full bg-[#5c5a63] z-10 rounded-2xl flex flex-col overflow-hidden">
           {optionList.map((item) => (
             <div
               key={item}

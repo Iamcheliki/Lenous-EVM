@@ -1,33 +1,35 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
+import { OrderToPlace } from "@/app/types/order";
+import React, { useState } from "react";
+import Modal from "react-modal";
+
 interface Props {
-  leverage: number;
-  setLeverage: (value: number) => void;
+  order: OrderToPlace;
+  setOrder: (order: OrderToPlace) => void;
 }
 
-const LeverageModal: React.FC<Props> = ({ leverage, setLeverage }) => {
+const LeverageModal: React.FC<Props> = ({ order, setOrder }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const customStyles = {
     content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
       padding: 0,
-      height: '650px',
-      background: 'unset',
-      border: 'none',
-      overflowY: 'hidden',
+      height: "650px",
+      background: "unset",
+      border: "none",
+      overflowY: "hidden",
     },
     overlay: {
-      background: '#00000066',
-      overflow: 'auto',
-      zIndex: '20',
+      background: "#00000066",
+      overflow: "auto",
+      zIndex: "20",
     },
   };
 
@@ -38,7 +40,7 @@ const LeverageModal: React.FC<Props> = ({ leverage, setLeverage }) => {
         onClick={openModal}
       >
         Leverage
-        <div className="ml-2">{leverage}X</div>
+        <div className="ml-2">{order.leverage}X</div>
       </button>
       <Modal
         isOpen={isModalOpen}
@@ -64,30 +66,34 @@ const LeverageModal: React.FC<Props> = ({ leverage, setLeverage }) => {
                 min="1"
                 max="20"
                 step="0.1"
-                value={leverage}
-                onChange={(e) => setLeverage(parseFloat(e.target.value))}
+                value={order.leverage}
+                onChange={(e) =>
+                  setOrder({ ...order, leverage: parseFloat(e.target.value) })
+                }
                 className="w-full h-2 bg-green-linear-gradient-slider h-5 rounded-full appearance-none cursor-pointer"
               />
               <div className="text-white text-xl italic font-normal">
-                {leverage.toFixed(1)}x
+                {order.leverage.toFixed(1)}x
               </div>
             </div>
             <div className="w-full flex justify-around items-center gap-2.5">
-              {['1x', '2x', '3x', '5x', '10x'].map((item) => (
+              {["1x", "2x", "3x", "5x", "10x"].map((item) => (
                 <button
                   key={item}
                   className={`h-8 px-6 rounded-full ${
-                    parseFloat(item) === leverage
-                      ? 'bg-gradient-to-l from-teal-500/25 to-transparent'
-                      : 'border border-gray-400'
+                    parseFloat(item) === order.leverage
+                      ? "bg-gradient-to-l from-teal-500/25 to-transparent"
+                      : "border border-gray-400"
                   } flex justify-center items-center`}
-                  onClick={() => setLeverage(parseFloat(item))}
+                  onClick={() =>
+                    setOrder({ ...order, leverage: parseFloat(item) })
+                  }
                 >
                   <span
                     className={`text-lg italic font-light ${
-                      parseFloat(item) === leverage
-                        ? 'text-teal-500'
-                        : 'text-gray-400'
+                      parseFloat(item) === order.leverage
+                        ? "text-teal-500"
+                        : "text-gray-400"
                     }`}
                   >
                     {item}

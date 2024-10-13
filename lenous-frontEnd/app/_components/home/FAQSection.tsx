@@ -60,6 +60,7 @@ export default function FAQSection() {
       <div className="mt-12">
         {list.map((item: Question, index: number) => (
           <div
+            key={item.question + index}
             className="p-6 rounded-6xl flex flex-col border cursor-pointer border-white-bg-30 mt-4 gap-10 overflow-hidden duration-[0.7s]"
             style={{
               maxHeight: item.open ? "400px" : "100px",

@@ -1,50 +1,54 @@
 import React, { useState } from "react";
-
 import Leverage from "./Leverage";
 import IsBuyOrSell from "./IsBuyOrSell";
 import OrderType from "./OrderType";
 import LimitOrder from "./LimitOrder";
 import MarketOrder from "./MarketOrder";
 import MarginType from "./MarginType";
+import { Margin_Type, Order_Type, OrderToPlace } from "@/app/types/order";
+
+const initialOrder: OrderToPlace = {
+  type: Order_Type.Limit,
+  asset: "",
+  price: 0,
+  stopLossPrice: 0,
+  takeProfitPrice: 0,
+  amount: 0,
+  isBuyOrder: true,
+  hasTime: false,
+  expiration: 0,
+  leverage: 1,
+  margin: Margin_Type.Isolated,
+};
 
 const PlaceOrder: React.FC = () => {
-  const [marginType, setMarginType] = useState<number>(0);
-  const [orderType, setOrderType] = useState<"limit" | "market">("limit");
-  const [actionType, setActionType] = useState<"buy" | "sell">("buy");
   const [leverage, setLeverage] = useState<number>(1);
+  const [order, setOrder] = useState<OrderToPlace>(initialOrder);
 
   return (
     <div className="p-4">
       {/* Margin Type Selection */}
       <div className="mb-4  ">
-        <IsBuyOrSell actionType={actionType} setActionType={setActionType} />
+        <IsBuyOrSell order={order} setOrder={setOrder} />
         <div className="flex mt-4">
           <div className="flex-1 mr-2">
-            <MarginType marginType={marginType} setMarginType={setMarginType} />
+            <MarginType order={order} setOrder={setOrder} />
           </div>
           <div className="flex-1">
-            <Leverage leverage={leverage} setLeverage={setLeverage} />
+            <Leverage order={order} setOrder={setOrder} />
           </div>
         </div>
       </div>
 
       {/* Tab Pane */}
       <div className="mb-4">
-        <OrderType orderType={orderType} setOrderType={setOrderType} />
+        <OrderType order={order} setOrder={setOrder} />
         <div className="w-full h-0 border-neutral-light border-b"></div>
-        {orderType === "market" && (
-          <MarketOrder
-            marginType={marginType}
-            leverage={leverage}
-            actionType={actionType}
-          />
+        {order.type === Order_Type.Market && (
+          <MarketOrder order={order} setOrder={setOrder} />
         )}
-        {orderType === "limit" && (
-          <LimitOrder
-            marginType={marginType}
-            leverage={leverage}
-            actionType={actionType}
-          />
+        {order.type === Order_Type.Limit && (
+          <LimitOrder order={order} setOrder={setOrder} />
         )}
       </div>
       <button className="bg-[#EAB3081a] mt-16 w-full rounded-2xl text-white py-[10px] font-poppins italic flex gap-2 items-center justify-center">

@@ -9,25 +9,24 @@ import { useEthersProvider, useEthersSigner } from "@/app/_libs/utils/ethers";
 import { useWatchContractEvent } from "wagmi";
 import ProfitAndStop from "./ProfitAndStop";
 import AdvancedOption from "./advancedOption";
+import { OrderToPlace } from "@/app/types/order";
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
 interface Props {
-  marginType: number;
-  leverage: number;
-  actionType: "buy" | "sell";
+  order: OrderToPlace;
+  setOrder: (order: OrderToPlace) => void;
 }
 
 const precentageList = [25, 50, 75, 100];
 
-const LimitOrder: React.FC<Props> = ({ marginType, leverage, actionType }) => {
+const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
   const [amount, setAmount] = useState<string>("5");
-  const [limitPrice, setLimitPrice] = useState<string>("3800");
   const [hasTime, setHasTime] = useState<boolean>(true);
   const [expirationTime, setExpirationTime] = useState<number>(
     Math.floor(Date.now() / 1000) + 5
   );
   const [time, setTime] = useState<string>("Mins");
-  const [TimeInfForce, setTimeInforce] = useState<string>("Good Til Time");
+  const [TimeInForce, setTimeInforce] = useState<string>("Good Til Time");
   const [profit, setProfit] = useState<string>("0");
   const [percent, setPercent] = useState<number>(25);
   const [stopLoss, setStopLoss] = useState<string>("0");
@@ -101,6 +100,14 @@ const LimitOrder: React.FC<Props> = ({ marginType, leverage, actionType }) => {
     // }
   };
 
+  useEffect(() => {
+    if (TimeInForce === "Good Til Time") {
+      setOrder({ ...order, hasTime: true });
+    } else {
+      setOrder({ ...order, hasTime: false });
+    }
+  }, [TimeInForce]);
+
   return (
     <div className="mt-4">
       <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
@@ -116,11 +123,11 @@ const LimitOrder: React.FC<Props> = ({ marginType, leverage, actionType }) => {
         </label>
         <input
           id="limitPrice"
-          type="text"
+          type="number"
           placeholder="$0.0"
-          value={limitPrice}
-          onChange={(e) => setLimitPrice(e.target.value)}
-          className="mt-1 block w-full  px-4 py-3  rounded-2xl  text-neutral-light bg-white-bg-05 sm:text-sm"
+          value={order.price}
+          onChange={(e) => setOrder({ ...order, price: +e.target.value })}
+          className="mt-1 block w-full  px-4 py-3  rounded-2xl  text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>
       <div className="mb-4">
@@ -132,10 +139,10 @@ const LimitOrder: React.FC<Props> = ({ marginType, leverage, actionType }) => {
         </label>
         <input
           id="amount"
-          type="text"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm"
+          type="number"
+          value={order.amount}
+          onChange={(e) => setOrder({ ...order, amount: +e.target.value })}
+          className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="Enter amount"
         />
       </div>
@@ -162,7 +169,7 @@ const LimitOrder: React.FC<Props> = ({ marginType, leverage, actionType }) => {
         <div className="mt-4 flex gap-4">
           <div className="flex-grow flex-shrink-0 w-[49%]">
             <AdvancedOption
-              option={TimeInfForce}
+              option={TimeInForce}
               setOption={setTimeInforce}
               label="Time in Foce"
               optionList={["Good Til Time", "Immediate Or Cancel"]}
@@ -182,7 +189,16 @@ const LimitOrder: React.FC<Props> = ({ marginType, leverage, actionType }) => {
             <div className=" flex justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins italic">
               <div>
                 <h3 className="text-primary text-sm">Take Profit</h3>
-                <p className="text-white text-md">0</p>
+                <input
+                  id="amount"
+                  type="number"
+                  value={order.takeProfitPrice}
+                  onChange={(e) =>
+                    setOrder({ ...order, takeProfitPrice: +e.target.value })
+                  }
+                  className="block w-full text-white text-md bg-transparent sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  placeholder="Enter amount"
+                />
               </div>
             </div>
           </div>
@@ -190,7 +206,16 @@ const LimitOrder: React.FC<Props> = ({ marginType, leverage, actionType }) => {
             <div className=" flex justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins italic">
               <div>
                 <h3 className="text-bad-situation text-sm">Take Profit</h3>
-                <p className="text-white text-md">0</p>
+                <input
+                  id="amount"
+                  type="number"
+                  value={order.stopLossPrice}
+                  onChange={(e) =>
+                    setOrder({ ...order, stopLossPrice: +e.target.value })
+                  }
+                  className="block w-full text-white text-md bg-transparent sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  placeholder="Enter amount"
+                />
               </div>
             </div>
           </div>

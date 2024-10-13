@@ -26,7 +26,6 @@ const menuData = [
 
 const NavBar = () => {
   const pathName = usePathname();
-  console.log("router path", pathName);
   return (
     <div className="container flex justify-between items-center py-3">
       <div className="headerLeft flex items-center">
@@ -40,6 +39,7 @@ const NavBar = () => {
           <ul className="flex  text-neutral-light">
             {menuData.map((item) => (
               <li
+                key={item.href + item.name}
                 className={
                   "p-4 " +
                   (pathName === item.href ? "text-primary" : "text-white")

@@ -3,17 +3,17 @@ import { ethers } from "ethers";
 import { useEthersProvider, useEthersSigner } from "@/app/_libs/utils/ethers";
 // import OrderbookABI from '@/app/_libs/utils/abis/Orderbook.json';
 import TransactionInfo from "./TransactionInfo";
+import { OrderToPlace } from "@/app/types/order";
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
 interface Props {
-  marginType: number;
-  leverage: number;
-  actionType: "buy" | "sell";
+  order: OrderToPlace;
+  setOrder: (order: OrderToPlace) => void;
 }
 
 const precentageList = [25, 50, 75, 100];
 
-const MarketOrder: React.FC<Props> = ({ marginType, leverage, actionType }) => {
+const MarketOrder: React.FC<Props> = ({ order, setOrder }) => {
   const [amount, setAmount] = useState<string>("");
   const provider = useEthersProvider();
   const signer = useEthersSigner();
