@@ -55,18 +55,18 @@ const MarketOrder: React.FC<Props> = ({ order, setOrder }) => {
       </div>
       <div className="mb-4">
         <label
-          htmlFor="limitPrice"
+          htmlFor="amount"
           className="block text-sm text-neutral-light font-medium "
         >
-          Limit Price
+          Amount
         </label>
         <input
-          id="limitPrice"
-          type="text"
-          placeholder="$0.0"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="mt-1 block w-full  px-4 py-3  rounded-2xl  text-neutral-light bg-white-bg-05 sm:text-sm"
+          id="amount"
+          type="number"
+          value={order.amount}
+          onChange={(e) => setOrder({ ...order, amount: +e.target.value })}
+          className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          placeholder="Enter amount"
         />
       </div>
 
@@ -87,28 +87,6 @@ const MarketOrder: React.FC<Props> = ({ order, setOrder }) => {
             <span>{item}%</span>
           </div>
         ))}
-      </div>
-      <div className="pt-10">
-        <h3 className="text-neutral-light font-poppins italic">Advanced</h3>
-
-        <div className="mt-4 flex gap-4">
-          <div className="flex-grow flex-shrink-0 w-[49%]">
-            <div className=" flex justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins italic">
-              <div>
-                <h3 className="text-primary text-sm">Take Profit</h3>
-                <p className="text-white text-md">0</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex-grow flex-shrink-0 w-[49%]">
-            <div className=" flex justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins italic">
-              <div>
-                <h3 className="text-bad-situation text-sm">Take Profit</h3>
-                <p className="text-white text-md">0</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
