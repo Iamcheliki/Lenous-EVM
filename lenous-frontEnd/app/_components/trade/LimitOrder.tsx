@@ -10,6 +10,8 @@ import { useWatchContractEvent } from "wagmi";
 import ProfitAndStop from "./ProfitAndStop";
 import AdvancedOption from "./advancedOption";
 import { OrderToPlace } from "@/app/types/order";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
 interface Props {
@@ -166,8 +168,8 @@ const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
       </div>
       <div className="pt-10">
         <h3 className="text-neutral-light font-poppins italic">Advanced</h3>
-        <div className="mt-4 flex gap-4">
-          <div className="flex-grow flex-shrink-0 w-[49%]">
+        <div className="mt-4 flex flex-col gap-4">
+          <div className="flex-grow flex-shrink-0 w-full">
             <AdvancedOption
               option={TimeInForce}
               setOption={setTimeInforce}
@@ -175,14 +177,18 @@ const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
               optionList={["Good Til Time", "Immediate Or Cancel"]}
             />
           </div>
-          <div className="flex-grow flex-shrink-0 w-[49%]">
-            <AdvancedOption
-              option={time}
-              setOption={setTime}
-              label="Time"
-              optionList={["Mins", "Hours", "Days", "Weeks"]}
-            />
-          </div>
+          {order.hasTime && (
+            <div className="bg-white-bg-05 w-full flex justify-center py-2.5 rounded-2xl font-poppins cursor-pointer italic">
+              <DatePicker
+                className="bg-transparent text-white"
+                selected={order.expiration}
+                onChange={(date) => setOrder({ ...order, expiration: date })}
+                showTimeSelect
+                // filterTime={filterPassedTime}
+                dateFormat="MMMM d, yyyy h:mm aa"
+              />
+            </div>
+          )}
         </div>
         <div className="mt-4 flex gap-4">
           <div className="flex-grow flex-shrink-0 w-[49%]">
