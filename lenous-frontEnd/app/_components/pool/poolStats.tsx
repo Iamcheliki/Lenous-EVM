@@ -3,9 +3,8 @@ import Image from "next/image";
 import { useState } from "react";
 import StakeModal from "./stakeModal";
 
-export default function PoolStats() {
+export default function PoolStats({ openModal }: { openModal: () => void }) {
   const token = tokenList[1];
-  const [showModal, setShowModal] = useState<boolean>(false);
 
   return (
     <div className="bg-[#ffffff26] rounded-[24px] flex flex-col p-[34px_31px] gap-[38px]">
@@ -14,7 +13,7 @@ export default function PoolStats() {
           Swap
         </button>
         <button
-          onClick={() => setShowModal(true)}
+          onClick={openModal}
           className="bg-[#ffffff0d] rounded-[20px] h-[48px] w-[48%] flex-shrink-0 text-white text-[22px] font-poppins italic"
         >
           Add Liquidity
@@ -61,12 +60,6 @@ export default function PoolStats() {
           </h3>
         </div>
       </div>
-      <StakeModal
-        isOpen={showModal}
-        onClose={() => {
-          setShowModal(false);
-        }}
-      />
     </div>
   );
 }

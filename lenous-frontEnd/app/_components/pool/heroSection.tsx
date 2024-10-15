@@ -1,4 +1,4 @@
-export default function HeroSection() {
+export default function HeroSection({ openModal }: { openModal: () => void }) {
   return (
     <div className="flex justify-between h-[400px] py-[71px]">
       <div className="flex flex-col gap-[12px]">
@@ -25,7 +25,10 @@ export default function HeroSection() {
             <p className="text-4xl text-white font-thin italic">$41.01 B</p>
           </div>
         </div>
-        <button className="bg-[#4E8AFF33] text-white text-[24px] h-[56px] rounded-[20px] px-4 border-[3px] border-solid border-[#4E8AFF1a]">
+        <button
+          onClick={openModal}
+          className="bg-[#4E8AFF33] text-white text-[24px] h-[56px] rounded-[20px] px-4 border-[3px] border-solid border-[#4E8AFF1a]"
+        >
           Add Liquidity
         </button>
       </div>
