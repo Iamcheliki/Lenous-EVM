@@ -1,8 +1,11 @@
 import { tokenList } from "@/app/_libs/utils/constants/TokenList";
 import Image from "next/image";
+import { useState } from "react";
+import StakeModal from "./stakeModal";
 
 export default function PoolStats() {
   const token = tokenList[1];
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   return (
     <div className="bg-[#ffffff26] rounded-[24px] flex flex-col p-[34px_31px] gap-[38px]">
@@ -10,7 +13,10 @@ export default function PoolStats() {
         <button className="bg-[#ffffff0d] rounded-[20px] h-[48px] w-[48%] flex-shrink-0 text-white text-[22px] font-poppins italic">
           Swap
         </button>
-        <button className="bg-[#ffffff0d] rounded-[20px] h-[48px] w-[48%] flex-shrink-0 text-white text-[22px] font-poppins italic">
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-[#ffffff0d] rounded-[20px] h-[48px] w-[48%] flex-shrink-0 text-white text-[22px] font-poppins italic"
+        >
           Add Liquidity
         </button>
       </div>
@@ -55,6 +61,12 @@ export default function PoolStats() {
           </h3>
         </div>
       </div>
+      <StakeModal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+        }}
+      />
     </div>
   );
 }

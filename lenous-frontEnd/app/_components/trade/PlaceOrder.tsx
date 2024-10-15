@@ -8,6 +8,9 @@ import MarginType from "./MarginType";
 import { Margin_Type, Order_Type, OrderToPlace } from "@/app/types/order";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import { useEthersProvider } from "@/app/_libs/utils/ethers";
+import { ethers } from "ethers";
+import TradeABI from "../../_libs/ABIs/OrderbookABI.json";
 
 const initialOrder: OrderToPlace = {
   type: Order_Type.Limit,
@@ -28,6 +31,12 @@ const PlaceOrder: React.FC = () => {
   const [order, setOrder] = useState<OrderToPlace>(initialOrder);
   const { openConnectModal } = useConnectModal();
   const { isConnecting, address, isConnected, chain } = useAccount();
+
+  const provider = useEthersProvider();
+
+  const handlePlaceOrder = () => {
+    const contract = new ethers.Contract("", TradeABI, provider);
+  };
 
   return (
     <div className="p-4">
