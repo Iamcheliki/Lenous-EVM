@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ethers, providers, BigNumber } from "ethers";
 // import OrderbookABI from '@/app/_libs/utils/abis/Orderbook.json';
-import { useEthersProvider } from "@/app/_libs/utils/ethers";
 import { useWatchContractEvent } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount, useDisconnect } from "wagmi";

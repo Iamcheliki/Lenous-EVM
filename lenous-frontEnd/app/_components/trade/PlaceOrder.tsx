@@ -8,13 +8,16 @@ import MarginType from "./MarginType";
 import { Margin_Type, Order_Type, OrderToPlace } from "@/app/types/order";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
-import { useEthersProvider } from "@/app/_libs/utils/ethers";
+import { useCustomProvider, useEthersProvider } from "@/app/_libs/utils/ethers";
 import { ethers } from "ethers";
 import TradeABI from "../../_libs/ABIs/OrderbookABI.json";
+import { ORDERBOOK_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
+import TokenList from "./tokenList";
+import { baseSepolia } from "@wagmi/core/chains";
 
 const initialOrder: OrderToPlace = {
   type: Order_Type.Limit,
-  asset: "",
+  asset: { symbol: "", address: "" },
   price: 0,
   stopLossPrice: 0,
   takeProfitPrice: 0,
@@ -32,10 +35,19 @@ const PlaceOrder: React.FC = () => {
   const { openConnectModal } = useConnectModal();
   const { isConnecting, address, isConnected, chain } = useAccount();
 
-  const provider = useEthersProvider();
+  const provider = useCustomProvider();
 
-  const handlePlaceOrder = () => {
-    const contract = new ethers.Contract("", TradeABI, provider);
+  console.log("provider", provider?._isProvider);
+
+  const handlePlaceOrder = async () => {
+    const contract = new ethers.Contract(
+      ORDERBOOK_CONTRACT_ADDRESS,
+      TradeABI,
+      provider
+    );
+    console.log("order to place", order);
+
+    await contract.placeLimitOrder().then((res: any) => console.log(res));
   };
 
   return (
@@ -57,6 +69,7 @@ const PlaceOrder: React.FC = () => {
       <div className="mb-4">
         <OrderType order={order} setOrder={setOrder} />
         <div className="w-full h-0 border-neutral-light border-b"></div>
+        <TokenList order={order} setOrder={setOrder} />
         {order.type === Order_Type.Market && (
           <MarketOrder order={order} setOrder={setOrder} />
         )}
@@ -67,7 +80,7 @@ const PlaceOrder: React.FC = () => {
       {isConnected ? (
         <button
           onClick={() => {
-            console.log(order);
+            handlePlaceOrder();
           }}
           className="bg-platform-bg-gradient mt-16 w-full rounded-2xl text-white py-[10px] font-poppins italic flex gap-2 items-center justify-center"
         >

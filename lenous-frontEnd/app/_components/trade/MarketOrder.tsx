@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { useEthersProvider, useEthersSigner } from "@/app/_libs/utils/ethers";
 // import OrderbookABI from '@/app/_libs/utils/abis/Orderbook.json';
 import TransactionInfo from "./TransactionInfo";
 import { OrderToPlace } from "@/app/types/order";
@@ -15,8 +14,6 @@ const precentageList = [25, 50, 75, 100];
 
 const MarketOrder: React.FC<Props> = ({ order, setOrder }) => {
   const [amount, setAmount] = useState<string>("");
-  const provider = useEthersProvider();
-  const signer = useEthersSigner();
   const [percent, setPercent] = useState<number>(25);
 
   // Initialize contract instance

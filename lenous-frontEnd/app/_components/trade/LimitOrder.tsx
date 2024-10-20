@@ -5,7 +5,6 @@ import Time from "./Time";
 import TransactionInfo from "./TransactionInfo";
 import { ethers } from "ethers";
 // import OrderbookABI from '@/app/_libs/utils/abis/Orderbook.json';
-import { useEthersProvider, useEthersSigner } from "@/app/_libs/utils/ethers";
 import { useWatchContractEvent } from "wagmi";
 import ProfitAndStop from "./ProfitAndStop";
 import AdvancedOption from "./advancedOption";
@@ -56,9 +55,6 @@ const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
   //     setExpirationTime(Math.floor(Date.now() / 1000) + timeInSeconds);
   //   }
   // }, [time, hasTime]);
-
-  const provider = useEthersProvider();
-  const signer = useEthersSigner();
 
   // const contract = new ethers.Contract(
   //   ORDERBOOK_ADDRESS,
@@ -211,7 +207,7 @@ const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
           <div className="flex-grow flex-shrink-0 w-[49%]">
             <div className=" flex justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins italic">
               <div>
-                <h3 className="text-bad-situation text-sm">Take Profit</h3>
+                <h3 className="text-bad-situation text-sm">Stop Loss</h3>
                 <input
                   id="amount"
                   type="number"
