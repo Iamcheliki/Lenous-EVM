@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Leverage from "./Leverage";
 import IsBuyOrSell from "./IsBuyOrSell";
 import OrderType from "./OrderType";
@@ -29,28 +29,42 @@ const initialOrder: OrderToPlace = {
   amount: 0,
   isBuyOrder: true,
   hasTime: false,
-  expiration: 0,
+  expiration: new Date(),
   leverage: 1,
   margin: Margin_Type.Isolated,
 };
 
+export interface OrderErrors {
+  amount: string | null;
+  price: string | null;
+  time: string | null;
+  asset: string | null;
+  takeProfit: string | null;
+  stopLoss: string | null;
+}
+
 const PlaceOrder: React.FC = () => {
-  const [leverage, setLeverage] = useState<number>(1);
+  const [check, setCheck] = useState<boolean>(false);
   const [order, setOrder] = useState<OrderToPlace>(initialOrder);
   const { openConnectModal } = useConnectModal();
   const { isConnecting, address, isConnected, chain } = useAccount();
   const { data, writeContract } = useWriteContract();
+  const [errors, setErrors] = useState<OrderErrors>({
+    amount: null,
+    price: null,
+    time: null,
+    asset: null,
+    takeProfit: null,
+    stopLoss: null,
+  });
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
-  console.log(signer);
 
   const contract = new ethers.Contract(
     ORDERBOOK_CONTRACT_ADDRESS,
     TradeABI.abi,
     signer
   );
-
-  console.log("contract", contract);
 
   const handlePlaceOrder = async () => {
     //limit order args
@@ -66,7 +80,6 @@ const PlaceOrder: React.FC = () => {
     const leverage = order.leverage;
     const marginType = order.margin === Margin_Type.Cross ? 0 : 1;
 
-    console.log("expiration", expiration);
     console.log(
       asset,
       price,
@@ -102,13 +115,6 @@ const PlaceOrder: React.FC = () => {
         .then((res: any) => console.log(res))
         .catch((err: any) => console.log(err));
     }
-
-    // writeContract({
-    //   address: LP_CONTRACT_ADDRESS,
-    //   abi: StakeABI,
-    //   functionName: "placeLimitOrder",
-    //   args: [],
-    // });
   };
 
   const handleDeposit = async () => {
@@ -128,7 +134,93 @@ const PlaceOrder: React.FC = () => {
       .then((res: any) => console.log(res))
       .catch((err: any) => console.log(err));
   };
-  console.log(data);
+
+  const resetErrors = () => {
+    setCheck(false);
+    setErrors({
+      amount: null,
+      price: null,
+      time: null,
+      asset: null,
+      takeProfit: null,
+      stopLoss: null,
+    });
+  };
+
+  const handleCheckErrors = () => {
+    console.log("hello");
+    let newErrors = { ...errors };
+
+    //check address
+    if (order.asset.address === "") {
+      newErrors.asset = "Please select an asset!";
+    } else {
+      newErrors.asset = null;
+    }
+
+    //check amount
+    if (order.amount === 0) {
+      newErrors.amount = "Please enter a valid amount!";
+    } else if (order.amount < 0) {
+      newErrors.amount = "Please enter a positive amount!";
+    } else {
+      newErrors.amount = null;
+    }
+
+    //check if limit
+    if (order.type === Order_Type.Limit) {
+      //check price
+      if (order.price === 0) {
+        newErrors.price = "PLease enter a valid price!";
+      } else if (order.price < 0) {
+        newErrors.price = "PLease enter a positive price!";
+      } else {
+        newErrors.price = null;
+      }
+
+      //check take profit
+      if (order.takeProfitPrice === 0) {
+        newErrors.takeProfit = "Please enter a valid amount!";
+      } else if (order.takeProfitPrice < 0) {
+        newErrors.takeProfit = "Please enter a positive amount!";
+      } else {
+        newErrors.takeProfit = null;
+      }
+
+      //check stop loss
+      if (order.stopLossPrice === 0) {
+        newErrors.stopLoss = "Please enter a valid amount!";
+      } else if (order.stopLossPrice < 0) {
+        newErrors.stopLoss = "Please enter a positive amount";
+      } else {
+        newErrors.stopLoss = null;
+      }
+    }
+
+    setErrors({ ...newErrors });
+    if (
+      newErrors.amount === null &&
+      newErrors.price === null &&
+      newErrors.asset === null &&
+      newErrors.stopLoss === null &&
+      newErrors.takeProfit === null &&
+      newErrors.time === null
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  useEffect(() => {
+    if (check) {
+      console.log("here cuase error");
+      handleCheckErrors();
+    }
+  }, [order]);
+
+  console.log("errors", errors);
+
   return (
     <div className="p-4">
       {/* Margin Type Selection */}
@@ -146,21 +238,42 @@ const PlaceOrder: React.FC = () => {
 
       {/* Tab Pane */}
       <div className="mb-4">
-        <OrderType order={order} setOrder={setOrder} />
+        <OrderType
+          order={order}
+          setOrder={setOrder}
+          resetErrors={resetErrors}
+        />
         <div className="w-full h-0 border-neutral-light border-b"></div>
         <TokenList order={order} setOrder={setOrder} />
+        {errors.asset && (
+          <p className="text-bad-situation text-sm py-1">{errors.asset}</p>
+        )}
         {order.type === Order_Type.Market && (
-          <MarketOrder order={order} setOrder={setOrder} />
+          <MarketOrder
+            order={order}
+            setOrder={setOrder}
+            errors={errors}
+            setErrors={setErrors}
+          />
         )}
         {order.type === Order_Type.Limit && (
-          <LimitOrder order={order} setOrder={setOrder} />
+          <LimitOrder
+            order={order}
+            setOrder={setOrder}
+            errors={errors}
+            setErrors={setErrors}
+          />
         )}
       </div>
       {isConnected ? (
         <>
           <button
             onClick={() => {
-              handlePlaceOrder();
+              if (!handleCheckErrors()) {
+                handlePlaceOrder();
+              } else {
+                setCheck(true);
+              }
             }}
             className="bg-platform-bg-gradient mt-16 w-full rounded-2xl text-white py-[10px] font-poppins italic flex gap-2 items-center justify-center"
           >

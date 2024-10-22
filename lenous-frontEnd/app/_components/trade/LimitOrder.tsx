@@ -11,16 +11,24 @@ import AdvancedOption from "./advancedOption";
 import { OrderToPlace } from "@/app/types/order";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { OrderErrors } from "./PlaceOrder";
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
 interface Props {
   order: OrderToPlace;
   setOrder: (order: OrderToPlace) => void;
+  errors: OrderErrors;
+  setErrors: (errors: OrderErrors) => void;
 }
 
 const precentageList = [25, 50, 75, 100];
 
-const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
+const LimitOrder: React.FC<Props> = ({
+  order,
+  setOrder,
+  errors,
+  setErrors,
+}) => {
   const [amount, setAmount] = useState<string>("5");
   const [hasTime, setHasTime] = useState<boolean>(true);
   const [expirationTime, setExpirationTime] = useState<number>(
@@ -31,72 +39,6 @@ const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
   const [profit, setProfit] = useState<string>("0");
   const [percent, setPercent] = useState<number>(25);
   const [stopLoss, setStopLoss] = useState<string>("0");
-
-  // useEffect(() => {
-  //   console.log(time);
-  //   if (hasTime) {
-  //     let timeInSeconds = 0;
-  //     switch (time.type) {
-  //       case "Days":
-  //         timeInSeconds = time.amount * 24 * 60 * 60;
-  //         break;
-  //       case "Hours":
-  //         timeInSeconds = time.amount * 60 * 60;
-  //         break;
-  //       case "Mins":
-  //         timeInSeconds = time.amount * 60;
-  //         break;
-  //       case "Weeks":
-  //         timeInSeconds = time.amount * 7 * 24 * 60 * 60;
-  //         break;
-  //       default:
-  //         timeInSeconds = 5;
-  //     }
-  //     setExpirationTime(Math.floor(Date.now() / 1000) + timeInSeconds);
-  //   }
-  // }, [time, hasTime]);
-
-  // const contract = new ethers.Contract(
-  //   ORDERBOOK_ADDRESS,
-  //   OrderbookABI,
-  //   signer || provider
-  // );
-
-  // useWatchContractEvent({
-  //   address: ORDERBOOK_ADDRESS,
-  //   abi: OrderbookABI,
-  //   eventName: "OrderPlaced",
-  //   onLogs(logs) {
-  //     console.log("New logs!", logs);
-  //   },
-  // });
-
-  const submitLimitOrder = async () => {
-    // const price = ethers.utils.parseUnits("3800", 6);
-    // const stopLossPrice = ethers.utils.parseUnits(stopLoss, 6);
-    // const takeProfitPrice = ethers.utils.parseUnits(profit, 6);
-    // const parsedAmount = ethers.utils.parseUnits(amount.toString(), 6);
-    // const gasLimit = ethers.utils.hexlify(1000000);
-    // const isBuyOrder = actionType == "buy" ? true : false;
-    // console.log(isBuyOrder);
-    // try {
-    //   const tx = await contract.placeLimitOrder(
-    //     price,
-    //     takeProfitPrice,
-    //     stopLossPrice,
-    //     parsedAmount,
-    //     isBuyOrder,
-    //     expirationTime,
-    //     leverage,
-    //     marginType,
-    //     { gasLimit }
-    //   );
-    //   await tx.wait();
-    //   console.log("Limit order placed successfully!");
-    // } catch (error) {
-    //   console.error("Transaction failed:", error);
-    // }
-  };
 
   useEffect(() => {
     if (TimeInForce === "Good Til Time") {
@@ -127,6 +69,9 @@ const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
           onChange={(e) => setOrder({ ...order, price: +e.target.value })}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl  text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
+        {errors.price && (
+          <p className="text-bad-situation text-sm py-1">{errors.price}</p>
+        )}
       </div>
       <div className="mb-4">
         <label
@@ -143,6 +88,9 @@ const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="Enter amount"
         />
+        {errors.amount && (
+          <p className="text-bad-situation text-sm py-1">{errors.amount}</p>
+        )}
       </div>
       <div className="flex gap-1 border-neutral-light border-b pb-8">
         {precentageList.map((item) => (
@@ -203,6 +151,11 @@ const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
                 />
               </div>
             </div>
+            {errors.takeProfit && (
+              <p className="text-bad-situation text-sm py-1">
+                {errors.takeProfit}
+              </p>
+            )}
           </div>
           <div className="flex-grow flex-shrink-0 w-[49%]">
             <div className=" flex justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins italic">
@@ -220,6 +173,11 @@ const LimitOrder: React.FC<Props> = ({ order, setOrder }) => {
                 />
               </div>
             </div>
+            {errors.stopLoss && (
+              <p className="text-bad-situation text-sm py-1">
+                {errors.stopLoss}
+              </p>
+            )}
           </div>
         </div>
       </div>

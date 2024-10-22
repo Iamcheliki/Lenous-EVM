@@ -3,16 +3,24 @@ import { ethers } from "ethers";
 // import OrderbookABI from '@/app/_libs/utils/abis/Orderbook.json';
 import TransactionInfo from "./TransactionInfo";
 import { OrderToPlace } from "@/app/types/order";
+import { OrderErrors } from "./PlaceOrder";
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
 interface Props {
   order: OrderToPlace;
   setOrder: (order: OrderToPlace) => void;
+  errors: OrderErrors;
+  setErrors: (errors: OrderErrors) => void;
 }
 
 const precentageList = [25, 50, 75, 100];
 
-const MarketOrder: React.FC<Props> = ({ order, setOrder }) => {
+const MarketOrder: React.FC<Props> = ({
+  order,
+  setOrder,
+  errors,
+  setErrors,
+}) => {
   const [amount, setAmount] = useState<string>("");
   const [percent, setPercent] = useState<number>(25);
 
@@ -65,6 +73,9 @@ const MarketOrder: React.FC<Props> = ({ order, setOrder }) => {
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="Enter amount"
         />
+        {errors.amount && (
+          <p className="text-bad-situation text-sm py-1">{errors.amount}</p>
+        )}
       </div>
 
       <div className="flex gap-1 border-neutral-light border-b pb-8">

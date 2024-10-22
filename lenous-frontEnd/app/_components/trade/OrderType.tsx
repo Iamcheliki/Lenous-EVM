@@ -4,13 +4,17 @@ import React from "react";
 interface Props {
   order: OrderToPlace;
   setOrder: (order: OrderToPlace) => void;
+  resetErrors: () => void;
 }
 
-const OrderType: React.FC<Props> = ({ order, setOrder }) => {
+const OrderType: React.FC<Props> = ({ order, setOrder, resetErrors }) => {
   return (
     <div className="flex space-x-4 pb-5 italic ">
       <button
-        onClick={() => setOrder({ ...order, type: Order_Type.Limit })}
+        onClick={() => {
+          resetErrors();
+          setOrder({ ...order, type: Order_Type.Limit });
+        }}
         className={`px-4 py-2  italic ${
           order.type === Order_Type.Limit
             ? " text-primary underline"
@@ -20,7 +24,10 @@ const OrderType: React.FC<Props> = ({ order, setOrder }) => {
         Limit
       </button>
       <button
-        onClick={() => setOrder({ ...order, type: Order_Type.Market })}
+        onClick={() => {
+          resetErrors();
+          setOrder({ ...order, type: Order_Type.Market });
+        }}
         className={`px-4 py-2 italic  ${
           order.type === Order_Type.Market
             ? " text-primary underline"
