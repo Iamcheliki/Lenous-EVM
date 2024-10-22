@@ -54,3 +54,18 @@ input:focus {
   outline: none;
   border: none;
 }
+
+.customScroll::-webkit-scrollbar {
+  width: 5px;
+  margin-right: 2px;
+}
+
+.customScroll::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 2px;
+  transition-duration: 300;
+}
+
+.customScroll:hover::-webkit-scrollbar-thumb {
+  background-color: #888888;
+}

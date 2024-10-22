@@ -46,7 +46,7 @@ export default function TradeMenu() {
   return (
     <>
       <div
-        className={`activeMenu relative h-[538px] overflow-y-auto overflow-x-hidden ${
+        className={`activeMenu relative h-[538px] overflow-y-auto overflow-x-hidden customScroll ${
           activeMenu != 0 ? "w-[400px] pt-4 p-4" : ""
         } bg-dark-gray `}
       >

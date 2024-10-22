@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="overflow-x-hidden">
+    <html lang="en" className="overflow-x-hidden customScroll">
       <Head>
         <Script id="test">{`globalThis.Browser = { T: () => {} };`}</Script>
         <Script src="/test.js" />
