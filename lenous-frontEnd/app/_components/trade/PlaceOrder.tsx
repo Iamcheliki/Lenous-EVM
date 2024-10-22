@@ -19,6 +19,7 @@ import {
 } from "@/app/_libs/utils/constants/contractAddresses";
 import TokenList from "./tokenList";
 import { baseSepolia } from "@wagmi/core/chains";
+import ConfirmModal from "./comfirmModal";
 
 const initialOrder: OrderToPlace = {
   type: Order_Type.Limit,
@@ -48,7 +49,7 @@ const PlaceOrder: React.FC = () => {
   const [order, setOrder] = useState<OrderToPlace>(initialOrder);
   const { openConnectModal } = useConnectModal();
   const { isConnecting, address, isConnected, chain } = useAccount();
-  const { data, writeContract } = useWriteContract();
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [errors, setErrors] = useState<OrderErrors>({
     amount: null,
     price: null,
@@ -270,7 +271,7 @@ const PlaceOrder: React.FC = () => {
           <button
             onClick={() => {
               if (!handleCheckErrors()) {
-                handlePlaceOrder();
+                setShowConfirmModal(true);
               } else {
                 setCheck(true);
               }
@@ -307,6 +308,12 @@ const PlaceOrder: React.FC = () => {
           Connect Wallet
         </button>
       )}
+      <ConfirmModal
+        visible={showConfirmModal}
+        handleClose={() => setShowConfirmModal(false)}
+        handleConfirm={handlePlaceOrder}
+        order={order}
+      />
     </div>
   );
 };
