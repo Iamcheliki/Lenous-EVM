@@ -1,4 +1,6 @@
+import { tokenList } from "@/app/_libs/utils/constants/TokenList";
 import { Order_Type, OrderToPlace } from "@/app/types/order";
+import Image from "next/image";
 import Modal from "react-modal";
 
 interface Props {
@@ -49,9 +51,18 @@ export default function ConfirmModal({
         <h2 className="text-white text-lg font-light">Order Details</h2>
         {order.type === Order_Type.Limit ? (
           <>
-            <div className="flex flex-col my-4">
-              <h2 className="text-white text-xl">{order.asset.symbol}</h2>
-              <p className="text-neutral-light">{order.type}</p>
+            <div className="flex items-center gap-3">
+              <Image
+                src={tokenList[1].img}
+                alt={tokenList[1].name}
+                width={200}
+                height={200}
+                className="w-10 h-10 object-contain"
+              />
+              <div className="flex flex-col my-4">
+                <h2 className="text-white text-xl">{order.asset.symbol}</h2>
+                <p className="text-neutral-light">{order.type}</p>
+              </div>
             </div>
             <div className="flex flex-wrap justify-between gap-2">
               <div className="flex flex-col w-[48%]">
@@ -114,9 +125,18 @@ export default function ConfirmModal({
           </>
         ) : (
           <>
-            <div className="flex flex-col my-4">
-              <h2 className="text-white text-xl">{order.asset.symbol}</h2>
-              <p className="text-neutral-light">{order.type}</p>
+            <div className="flex items-center gap-3">
+              <Image
+                src={tokenList[1].img}
+                alt={tokenList[1].name}
+                width={200}
+                height={200}
+                className="w-10 h-10 object-contain"
+              />
+              <div className="flex flex-col my-4">
+                <h2 className="text-white text-xl">{order.asset.symbol}</h2>
+                <p className="text-neutral-light">{order.type}</p>
+              </div>
             </div>
             <div className="flex flex-wrap justify-between gap-4">
               <div className="flex flex-col w-[100%]">
