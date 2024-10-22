@@ -1,6 +1,11 @@
+import { STAKE_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
+import { useEthersSigner } from "@/app/_libs/utils/ethers";
+import { ethers } from "ethers";
 import Image from "next/image";
 import { useState } from "react";
 import Modal from "react-modal";
+import { baseSepolia } from "viem/chains";
+import StakeABI from "../../_libs/ABIs/StakingContract.json";
 
 interface Props {
   isOpen: boolean;
@@ -32,6 +37,24 @@ export default function StakeModal({ isOpen, onClose }: Props) {
       overflow: "auto",
       zIndex: "20",
     },
+  };
+
+  const signer = useEthersSigner({ chainId: baseSepolia.id });
+
+  const handleStake = async () => {
+    const contract = new ethers.Contract(
+      STAKE_CONTRACT_ADDRESS,
+      StakeABI.abi,
+      signer
+    );
+
+    console.log("stake contract", contract);
+    await contract
+      .stake(100, 2592000, {
+        gasLimit: 2000,
+      })
+      .then((res: any) => console.log(res))
+      .catch((err: any) => console.log(err));
   };
 
   return (
@@ -125,7 +148,12 @@ export default function StakeModal({ isOpen, onClose }: Props) {
               This Pool is on High Risk, Reference site about Lorem Ipsum{" "}
             </p>
           </div>
-          <button className="bg-[#4E8AFF80] text-white italic font-poppins rounded-4xl py-4">
+          <button
+            onClick={() => {
+              handleStake();
+            }}
+            className="bg-[#4E8AFF80] text-white italic font-poppins rounded-4xl py-4"
+          >
             Confirm
           </button>
         </div>
