@@ -244,7 +244,7 @@ const PlaceOrder: React.FC = () => {
           setOrder={setOrder}
           resetErrors={resetErrors}
         />
-        <div className="w-full h-0 border-neutral-light border-b"></div>
+        <div className="w-full h-0 border-white border-b mb-8 opacity-10"></div>
         <TokenList order={order} setOrder={setOrder} />
         {errors.asset && (
           <p className="text-bad-situation text-sm py-1">{errors.asset}</p>

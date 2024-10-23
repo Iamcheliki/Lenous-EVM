@@ -39,7 +39,6 @@ export default function TokenList({ order, setOrder }: Props) {
   return (
     <div>
       <Select
-        className="basic-single bg-transparent rounded-2xl"
         classNamePrefix="select"
         defaultValue={tokens[0]}
         isSearchable={true}
