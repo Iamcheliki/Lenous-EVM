@@ -15,6 +15,7 @@ export default function TradeMenu() {
       name: "market",
       icon: "market",
       content: <PlaceOrder />,
+      active: true,
     },
 
     {
@@ -22,6 +23,7 @@ export default function TradeMenu() {
       name: "Order Book",
       icon: "orderBook",
       content: <OrderBook />,
+      active: true,
     },
 
     {
@@ -29,18 +31,21 @@ export default function TradeMenu() {
       name: "Margin Ratio",
       icon: "marginRatio",
       content: <div>Margin Ratio Component</div>,
+      active: false,
     },
     {
       id: 7,
       name: "Assets",
       icon: "assets",
       content: <div>Assets Component</div>,
+      active: false,
     },
     {
       id: 8,
       name: "Help",
       icon: "help",
       content: <div>Help Component</div>,
+      active: false,
     },
   ];
   return (
@@ -56,10 +61,13 @@ export default function TradeMenu() {
         <div className="inline">
           {menuItems.map((item, index) => (
             <div
-              className={`flex justify-end pointer-cursor mb-9
-              `}
+              className={`flex justify-end pointer-cursor mb-9 ${
+                item.active ? "opacity-100" : "opacity-50"
+              }`}
               key={item.id}
-              onClick={() => setActiveMenu(item.id)}
+              onClick={() => {
+                item.active ? setActiveMenu(item.id) : () => {};
+              }}
             >
               {/* <div className="text-white pr-2">{item.name}</div> */}
               <Icon name={item.icon} />

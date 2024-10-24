@@ -20,6 +20,7 @@ import {
 import TokenList from "./tokenList";
 import { baseSepolia } from "@wagmi/core/chains";
 import ConfirmModal from "./comfirmModal";
+import DepositModal from "./depositModal";
 
 const initialOrder: OrderToPlace = {
   type: Order_Type.Limit,
@@ -50,6 +51,8 @@ const PlaceOrder: React.FC = () => {
   const { openConnectModal } = useConnectModal();
   const { isConnecting, address, isConnected, chain } = useAccount();
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [showDepositModal, setShowDepositModal] = useState<boolean>(false);
+  const [depositAmount, setDepositAmount] = useState<number>(0);
   const [errors, setErrors] = useState<OrderErrors>({
     amount: null,
     price: null,
@@ -282,7 +285,7 @@ const PlaceOrder: React.FC = () => {
           </button>
           <button
             onClick={() => {
-              handleDeposit();
+              setShowDepositModal(true);
             }}
             className="bg-[#4E8AFF] mt-2 w-full rounded-2xl text-white py-[10px] font-poppins italic flex gap-2 items-center justify-center"
           >
@@ -313,6 +316,13 @@ const PlaceOrder: React.FC = () => {
         handleClose={() => setShowConfirmModal(false)}
         handleConfirm={handlePlaceOrder}
         order={order}
+      />
+      <DepositModal
+        visible={showDepositModal}
+        handleClose={() => setShowDepositModal(false)}
+        handleDeposit={handleDeposit}
+        amount={depositAmount}
+        setAmount={setDepositAmount}
       />
     </div>
   );
