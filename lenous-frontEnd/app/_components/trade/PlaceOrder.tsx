@@ -21,6 +21,7 @@ import TokenList from "./tokenList";
 import { baseSepolia } from "@wagmi/core/chains";
 import ConfirmModal from "./comfirmModal";
 import DepositModal from "./depositModal";
+import WithdrawModal from "./withdrawModal";
 
 const initialOrder: OrderToPlace = {
   type: Order_Type.Limit,
@@ -52,7 +53,9 @@ const PlaceOrder: React.FC = () => {
   const { isConnecting, address, isConnected, chain } = useAccount();
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [showDepositModal, setShowDepositModal] = useState<boolean>(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
   const [depositAmount, setDepositAmount] = useState<number>(0);
+  const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
   const [errors, setErrors] = useState<OrderErrors>({
     amount: null,
     price: null,
@@ -293,7 +296,7 @@ const PlaceOrder: React.FC = () => {
           </button>
           <button
             onClick={() => {
-              handleWithdraw();
+              setShowWithdrawModal(true);
             }}
             className="bg-yellow mt-2 w-full rounded-2xl text-white py-[10px] font-poppins italic flex gap-2 items-center justify-center"
           >
@@ -323,6 +326,15 @@ const PlaceOrder: React.FC = () => {
         handleDeposit={handleDeposit}
         amount={depositAmount}
         setAmount={setDepositAmount}
+      />
+      <WithdrawModal
+        visible={showWithdrawModal}
+        handleClose={() => {
+          setShowWithdrawModal(false);
+        }}
+        handleWithdraw={handleWithdraw}
+        amount={withdrawAmount}
+        setAmount={setWithdrawAmount}
       />
     </div>
   );
