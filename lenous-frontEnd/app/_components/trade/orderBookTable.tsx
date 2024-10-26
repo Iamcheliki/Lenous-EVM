@@ -37,9 +37,11 @@ export default function OrderBookTable({ orders }: Props) {
         <tbody className="text-white text-right">
           {orders.map((item) => (
             <tr>
-              <td className="p-2">{item.price}</td>
-              <td className="p-2">{item.size}</td>
-              <td className="p-2">{item.total}</td>
+              <td className="p-2">
+                {(item.price / item.amount).toExponential()}
+              </td>
+              <td className="p-2">{item.amount.toExponential()}</td>
+              <td className="p-2">{item.price.toExponential()}</td>
             </tr>
           ))}
         </tbody>

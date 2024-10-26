@@ -7,6 +7,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import Icon from "../UI/icon";
 import TokenSelector from "./tokenSelector";
 import OrderBookTable from "./orderBookTable";
+import { getALlOrders } from "@/app/dataRequests/orderDataRequests";
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
 interface OrderPlacedEventArgs {
@@ -55,52 +56,59 @@ const formatNumber = (value: number, decimals: number): string => {
   return formatted;
 };
 
-const orderList = [
-  {
-    price: 3800,
-    size: 5.29,
-    total: 60,
-  },
-  {
-    price: 3800,
-    size: 5.29,
-    total: 60,
-  },
-  {
-    price: 3800,
-    size: 5.29,
-    total: 60,
-  },
-  {
-    price: 3800,
-    size: 5.29,
-    total: 60,
-  },
-  {
-    price: 3800,
-    size: 5.29,
-    total: 60,
-  },
-  {
-    price: 3800,
-    size: 5.29,
-    total: 60,
-  },
-  {
-    price: 3800,
-    size: 5.29,
-    total: 60,
-  },
-  {
-    price: 3800,
-    size: 5.29,
-    total: 60,
-  },
-];
+// const orderList = [
+//   {
+//     price: 3800,
+//     size: 5.29,
+//     total: 60,
+//   },
+//   {
+//     price: 3800,
+//     size: 5.29,
+//     total: 60,
+//   },
+//   {
+//     price: 3800,
+//     size: 5.29,
+//     total: 60,
+//   },
+//   {
+//     price: 3800,
+//     size: 5.29,
+//     total: 60,
+//   },
+//   {
+//     price: 3800,
+//     size: 5.29,
+//     total: 60,
+//   },
+//   {
+//     price: 3800,
+//     size: 5.29,
+//     total: 60,
+//   },
+//   {
+//     price: 3800,
+//     size: 5.29,
+//     total: 60,
+//   },
+//   {
+//     price: 3800,
+//     size: 5.29,
+//     total: 60,
+//   },
+// ];
 
 const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
   const [amount, setAmount] = useState<number>(0);
   const [selectedToken, setSelectedToken] = useState<string>("ETH");
+  const [orderList, setOrderList] = useState<any[]>([]);
+
+  useEffect(() => {
+    getALlOrders().then((res) => {
+      setOrderList([...res.data.orders]);
+    });
+  }, []);
 
   return (
     <div>

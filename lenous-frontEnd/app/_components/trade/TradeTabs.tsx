@@ -1,11 +1,24 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import PositionTable from './positions/PositionTable';
 import Icon from "../UI/icon";
 import OpenOrderList from "./openOrderList";
+import { getAllOrdersByAddress } from "@/app/dataRequests/orderDataRequests";
+import { useAccount } from "wagmi";
 
 export default function TradeTabs() {
   const [activeTab, setActiveTab] = useState(1);
+  const [userOrder, setUserOrder] = useState<any[]>([]);
+  const { address } = useAccount();
+
+  useEffect(() => {
+    if (address) {
+      getAllOrdersByAddress(address).then((res) => {
+        console.log("trade table list", res.data.orders);
+      });
+    }
+  }, [address]);
+
   const tabs = [
     {
       id: 1,
