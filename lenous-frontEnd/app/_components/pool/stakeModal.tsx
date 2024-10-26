@@ -12,10 +12,32 @@ interface Props {
   onClose: () => void;
 }
 
-const leverageList = [2, 3, 4, 5, 10, 20];
+interface Duration {
+  label: string;
+  value: number;
+}
+const durationList: Duration[] = [
+  {
+    value: 30,
+    label: "1 Month",
+  },
+  {
+    value: 60,
+    label: "2 Months",
+  },
+  {
+    value: 90,
+    label: "3 Months",
+  },
+  {
+    value: 120,
+    label: "6 Months",
+  },
+];
 
 export default function StakeModal({ isOpen, onClose }: Props) {
-  const [leverage, setLeverage] = useState<number>(2);
+  const [duration, setDuration] = useState<number>(2);
+  const [amount, setAmount] = useState<number>(30);
   const customStyles = {
     content: {
       top: "50%",
@@ -50,7 +72,7 @@ export default function StakeModal({ isOpen, onClose }: Props) {
 
     console.log("stake contract", contract);
     await contract
-      .stake(100, 2592000, {
+      .stake(100, duration * 24 * 60 * 60, {
         gasLimit: 2000,
       })
       .then((res: any) => console.log(res))
@@ -72,7 +94,13 @@ export default function StakeModal({ isOpen, onClose }: Props) {
           <div className="flex items-center justify-between bg-white-bg-05 py-2 px-6 rounded-2xl w-[75%]">
             <div>
               <p className="text-neutral-light text-md">USDC</p>
-              <p className="text-white text-2xl">0</p>
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(+e.target.value)}
+                placeholder="Amount"
+                className="bg-transparent text-white text-2xl font-poppins italic flex-grow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
             </div>
             <div className="flex items-center gap-1">
               <Image
@@ -93,26 +121,28 @@ export default function StakeModal({ isOpen, onClose }: Props) {
           </div>
         </div>
         <div className="flex items-center justify-between font-poppins italic">
-          <h3 className="text-2xl text-white">Leverage</h3>
+          <h3 className="text-2xl text-white">Duration</h3>
           <div className="flex items-center gap-2">
-            {leverageList.map((item: number) => (
+            {durationList.map((item: Duration) => (
               <div
                 key={item + "leverage"}
                 onClick={() => {
-                  setLeverage(item);
+                  setDuration(item.value);
                 }}
                 className={`flex items-center justify-center py-2 px-5 rounded-4xl cursor-pointer w-fit ${
-                  item === leverage
+                  item.value === duration
                     ? "bg-[#4E8AFF80]"
                     : "border-sold border-[1px] border-neutral-light bg-transparent"
                 }`}
               >
                 <p
                   className={`text-sm ${
-                    item === leverage ? "text-white" : "text-neutral-light"
+                    item.value === duration
+                      ? "text-white"
+                      : "text-neutral-light"
                   }`}
                 >
-                  {item}X
+                  {item.label}
                 </p>
               </div>
             ))}
