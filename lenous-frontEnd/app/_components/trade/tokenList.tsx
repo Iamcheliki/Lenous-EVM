@@ -44,7 +44,7 @@ export default function TokenList({ asset, setAsset }: Props) {
       name="Token"
       options={tokens}
       onChange={(value) => {
-        setAsset({ symbol: value.label, address: value.value });
+        setAsset({ name: value.label, address: value.value });
       }}
     />
   );
