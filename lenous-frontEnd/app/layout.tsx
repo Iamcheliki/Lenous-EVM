@@ -26,9 +26,12 @@ export default function RootLayout({
         <Script id="test">{`globalThis.Browser = { T: () => {} };`}</Script>
         <Script src="/test.js" />
       </Head>
-      <body className={`${inter.className} bg-dark-background`}>
+      <body className={`${inter.className} bg-dark-background pt-9`}>
         <div className="absolute w-[100vw] h-[200vh] opacity-70 -z-[1] bg-[url('/images/home-page/hero-background.png')] bg-left-top bg-contain bg-no-repeat" />
         <Providers>
+          <div className="bg-bad-situation flex items-center justify-center h-9 w-full fixed top-0 left-0 z-50">
+            <p className="text-white ">This is a Beta Version</p>
+          </div>
           <Header />
           {children}
           <Footer />

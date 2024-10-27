@@ -64,8 +64,6 @@ export default function DepositModal({
     resolver: yupResolver(schema),
   });
 
-  console.log(errors);
-
   return (
     <Modal
       isOpen={visible}

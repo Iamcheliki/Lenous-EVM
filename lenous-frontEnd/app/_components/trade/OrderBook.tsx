@@ -110,6 +110,8 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
     });
   }, []);
 
+  console.log(orderList);
+
   return (
     <div>
       <div>

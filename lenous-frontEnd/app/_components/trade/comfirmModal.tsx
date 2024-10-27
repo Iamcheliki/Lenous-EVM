@@ -39,7 +39,6 @@ export default function ConfirmModal({
     },
   };
 
-  console.log(order.expiration);
   return (
     <Modal
       isOpen={visible}
