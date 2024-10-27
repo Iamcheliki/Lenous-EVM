@@ -37,17 +37,15 @@ export default function TokenList({ asset, setAsset }: Props) {
   }, []);
 
   return (
-    <div>
-      <Select
-        classNamePrefix="select"
-        defaultValue={tokens[0]}
-        isSearchable={true}
-        name="Token"
-        options={tokens}
-        onChange={(value) => {
-          setAsset({ symbol: value.label, address: value.value });
-        }}
-      />
-    </div>
+    <Select
+      classNamePrefix="select"
+      defaultValue={tokens[0]}
+      isSearchable={true}
+      name="Token"
+      options={tokens}
+      onChange={(value) => {
+        setAsset({ symbol: value.label, address: value.value });
+      }}
+    />
   );
 }

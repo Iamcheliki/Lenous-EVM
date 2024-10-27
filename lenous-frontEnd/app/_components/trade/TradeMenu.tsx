@@ -57,12 +57,17 @@ export default function TradeMenu() {
   return (
     <>
       <div className="bg-dark-gray">
-        <div className="w-full h-15 p-4">
-          <TokenList
-            asset={selectedAsset}
-            setAsset={(asset) => dispatch(setSelectedAsset(asset))}
-          />
-        </div>
+        {activeMenu ? (
+          <div className="w-full h-15 p-4">
+            <TokenList
+              asset={selectedAsset}
+              setAsset={(asset) => dispatch(setSelectedAsset(asset))}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
+
         <div
           className={`activeMenu relative h-[538px] overflow-y-auto overflow-x-hidden customScroll ${
             activeMenu != 0 ? "w-[400px] pt-4 p-4" : ""
