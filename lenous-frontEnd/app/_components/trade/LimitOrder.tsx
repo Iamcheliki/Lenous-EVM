@@ -93,7 +93,7 @@ const LimitOrder: React.FC<Props> = ({
           <p className="text-bad-situation text-sm py-1">{errors.amount}</p>
         )}
       </div>
-      <div className="flex gap-1 border-neutral-light border-b pb-8">
+      <div className="flex gap-1 border-neutral-light  mb-8">
         {precentageList.map((item) => (
           <div
             key={item}
@@ -111,6 +111,7 @@ const LimitOrder: React.FC<Props> = ({
           </div>
         ))}
       </div>
+      <div className="w-full h-0 border-white border-b opacity-10"></div>
       <div className="pt-10">
         <h3 className="text-neutral-light font-poppins italic">Advanced</h3>
         <div className="mt-4 flex flex-col gap-4">
