@@ -5,11 +5,14 @@ import Icon from "../UI/icon";
 import OpenOrderList from "./openOrderList";
 import { getAllOrdersByAddress } from "@/app/dataRequests/orderDataRequests";
 import { useAccount } from "wagmi";
+import { useSelector } from "react-redux";
 
 export default function TradeTabs() {
   const [activeTab, setActiveTab] = useState(1);
   const [userOrder, setUserOrder] = useState<any[]>([]);
   const { address } = useAccount();
+  const { selectedAsset } = useSelector((state: any) => state.trade);
+  const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
 
   useEffect(() => {
     if (address) {
@@ -18,6 +21,24 @@ export default function TradeTabs() {
       });
     }
   }, [address]);
+
+  useEffect(() => {
+    if (address) {
+      getAllOrdersByAddress(address).then((res) => {
+        console.log("trade table list", res.data.orders);
+        const list = [...res.data.orders];
+
+        if (filteredByAsset) {
+          const filteredList = list.filter(
+            (x) => x.symbol === selectedAsset.address
+          );
+          setUserOrder([...filteredList]);
+        } else {
+          setUserOrder([...list]);
+        }
+      });
+    }
+  }, [filteredByAsset, address]);
 
   const tabs = [
     {
@@ -44,7 +65,7 @@ export default function TradeTabs() {
   return (
     <div className="py-8 container">
       <div className="flex justify-between">
-        <div className="inline-flex ">
+        <div className="inline-flex items-center">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -56,6 +77,21 @@ export default function TradeTabs() {
               {tab.label}
             </button>
           ))}
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => {
+              setFilteredByAsset(!filteredByAsset);
+            }}
+          >
+            <span
+              className={`block rounded-full w-4 h-4 border-[1px] border-solid border-neutral-light ${
+                filteredByAsset ? "bg-primary" : "bg-transparent"
+              }`}
+            />
+            <p className="text-neutral-light italic">
+              Filtered by Selected Asset
+            </p>
+          </div>
         </div>
         <div className="flex">
           <button className="text-white bg-primary border py-1 px-6 mr-4  rounded-3xl">
