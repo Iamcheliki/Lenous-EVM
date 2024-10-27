@@ -10,7 +10,6 @@ export enum Order_Type {
   
 export interface OrderToPlace {
     type: Order_Type;
-    asset: {symbol: string; address: string};
     price: number;
     stopLossPrice: number;
     takeProfitPrice: number;

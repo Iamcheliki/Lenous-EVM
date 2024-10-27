@@ -2,6 +2,7 @@ import { tokenList } from "@/app/_libs/utils/constants/TokenList";
 import { Order_Type, OrderToPlace } from "@/app/types/order";
 import Image from "next/image";
 import Modal from "react-modal";
+import { useSelector } from "react-redux";
 
 interface Props {
   visible: boolean;
@@ -39,6 +40,8 @@ export default function ConfirmModal({
     },
   };
 
+  const { selectedAsset } = useSelector((state: any) => state.trade);
+
   return (
     <Modal
       isOpen={visible}
@@ -59,7 +62,7 @@ export default function ConfirmModal({
                 className="w-10 h-10 object-contain"
               />
               <div className="flex flex-col my-4">
-                <h2 className="text-white text-xl">{order.asset.symbol}</h2>
+                <h2 className="text-white text-xl">{selectedAsset?.symbol}</h2>
                 <p className="text-neutral-light">{order.type}</p>
               </div>
             </div>
@@ -133,7 +136,7 @@ export default function ConfirmModal({
                 className="w-10 h-10 object-contain"
               />
               <div className="flex flex-col my-4">
-                <h2 className="text-white text-xl">{order.asset.symbol}</h2>
+                <h2 className="text-white text-xl">{selectedAsset?.symbol}</h2>
                 <p className="text-neutral-light">{order.type}</p>
               </div>
             </div>

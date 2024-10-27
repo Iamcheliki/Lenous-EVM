@@ -22,10 +22,11 @@ import { baseSepolia } from "@wagmi/core/chains";
 import ConfirmModal from "./comfirmModal";
 import DepositModal from "./depositModal";
 import WithdrawModal from "./withdrawModal";
+import { useSelector } from "react-redux";
+import store from "@/app/redux/store";
 
 const initialOrder: OrderToPlace = {
   type: Order_Type.Limit,
-  asset: { symbol: "", address: "" },
   price: 0,
   stopLossPrice: 0,
   takeProfitPrice: 0,
@@ -41,7 +42,6 @@ export interface OrderErrors {
   amount: string | null;
   price: string | null;
   time: string | null;
-  asset: string | null;
   takeProfit: string | null;
   stopLoss: string | null;
 }
@@ -56,11 +56,11 @@ const PlaceOrder: React.FC = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
   const [depositAmount, setDepositAmount] = useState<number>(0);
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
+  const { selectedAsset } = useSelector((state: any) => state.trade);
   const [errors, setErrors] = useState<OrderErrors>({
     amount: null,
     price: null,
     time: null,
-    asset: null,
     takeProfit: null,
     stopLoss: null,
   });
@@ -75,7 +75,7 @@ const PlaceOrder: React.FC = () => {
 
   const handlePlaceOrder = async () => {
     //limit order args
-    const asset = ethers.utils.getAddress(order.asset.address);
+    const asset = ethers.utils.getAddress(selectedAsset.address);
     const price = order.price;
     const stopLossPrice = order.stopLossPrice;
     const takeProfitPrice = order.takeProfitPrice;
@@ -148,7 +148,6 @@ const PlaceOrder: React.FC = () => {
       amount: null,
       price: null,
       time: null,
-      asset: null,
       takeProfit: null,
       stopLoss: null,
     });
@@ -157,13 +156,6 @@ const PlaceOrder: React.FC = () => {
   const handleCheckErrors = () => {
     console.log("hello");
     let newErrors = { ...errors };
-
-    //check address
-    if (order.asset.address === "") {
-      newErrors.asset = "Please select an asset!";
-    } else {
-      newErrors.asset = null;
-    }
 
     //check amount
     if (order.amount === 0) {
@@ -208,7 +200,6 @@ const PlaceOrder: React.FC = () => {
     if (
       newErrors.amount === null &&
       newErrors.price === null &&
-      newErrors.asset === null &&
       newErrors.stopLoss === null &&
       newErrors.takeProfit === null &&
       newErrors.time === null
@@ -251,10 +242,10 @@ const PlaceOrder: React.FC = () => {
           resetErrors={resetErrors}
         />
         <div className="w-full h-0 border-white border-b mb-8 opacity-10"></div>
-        <TokenList order={order} setOrder={setOrder} />
+        {/* <TokenList order={order} setOrder={setOrder} />
         {errors.asset && (
           <p className="text-bad-situation text-sm py-1">{errors.asset}</p>
-        )}
+        )} */}
         {order.type === Order_Type.Market && (
           <MarketOrder
             order={order}

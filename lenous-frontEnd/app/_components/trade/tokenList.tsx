@@ -1,16 +1,16 @@
 import { ETHERSCAN_API_KEY } from "@/app/_libs/utils/constants/apiKey";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import data from "../../_libs/utils/constants/erc20Tokens.json";
+import data from "../../_libs/utils/constants/supportedTokens.json";
 import Select from "react-select";
 import { OrderToPlace } from "@/app/types/order";
 
 interface Props {
-  order: OrderToPlace;
-  setOrder: (order: OrderToPlace) => void;
+  asset: any;
+  setAsset: (asset: any) => void;
 }
 
-export default function TokenList({ order, setOrder }: Props) {
+export default function TokenList({ asset, setAsset }: Props) {
   const [tokens, setTokens] = useState<any[]>([]);
   // const handleGetTokens = () => {
   //   axios
@@ -45,10 +45,7 @@ export default function TokenList({ order, setOrder }: Props) {
         name="Token"
         options={tokens}
         onChange={(value) => {
-          setOrder({
-            ...order,
-            asset: { symbol: value.label, address: value.value },
-          });
+          setAsset({ symbol: value.label, address: value.value });
         }}
       />
     </div>

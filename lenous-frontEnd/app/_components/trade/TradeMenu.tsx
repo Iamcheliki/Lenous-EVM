@@ -5,9 +5,16 @@ import StopLimit from "./StopLimit";
 import { useState } from "react";
 import PlaceOrder from "./PlaceOrder";
 import OrderBook from "./OrderBook";
+import TokenList from "./tokenList";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedAsset } from "@/app/redux/slices/tradeSlice";
 
 export default function TradeMenu() {
   const [activeMenu, setActiveMenu] = useState(0);
+  const { selectedAsset } = useSelector((state: any) => state.trade);
+  const dispatch = useDispatch();
+
+  console.log("selected asset", selectedAsset);
 
   const menuItems = [
     {
@@ -48,15 +55,25 @@ export default function TradeMenu() {
       active: false,
     },
   ];
+
   return (
     <>
-      <div
-        className={`activeMenu relative h-[538px] overflow-y-auto overflow-x-hidden customScroll ${
-          activeMenu != 0 ? "w-[400px] pt-4 p-4" : ""
-        } bg-dark-gray `}
-      >
-        {menuItems.find((item) => item.id === activeMenu)?.content}
+      <div className="bg-dark-gray">
+        <div className="w-full h-15 p-4">
+          <TokenList
+            asset={selectedAsset}
+            setAsset={(asset) => dispatch(setSelectedAsset(asset))}
+          />
+        </div>
+        <div
+          className={`activeMenu relative h-[538px] overflow-y-auto overflow-x-hidden customScroll ${
+            activeMenu != 0 ? "w-[400px] pt-4 p-4" : ""
+          } bg-dark-gray `}
+        >
+          {menuItems.find((item) => item.id === activeMenu)?.content}
+        </div>
       </div>
+
       <div className="w-24 bg-light-gray py-9 flex justify-center">
         <div className="inline">
           {menuItems.map((item, index) => (

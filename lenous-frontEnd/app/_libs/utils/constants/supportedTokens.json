@@ -1,0 +1,19 @@
+{
+    "tokens": [
+        {
+            "address": "0xD629eb00dEced2a080B7EC630eF6aC117e614f1b",
+            "symbol": "BTC",
+            "name": "Bitcoin"
+        },
+        {
+            "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+            "symbol": "SOL",
+            "name": "Solana"
+        },
+        {
+            "address": "0xdd13E55209Fd76AfE204dBda4007C227904f0a81",
+            "symbol": "ETH",
+            "name": "Ethereum"
+        }
+    ]
+}
