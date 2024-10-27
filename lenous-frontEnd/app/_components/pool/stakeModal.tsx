@@ -2,7 +2,7 @@ import { STAKE_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddr
 import { useEthersSigner } from "@/app/_libs/utils/ethers";
 import { ethers } from "ethers";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { baseSepolia } from "viem/chains";
 import StakeABI from "../../_libs/ABIs/StakingContract.json";
@@ -38,6 +38,7 @@ const durationList: Duration[] = [
 export default function StakeModal({ isOpen, onClose }: Props) {
   const [duration, setDuration] = useState<number>(2);
   const [amount, setAmount] = useState<number>(30);
+  const [lpAmount, setLpAmount] = useState<number>(0);
   const customStyles = {
     content: {
       top: "50%",
@@ -78,6 +79,10 @@ export default function StakeModal({ isOpen, onClose }: Props) {
       .catch((err: any) => console.log(err));
   };
 
+  useEffect(() => {
+    setLpAmount(amount * 0.1);
+  }, [amount]);
+
   return (
     <Modal
       onRequestClose={onClose}
@@ -115,7 +120,9 @@ export default function StakeModal({ isOpen, onClose }: Props) {
           <div className="flex items-center justify-between bg-white-bg-05 py-2 px-6 rounded-2xl w-[25%] flex-shrink-0">
             <div>
               <p className="text-neutral-light text-md">LP Token</p>
-              <p className="text-neutral-light text-2xl">0</p>
+              <p className="text-neutral-light text-2xl">
+                {lpAmount.toFixed(2)}
+              </p>
             </div>
           </div>
         </div>
