@@ -22,7 +22,6 @@ const TransactionInfo: React.FC<TransactionInfoProps> = ({
   React.useEffect(() => {
     if (orderId) {
       // fetchOrderDetails(orderId);
-      console.log("hello");
     }
   }, [orderId, fetchOrderDetails]);
 

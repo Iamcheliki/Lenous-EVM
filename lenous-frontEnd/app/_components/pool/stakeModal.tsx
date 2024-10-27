@@ -70,7 +70,6 @@ export default function StakeModal({ isOpen, onClose }: Props) {
       signer
     );
 
-    console.log("stake contract", contract);
     await contract
       .stake(100, duration * 24 * 60 * 60, {
         gasLimit: 2000,

@@ -14,8 +14,6 @@ export default function TradeMenu() {
   const { selectedAsset } = useSelector((state: any) => state.trade);
   const dispatch = useDispatch();
 
-  console.log("selected asset", selectedAsset);
-
   const menuItems = [
     {
       id: 2,

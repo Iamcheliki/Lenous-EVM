@@ -8,6 +8,7 @@ import Icon from "../UI/icon";
 import TokenSelector from "./tokenSelector";
 import OrderBookTable from "./orderBookTable";
 import { getALlOrders } from "@/app/dataRequests/orderDataRequests";
+import { useSelector } from "react-redux";
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
 interface OrderPlacedEventArgs {
@@ -103,14 +104,17 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
   const [amount, setAmount] = useState<number>(0);
   const [selectedToken, setSelectedToken] = useState<string>("ETH");
   const [orderList, setOrderList] = useState<any[]>([]);
+  const { selectedAsset } = useSelector((state: any) => state.trade);
 
   useEffect(() => {
     getALlOrders().then((res) => {
-      setOrderList([...res.data.orders]);
+      const newList = [...res.data.orders];
+      const filteredList = newList.filter(
+        (x) => x.symbol === selectedAsset.address
+      );
+      setOrderList([...filteredList]);
     });
-  }, []);
-
-  console.log(orderList);
+  }, [selectedAsset]);
 
   return (
     <div>

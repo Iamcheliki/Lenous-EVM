@@ -154,7 +154,6 @@ const PlaceOrder: React.FC = () => {
   };
 
   const handleCheckErrors = () => {
-    console.log("hello");
     let newErrors = { ...errors };
 
     //check amount
@@ -212,12 +211,9 @@ const PlaceOrder: React.FC = () => {
 
   useEffect(() => {
     if (check) {
-      console.log("here cuase error");
       handleCheckErrors();
     }
   }, [order]);
-
-  console.log("errors", errors);
 
   return (
     <div className="p-4">

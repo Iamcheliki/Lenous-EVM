@@ -64,8 +64,6 @@ export default function WithdrawModal({
     resolver: yupResolver(schema),
   });
 
-  console.log(errors);
-
   return (
     <Modal
       isOpen={visible}
