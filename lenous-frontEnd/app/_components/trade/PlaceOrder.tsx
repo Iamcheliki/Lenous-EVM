@@ -24,6 +24,8 @@ import DepositModal from "./depositModal";
 import WithdrawModal from "./withdrawModal";
 import { useSelector } from "react-redux";
 import store from "@/app/redux/store";
+import { getUserCredit } from "@/app/dataRequests/userDataRequests";
+import { getTokensPrice } from "@/app/dataRequests/tokensDataRequests";
 
 const initialOrder: OrderToPlace = {
   type: Order_Type.Limit,
@@ -50,7 +52,7 @@ const PlaceOrder: React.FC = () => {
   const [check, setCheck] = useState<boolean>(false);
   const [order, setOrder] = useState<OrderToPlace>(initialOrder);
   const { openConnectModal } = useConnectModal();
-  const { isConnecting, address, isConnected, chain } = useAccount();
+  const { address, isConnected } = useAccount();
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [showDepositModal, setShowDepositModal] = useState<boolean>(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
@@ -64,6 +66,7 @@ const PlaceOrder: React.FC = () => {
     takeProfit: null,
     stopLoss: null,
   });
+  const [userBalance, setUserBalance] = useState<number>(0);
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
@@ -215,6 +218,17 @@ const PlaceOrder: React.FC = () => {
     }
   }, [order]);
 
+  useEffect(() => {
+    if (address) {
+      getUserCredit(address.toString()).then((res) => {
+        console.log("user balance", res);
+      });
+    } else {
+      setUserBalance(0);
+    }
+    getTokensPrice(["bitcoin"]);
+  }, []);
+
   return (
     <div className="p-4">
       {/* Margin Type Selection */}
@@ -256,6 +270,7 @@ const PlaceOrder: React.FC = () => {
             setOrder={setOrder}
             errors={errors}
             setErrors={setErrors}
+            balance={userBalance}
           />
         )}
       </div>

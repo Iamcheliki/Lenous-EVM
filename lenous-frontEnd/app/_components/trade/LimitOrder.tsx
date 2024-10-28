@@ -20,6 +20,7 @@ interface Props {
   setOrder: (order: OrderToPlace) => void;
   errors: OrderErrors;
   setErrors: (errors: OrderErrors) => void;
+  balance: number;
 }
 
 const precentageList = [25, 50, 75, 100];
@@ -29,17 +30,10 @@ const LimitOrder: React.FC<Props> = ({
   setOrder,
   errors,
   setErrors,
+  balance,
 }) => {
-  const [amount, setAmount] = useState<string>("5");
-  const [hasTime, setHasTime] = useState<boolean>(true);
-  const [expirationTime, setExpirationTime] = useState<number>(
-    Math.floor(Date.now() / 1000) + 5
-  );
-  const [time, setTime] = useState<string>("Mins");
   const [TimeInForce, setTimeInforce] = useState<string>("Good Til Time");
-  const [profit, setProfit] = useState<string>("0");
   const [percent, setPercent] = useState<number>(25);
-  const [stopLoss, setStopLoss] = useState<string>("0");
 
   useEffect(() => {
     if (TimeInForce === "Good Til Time") {
@@ -53,7 +47,7 @@ const LimitOrder: React.FC<Props> = ({
     <div className="mt-4">
       <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
         <h4>Available</h4>
-        <p>0 USDT</p>
+        <p>{balance} USD</p>
       </div>
       <div className="mb-4">
         <label

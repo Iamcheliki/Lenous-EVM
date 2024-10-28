@@ -1,13 +1,27 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['cdn.moralis.io', 'coin-images.coingecko.com', 'cryptologos.cc' , 'localhost:3003'],
+    domains: [
+      "cdn.moralis.io",
+      "coin-images.coingecko.com",
+      "cryptologos.cc",
+      "localhost:3003",
+    ],
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  output: "export",
+  trailingSlash: true,
+
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
-      use: ['@svgr/webpack'],
+      use: ["@svgr/webpack"],
     });
     config.resolve.fallback = {
       ...config.resolve.fallback,

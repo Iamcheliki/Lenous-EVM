@@ -1,6 +1,6 @@
 import axios from "axios";
+import { BASE_URL } from "./constants";
 
-const BASE_URL = "http://195.248.240.173:8000";
 
 export const getALlOrders = async () => {
   return axios.get(`${BASE_URL}/orders`).then((res) => {
