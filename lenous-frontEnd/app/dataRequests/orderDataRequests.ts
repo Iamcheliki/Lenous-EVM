@@ -2,7 +2,7 @@ import axios from "axios";
 import { BASE_URL } from "./constants";
 
 
-export const getALlOrders = async () => {
+export const getAllOrders = async () => {
   return axios.get(`${BASE_URL}/orders`).then((res) => {
     return res;
   });

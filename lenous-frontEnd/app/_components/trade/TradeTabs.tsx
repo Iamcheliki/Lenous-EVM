@@ -3,7 +3,10 @@ import React, { useEffect, useState } from "react";
 // import PositionTable from './positions/PositionTable';
 import Icon from "../UI/icon";
 import OpenOrderList from "./openOrderList";
-import { getAllOrdersByAddress } from "@/app/dataRequests/orderDataRequests";
+import {
+  getAllOrders,
+  getAllOrdersByAddress,
+} from "@/app/dataRequests/orderDataRequests";
 import { useAccount } from "wagmi";
 import { useSelector } from "react-redux";
 
@@ -23,21 +26,25 @@ export default function TradeTabs() {
   }, [address]);
 
   useEffect(() => {
-    if (address) {
-      getAllOrdersByAddress(address).then((res) => {
-        console.log("trade table list", res.data.orders);
-        const list = [...res.data.orders];
+    // if (address) {
+    //   getAllOrdersByAddress(address).then((res) => {
+    //     console.log("trade table list", res.data.orders);
+    //     const list = [...res.data.orders];
 
-        if (filteredByAsset) {
-          const filteredList = list.filter(
-            (x) => x.symbol === selectedAsset.address
-          );
-          setUserOrder([...filteredList]);
-        } else {
-          setUserOrder([...list]);
-        }
-      });
-    }
+    //     if (filteredByAsset) {
+    //       const filteredList = list.filter(
+    //         (x) => x.symbol === selectedAsset.address
+    //       );
+    //       setUserOrder([...filteredList]);
+    //     } else {
+    //       setUserOrder([...list]);
+    //     }
+    //   });
+    // }
+    getAllOrders().then((res) => {
+      console.log(res);
+      setUserOrder([...res.data.orders]);
+    });
   }, [filteredByAsset, address]);
 
   const tabs = [
@@ -107,7 +114,7 @@ export default function TradeTabs() {
       </div>
       <div className=" mt-12 min-h-[350px]">
         {/* {tabs.find((item) => item.id === activeTab)?.content} */}
-        <OpenOrderList />
+        <OpenOrderList orders={userOrder} />
       </div>
     </div>
   );

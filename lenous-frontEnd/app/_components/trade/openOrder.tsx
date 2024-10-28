@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export interface Order {
+export interface orderToShow {
   id: string;
   market: OrderMarket;
   side: string;
@@ -15,8 +15,8 @@ export interface Order {
   cmlPnl: number;
   cmlUnit: string;
   pnlPercentage: number;
-  tp: any;
-  sl: any;
+  // tp: any;
+  // sl: any;
   liqRisk: number;
 }
 
@@ -27,59 +27,87 @@ interface OrderMarket {
   leverage: number;
 }
 
-export default function OpenOrder({ order }: { order: Order }) {
+export default function OpenOrder({ order }: any) {
+  const marketPrice = 2000000000000;
+  const pnl = marketPrice * order.amount - order.price / order.amount;
+  const orderToShow: orderToShow = {
+    id: order.orderId,
+    market: {
+      logo: "/",
+      title: "Bitcoin",
+      type: order.marginType === 0 ? "Cross" : "Isolated",
+      leverage: order.leverage,
+    },
+    side: order.isBuyOrder === 1 ? "Long" : "Short",
+    amount: order.amount,
+    avgEntry: order.price / order.amount,
+    markPrice: marketPrice,
+    liqPrice:
+      order.price / order.amount -
+      ((1 / order.leverage) * order.price) / order.amount,
+    marginPosition: 2000,
+    marginRate: 20,
+    cmlPnl: pnl,
+    pnlPercentage: (pnl / order.amount) * order.price,
+    liqRisk: 10,
+    marginUnit: "USD",
+    cmlUnit: "USD",
+    unit: "BTC",
+  };
   return (
     <>
       <tr>
         <td className="py-4">
           <div className="flex items-center gap-2">
             <Image
-              src={order.market.logo}
-              alt={order.market.title}
+              src={orderToShow.market.logo}
+              alt={orderToShow.market.title}
               width={40}
               height={40}
               className="w-[40px] h-[40px] object-contain"
             />
             <div>
-              <h3>{order.market.title}</h3>
+              <h3>{orderToShow.market.title}</h3>
               <div className="flex items-center gap-1">
-                <p>{order.market.type}</p>
-                <p>{order.market.leverage}x</p>
+                <p>{orderToShow.market.type}</p>
+                <p>{orderToShow.market.leverage}x</p>
               </div>
             </div>
           </div>
         </td>
-        <td className="py-4">{order.side}</td>
-        <td className="py-4">{order.amount + " " + order.unit}</td>
-        <td className="py-4">{order.avgEntry}</td>
-        <td className="py-4">{order.markPrice}</td>
-        <td className="text-yellow py-4">{order.liqPrice}</td>
+        <td className="py-4">{orderToShow.side}</td>
+        <td className="py-4">{orderToShow.amount + " " + orderToShow.unit}</td>
+        <td className="py-4">{orderToShow.avgEntry}</td>
+        <td className="py-4">{orderToShow.markPrice}</td>
+        <td className="text-yellow py-4">{orderToShow.liqPrice}</td>
         <td className="py-4">
           <div>
-            <p>{order.marginPosition + " " + order.marginUnit}</p>
-            <p>{order.marginRate + "%"}</p>
+            <p>{orderToShow.marginPosition + " " + orderToShow.marginUnit}</p>
+            <p>{orderToShow.marginRate + "%"}</p>
           </div>
         </td>
         <td className="py-4">
           <div className="text-primary">
             <p>
-              {(order.cmlPnl > 0 ? "+" : "") +
-                order.cmlPnl +
+              {(orderToShow.cmlPnl > 0 ? "+" : "") +
+                orderToShow.cmlPnl +
                 " " +
-                order.cmlUnit}
+                orderToShow.cmlUnit}
             </p>
             <p>
-              {(order.pnlPercentage > 0 ? "+" : "") + order.pnlPercentage + "%"}
+              {(orderToShow.pnlPercentage > 0 ? "+" : "") +
+                orderToShow.pnlPercentage +
+                "%"}
             </p>
           </div>
         </td>
-        <td className="py-4">
+        {/* <td className="py-4">
           <div>
-            <p>{order.tp}</p>
-            <p>{order.sl}</p>
+            <p>{orderToShow.tp}</p>
+            <p>{orderToShow.sl}</p>
           </div>
-        </td>
-        <td className="text-primary py-4">{order.liqRisk}%</td>
+        </td> */}
+        <td className="text-primary py-4">{orderToShow.liqRisk}%</td>
         <td className="text-bad-situation underline cursor-pointer py-4">
           <p>Close</p>
         </td>

@@ -1,79 +1,79 @@
-import OpenOrder, { Order } from "./openOrder";
+import OpenOrder from "./openOrder";
 
-const orderList: Order[] = [
-  {
-    id: "12345",
-    market: {
-      logo: "/icons/dogecoin.svg",
-      title: "DOGEUSDT",
-      type: "Isolated",
-      leverage: 5,
-    },
-    side: "Long",
-    amount: 5409,
-    unit: "DOGE",
-    avgEntry: 0.140506,
-    markPrice: 0.140506,
-    liqPrice: 0.087859,
-    marginPosition: 296.77191888,
-    marginUnit: "USDT",
-    marginRate: 38.67,
-    cmlPnl: 4.96566456,
-    cmlUnit: "USDT",
-    pnlPercentage: 3.26,
-    tp: "",
-    sl: "",
-    liqRisk: 2.58,
-  },
-  {
-    id: "12345",
-    market: {
-      logo: "/icons/dogecoin.svg",
-      title: "DOGEUSDT",
-      type: "Isolated",
-      leverage: 5,
-    },
-    side: "Long",
-    amount: 5409,
-    unit: "DOGE",
-    avgEntry: 0.140506,
-    markPrice: 0.140506,
-    liqPrice: 0.087859,
-    marginPosition: 296.77191888,
-    marginUnit: "USDT",
-    marginRate: 38.67,
-    cmlPnl: 4.96566456,
-    cmlUnit: "USDT",
-    pnlPercentage: 3.26,
-    tp: "",
-    sl: "",
-    liqRisk: 2.58,
-  },
-  {
-    id: "12345",
-    market: {
-      logo: "/icons/dogecoin.svg",
-      title: "DOGEUSDT",
-      type: "Isolated",
-      leverage: 5,
-    },
-    side: "Long",
-    amount: 5409,
-    unit: "DOGE",
-    avgEntry: 0.140506,
-    markPrice: 0.140506,
-    liqPrice: 0.087859,
-    marginPosition: 296.77191888,
-    marginUnit: "USDT",
-    marginRate: 38.67,
-    cmlPnl: 4.96566456,
-    cmlUnit: "USDT",
-    pnlPercentage: 3.26,
-    tp: "",
-    sl: "",
-    liqRisk: 2.58,
-  },
-];
+// const orderList: Order[] = [
+//   {
+//     id: "12345",
+//     market: {
+//       logo: "/icons/dogecoin.svg",
+//       title: "DOGEUSDT",
+//       type: "Isolated",
+//       leverage: 5,
+//     },
+//     side: "Long",
+//     amount: 5409,
+//     unit: "DOGE",
+//     avgEntry: 0.140506,
+//     markPrice: 0.140506,
+//     liqPrice: 0.087859,
+//     marginPosition: 296.77191888,
+//     marginUnit: "USDT",
+//     marginRate: 38.67,
+//     cmlPnl: 4.96566456,
+//     cmlUnit: "USDT",
+//     pnlPercentage: 3.26,
+//     tp: "",
+//     sl: "",
+//     liqRisk: 2.58,
+//   },
+//   {
+//     id: "12345",
+//     market: {
+//       logo: "/icons/dogecoin.svg",
+//       title: "DOGEUSDT",
+//       type: "Isolated",
+//       leverage: 5,
+//     },
+//     side: "Long",
+//     amount: 5409,
+//     unit: "DOGE",
+//     avgEntry: 0.140506,
+//     markPrice: 0.140506,
+//     liqPrice: 0.087859,
+//     marginPosition: 296.77191888,
+//     marginUnit: "USDT",
+//     marginRate: 38.67,
+//     cmlPnl: 4.96566456,
+//     cmlUnit: "USDT",
+//     pnlPercentage: 3.26,
+//     tp: "",
+//     sl: "",
+//     liqRisk: 2.58,
+//   },
+//   {
+//     id: "12345",
+//     market: {
+//       logo: "/icons/dogecoin.svg",
+//       title: "DOGEUSDT",
+//       type: "Isolated",
+//       leverage: 5,
+//     },
+//     side: "Long",
+//     amount: 5409,
+//     unit: "DOGE",
+//     avgEntry: 0.140506,
+//     markPrice: 0.140506,
+//     liqPrice: 0.087859,
+//     marginPosition: 296.77191888,
+//     marginUnit: "USDT",
+//     marginRate: 38.67,
+//     cmlPnl: 4.96566456,
+//     cmlUnit: "USDT",
+//     pnlPercentage: 3.26,
+//     tp: "",
+//     sl: "",
+//     liqRisk: 2.58,
+//   },
+// ];
 
 const tableTitleList = [
   "Market",
@@ -84,12 +84,17 @@ const tableTitleList = [
   " Liq. Price",
   "Position Margin / Margin Rate",
   "Cml. PNL / PNL%",
-  "TP /SL",
+  // "TP /SL",
   "Liq. Risk%",
   "Close",
 ];
 
-export default function OpenOrderList() {
+interface Props {
+  orders: any[];
+}
+
+export default function OpenOrderList({ orders }: Props) {
+  console.log(orders);
   return (
     <div className="w-full">
       <table className="w-full">
@@ -103,7 +108,7 @@ export default function OpenOrderList() {
           </tr>
         </thead>
         <tbody className="font-poppins italic text-white align-top">
-          {orderList.map((item) => (
+          {orders.map((item) => (
             <OpenOrder order={item} />
           ))}
         </tbody>

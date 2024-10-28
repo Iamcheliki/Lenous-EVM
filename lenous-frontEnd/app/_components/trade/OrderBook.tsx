@@ -7,7 +7,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import Icon from "../UI/icon";
 import TokenSelector from "./tokenSelector";
 import OrderBookTable from "./orderBookTable";
-import { getALlOrders } from "@/app/dataRequests/orderDataRequests";
+import { getAllOrders } from "@/app/dataRequests/orderDataRequests";
 import { useSelector } from "react-redux";
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
@@ -107,7 +107,7 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
   const { selectedAsset } = useSelector((state: any) => state.trade);
 
   useEffect(() => {
-    getALlOrders().then((res) => {
+    getAllOrders().then((res) => {
       const newList = [...res.data.orders];
       const filteredList = newList.filter(
         (x) => x.symbol === selectedAsset.address
