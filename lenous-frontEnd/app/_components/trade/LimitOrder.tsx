@@ -58,10 +58,14 @@ const LimitOrder: React.FC<Props> = ({
         </label>
         <input
           id="limitPrice"
-          type="number"
-          placeholder="$0.0"
-          value={order.price}
-          onChange={(e) => setOrder({ ...order, price: +e.target.value })}
+          type="text"
+          placeholder="Enter the limit price"
+          value={order.price === 0 ? "" : order.price.toString()}
+          onChange={(e) => {
+            const inputValue = e.target.value;
+            const numericValue = inputValue.replace(/[^0-9]/g, "");
+            setOrder({ ...order, price: +numericValue });
+          }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl  text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         {errors.price && (
@@ -77,11 +81,15 @@ const LimitOrder: React.FC<Props> = ({
         </label>
         <input
           id="amount"
-          type="number"
-          value={order.amount}
-          onChange={(e) => setOrder({ ...order, amount: +e.target.value })}
+          type="text"
+          value={order.amount === 0 ? "" : order.amount.toString()}
+          onChange={(e) => {
+            const inputValue = e.target.value;
+            const numericValue = inputValue.replace(/[^0-9]/g, "");
+            setOrder({ ...order, amount: +numericValue });
+          }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          placeholder="Enter amount"
+          placeholder="Enter the amount"
         />
         {errors.amount && (
           <p className="text-bad-situation text-sm py-1">{errors.amount}</p>
@@ -137,13 +145,19 @@ const LimitOrder: React.FC<Props> = ({
                 <h3 className="text-primary text-sm">Take Profit</h3>
                 <input
                   id="amount"
-                  type="number"
-                  value={order.takeProfitPrice}
-                  onChange={(e) =>
-                    setOrder({ ...order, takeProfitPrice: +e.target.value })
+                  type="text"
+                  value={
+                    order.takeProfitPrice === 0
+                      ? ""
+                      : order.takeProfitPrice.toString()
                   }
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    const numericValue = inputValue.replace(/[^0-9]/g, "");
+                    setOrder({ ...order, takeProfitPrice: +numericValue });
+                  }}
                   className="block w-full text-white text-md bg-transparent sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  placeholder="Enter amount"
+                  placeholder="Enter the amount"
                 />
               </div>
             </div>
@@ -159,11 +173,17 @@ const LimitOrder: React.FC<Props> = ({
                 <h3 className="text-bad-situation text-sm">Stop Loss</h3>
                 <input
                   id="amount"
-                  type="number"
-                  value={order.stopLossPrice}
-                  onChange={(e) =>
-                    setOrder({ ...order, stopLossPrice: +e.target.value })
+                  type="text"
+                  value={
+                    order.stopLossPrice === 0
+                      ? ""
+                      : order.stopLossPrice.toString()
                   }
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    const numericValue = inputValue.replace(/[^0-9]/g, "");
+                    setOrder({ ...order, stopLossPrice: +numericValue });
+                  }}
                   className="block w-full text-white text-md bg-transparent sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="Enter amount"
                 />

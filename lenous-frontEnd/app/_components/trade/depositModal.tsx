@@ -7,6 +7,8 @@ import Modal from "react-modal";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useAccount, useBalance } from "wagmi";
+import { baseSepolia } from "viem/chains";
 
 interface Props {
   visible: boolean;
@@ -46,6 +48,13 @@ export default function DepositModal({
     },
   };
 
+  const { address } = useAccount();
+  const { data, error, isLoading } = useBalance({
+    address: address, // Replace with your address
+    token: "0x5dEaC602762362FE5f135FA5904351916053cF70", // USDC token address on Base Sepolia
+    chainId: baseSepolia.id,
+  });
+
   const [percent, setPeercent] = useState<number | string>(25);
 
   const percentList: (string | number)[] = [25, 50, 75, "max"];
@@ -77,7 +86,7 @@ export default function DepositModal({
           USDC deposits from <Link href={"/"}>select chains</Link> have the
           lowest fees. Other deposits may have additional third-party fees.
         </p>
-        <div className="flex flex-col items-center gap-3 mt-10 w-full">
+        {/* <div className="flex flex-col items-center gap-3 mt-10 w-full">
           <div className="flex items-center justify-between rounded-2xl bg-white-bg-05 py-5 px-8 w-full">
             <div className="flex flex-col gap-2">
               <h3 className="text-neutral-light text-md">Source</h3>
@@ -117,17 +126,21 @@ export default function DepositModal({
               <span className="block w-3 h-3 bg-[url('/icons/arrowDown.svg')] bg-no-repeat bg-center bg-contain" />
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="flex items-center justify-between text-white mt-10 text-xl">
           <h3>Available</h3>
-          <p>0 USDC</p>
+          {isLoading ? "..." : <p>{data ? data.formatted : "0"} USDC</p>}
         </div>
         <div className="bg-white-bg-05 rounded-2xl text-3xl text-neutral-light flex items-center py-3 px-8 mt-3">
           <input
             {...register("amount")}
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(+e.target.value)}
+            type="text"
+            value={amount === 0 ? "" : amount}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const numericValue = inputValue.replace(/[^0-9]/g, "");
+              setAmount(+numericValue);
+            }}
             placeholder="Amount"
             className="bg-transparent font-poppins italic flex-grow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
@@ -136,6 +149,11 @@ export default function DepositModal({
         <p className="text-bad-situation text-sm mt-1">
           {errors.amount?.message}
         </p>
+        {data && amount > +data?.formatted && (
+          <p className="text-bad-situation text-sm mt-1">
+            insufficient Balance
+          </p>
+        )}
         <div className="mt-3 flex items-center justify-between">
           {percentList.map((item: string | number) => (
             <div

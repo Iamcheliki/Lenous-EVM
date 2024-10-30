@@ -72,7 +72,7 @@ const PlaceOrder: React.FC = () => {
 
   const contract = new ethers.Contract(
     ORDERBOOK_CONTRACT_ADDRESS,
-    TradeABI.abi,
+    TradeABI,
     signer
   );
 
@@ -118,9 +118,19 @@ const PlaceOrder: React.FC = () => {
         .then((res: any) => console.log(res))
         .catch((err: any) => console.log(err));
     } else {
+      // const estimatedGasLimit = await contract.estimateGas.placeMarketOrder(
+      //   asset,
+      //   amount,
+      //   isBuyOrder,
+      //   leverage,
+      //   marginType
+      // );
+      const gasPrice = ethers.utils.parseUnits("0.00000000001", "ether");
+      const gasLimit = ethers.utils.parseUnits("0.00000000001", "ether");
       await contract
         .placeMarketOrder(asset, amount, isBuyOrder, leverage, marginType, {
-          gasLimit: 2000,
+          gasLimit: gasLimit,
+          gasPrice: gasPrice,
         })
         .then((res: any) => console.log(res))
         .catch((err: any) => console.log(err));
@@ -178,24 +188,6 @@ const PlaceOrder: React.FC = () => {
       } else {
         newErrors.price = null;
       }
-
-      //check take profit
-      if (order.takeProfitPrice === 0) {
-        newErrors.takeProfit = "Please enter a valid amount!";
-      } else if (order.takeProfitPrice < 0) {
-        newErrors.takeProfit = "Please enter a positive amount!";
-      } else {
-        newErrors.takeProfit = null;
-      }
-
-      //check stop loss
-      if (order.stopLossPrice === 0) {
-        newErrors.stopLoss = "Please enter a valid amount!";
-      } else if (order.stopLossPrice < 0) {
-        newErrors.stopLoss = "Please enter a positive amount";
-      } else {
-        newErrors.stopLoss = null;
-      }
     }
 
     setErrors({ ...newErrors });
@@ -221,12 +213,14 @@ const PlaceOrder: React.FC = () => {
   useEffect(() => {
     if (address) {
       getUserCredit(address.toString()).then((res) => {
-        console.log("user balance", res);
+        const balances = res.data.balances;
+        if (balances.length > 0) {
+          setUserBalance(balances[0].total);
+        }
       });
     } else {
       setUserBalance(0);
     }
-    getTokensPrice(["bitcoin"]);
   }, []);
 
   return (

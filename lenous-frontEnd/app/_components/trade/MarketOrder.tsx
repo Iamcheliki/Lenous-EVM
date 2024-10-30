@@ -67,11 +67,15 @@ const MarketOrder: React.FC<Props> = ({
         </label>
         <input
           id="amount"
-          type="number"
-          value={order.amount}
-          onChange={(e) => setOrder({ ...order, amount: +e.target.value })}
+          type="text"
+          value={order.amount === 0 ? "" : order.amount.toString()}
+          onChange={(e) => {
+            const inputValue = e.target.value;
+            const numericValue = inputValue.replace(/[^0-9]/g, "");
+            setOrder({ ...order, amount: +numericValue });
+          }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          placeholder="Enter amount"
+          placeholder="Enter the amount"
         />
         {errors.amount && (
           <p className="text-bad-situation text-sm py-1">{errors.amount}</p>

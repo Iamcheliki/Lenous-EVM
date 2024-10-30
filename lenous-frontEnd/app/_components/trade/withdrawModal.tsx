@@ -81,7 +81,7 @@ export default function WithdrawModal({
           have the lowest fees. Other withdrawal methods (e.g. assets on
           Ethereum) may have higher third-party fees.
         </p>
-        <div className="flex flex-col items-center gap-3 mt-10 w-full">
+        {/* <div className="flex flex-col items-center gap-3 mt-10 w-full">
           <div className="flex items-center gap-3 w-full">
             <div className="flex flex-col gap-2 rounded-2xl bg-white-bg-05 py-5 px-8 w-[49%] flex-shrink-0 self-stretch">
               <h3 className="text-neutral-light text-md">Destination</h3>
@@ -134,13 +134,17 @@ export default function WithdrawModal({
               <span className="block w-3 h-3 bg-[url('/icons/arrowDown.svg')] bg-no-repeat bg-center bg-contain" />
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="bg-white-bg-05 rounded-2xl text-3xl text-neutral-light flex items-center py-3 px-8 mt-10">
           <input
             {...register("amount")}
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(+e.target.value)}
+            type="text"
+            value={amount === 0 ? "" : amount}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const numericValue = inputValue.replace(/[^0-9]/g, "");
+              setAmount(+numericValue);
+            }}
             placeholder="Amount"
             className="bg-transparent font-poppins italic flex-grow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />

@@ -28,7 +28,15 @@ interface OrderMarket {
 }
 
 export default function OpenOrder({ order }: any) {
-  const marketPrice = 2000000000000;
+  const formatNumber = (price: number) => {
+    return price.toLocaleString("en-US");
+  };
+
+  const calculatePnl = (order: any) => {
+    const pnl = marketPrice * order.amount - order.price / order.amount;
+  };
+
+  const marketPrice = 0.000000004;
   const pnl = marketPrice * order.amount - order.price / order.amount;
   const orderToShow: orderToShow = {
     id: order.orderId,
@@ -48,7 +56,7 @@ export default function OpenOrder({ order }: any) {
     marginPosition: 2000,
     marginRate: 20,
     cmlPnl: pnl,
-    pnlPercentage: (pnl / order.amount) * order.price,
+    pnlPercentage: (pnl / order.amount) * 100,
     liqRisk: 10,
     marginUnit: "USD",
     cmlUnit: "USD",
@@ -76,13 +84,19 @@ export default function OpenOrder({ order }: any) {
           </div>
         </td>
         <td className="py-4">{orderToShow.side}</td>
-        <td className="py-4">{orderToShow.amount + " " + orderToShow.unit}</td>
+        <td className="py-4">
+          {formatNumber(orderToShow.amount) + " " + orderToShow.unit}
+        </td>
         <td className="py-4">{orderToShow.avgEntry}</td>
-        <td className="py-4">{orderToShow.markPrice}</td>
+        <td className="py-4">{formatNumber(orderToShow.markPrice)}</td>
         <td className="text-yellow py-4">{orderToShow.liqPrice}</td>
         <td className="py-4">
           <div>
-            <p>{orderToShow.marginPosition + " " + orderToShow.marginUnit}</p>
+            <p>
+              {formatNumber(orderToShow.marginPosition) +
+                " " +
+                orderToShow.marginUnit}
+            </p>
             <p>{orderToShow.marginRate + "%"}</p>
           </div>
         </td>
