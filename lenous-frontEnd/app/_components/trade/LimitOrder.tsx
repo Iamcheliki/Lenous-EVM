@@ -32,6 +32,10 @@ const LimitOrder: React.FC<Props> = ({
 }) => {
   const [TimeInForce, setTimeInforce] = useState<string>("Good Til Time");
   const [percent, setPercent] = useState<number>(25);
+  const [profitPercentage, setProfitPercentage] = useState<string>("");
+  const [profitTotalValue, setProfitTotalValue] = useState<string>("");
+  const [lossPercentage, setLossPercentage] = useState<string>("");
+  const [lossTotalValue, setLossTotalValue] = useState<string>("");
 
   useEffect(() => {
     if (TimeInForce === "Good Til Time") {
@@ -183,24 +187,114 @@ const LimitOrder: React.FC<Props> = ({
         <div className="mt-4 flex gap-4">
           <div className="flex-grow flex-shrink-0 w-[49%]">
             <div className=" flex justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins italic">
-              <div>
+              <div className="flex flex-col gap-3">
                 <h3 className="text-primary text-sm">Take Profit</h3>
-                <input
-                  id="amount"
-                  type="text"
-                  value={
-                    +order.takeProfitPrice === 0
-                      ? ""
-                      : order.takeProfitPrice.toString()
-                  }
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    const numericValue = inputValue.replace(/[^0-9]/g, "");
-                    setOrder({ ...order, takeProfitPrice: numericValue });
-                  }}
-                  className="block w-full text-white text-md bg-transparent sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  placeholder="Enter the amount"
-                />
+                <div className="flex flex-col gap-1">
+                  <label className="text-white text-sm">Profit amount</label>
+                  <input
+                    id="amount"
+                    type="text"
+                    value={
+                      +order.takeProfitPrice === 0 ? "" : order.takeProfitPrice
+                    }
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const numericValue = inputValue.replace(/[^0-9]/g, "");
+                      setOrder({ ...order, takeProfitPrice: numericValue });
+                      if (order.totalPrice && order.totalPrice !== "0") {
+                        setProfitPercentage(
+                          ((+numericValue / +order.totalPrice) * 100)
+                            .toFixed(2)
+                            .toString()
+                        );
+                        setProfitTotalValue(
+                          (+numericValue + +order.totalPrice).toString()
+                        );
+                      }
+                      if (e.target.value === "") {
+                        setProfitPercentage("");
+                        setProfitTotalValue("");
+                      }
+                    }}
+                    className="block w-full text-white text-md bg-transparent sm:text-sm border-b-solid border-b-[1px] border-b-white-bg-15 pb-1 "
+                    placeholder="Enter the amount"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-white text-sm">
+                    Profit percentage
+                  </label>
+                  <input
+                    id="profitPercentage"
+                    type="text"
+                    value={+profitPercentage === 0 ? "" : profitPercentage}
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const numericValue = inputValue.replace(/[^0-9]/g, "");
+                      setProfitPercentage(numericValue);
+                      if (order.totalPrice && order.totalPrice !== "0") {
+                        setOrder({
+                          ...order,
+                          takeProfitPrice: (
+                            (+numericValue / 100) *
+                            +order.totalPrice
+                          ).toString(),
+                        });
+
+                        setProfitTotalValue(
+                          ((+numericValue / 100 + 1) * +order.totalPrice)
+                            .toFixed(2)
+                            .toString()
+                        );
+                      }
+                      if (e.target.value === "") {
+                        setProfitPercentage("");
+                        setProfitTotalValue("");
+                      }
+                    }}
+                    className="block w-full text-white text-md bg-transparent sm:text-sm border-b-solid border-b-[1px] border-b-white-bg-15 pb-1 "
+                    placeholder="Enter the amount"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-white text-sm">Totla amount</label>
+                  <input
+                    id="profitTotal"
+                    type="text"
+                    value={+profitTotalValue === 0 ? "" : profitTotalValue}
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const numericValue = inputValue.replace(/[^0-9]/g, "");
+                      setProfitTotalValue(numericValue);
+                      if (order.totalPrice && order.totalPrice !== "0") {
+                        setOrder({
+                          ...order,
+                          takeProfitPrice: (
+                            +numericValue - +order.totalPrice
+                          ).toString(),
+                        });
+                        setProfitPercentage(
+                          (
+                            ((+numericValue - +order.totalPrice) /
+                              +order.totalPrice) *
+                            100
+                          )
+                            .toFixed(2)
+                            .toString()
+                        );
+                      }
+                      if (e.target.value === "") {
+                        setProfitPercentage("");
+                        setOrder({
+                          ...order,
+                          takeProfitPrice: "",
+                        });
+                      }
+                    }}
+                    className="block w-full text-white text-md bg-transparent sm:text-sm border-b-solid border-b-[1px] border-b-white-bg-15 pb-1 "
+                    placeholder="Enter the amount"
+                  />
+                </div>
               </div>
             </div>
             {errors.takeProfit && (
@@ -211,24 +305,112 @@ const LimitOrder: React.FC<Props> = ({
           </div>
           <div className="flex-grow flex-shrink-0 w-[49%]">
             <div className=" flex justify-between bg-white-bg-05 w-full px-4 py-2.5 rounded-2xl font-poppins italic">
-              <div>
+              <div className="flex flex-col gap-3">
                 <h3 className="text-bad-situation text-sm">Stop Loss</h3>
-                <input
-                  id="amount"
-                  type="text"
-                  value={
-                    order.stopLossPrice === "0"
-                      ? ""
-                      : order.stopLossPrice.toString()
-                  }
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    const numericValue = inputValue.replace(/[^0-9]/g, "");
-                    setOrder({ ...order, stopLossPrice: numericValue });
-                  }}
-                  className="block w-full text-white text-md bg-transparent sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  placeholder="Enter amount"
-                />
+                <div className="flex flex-col gap-1">
+                  <label className="text-white text-sm">Loss amount</label>
+                  <input
+                    id="lossAmount"
+                    type="text"
+                    value={
+                      +order.stopLossPrice === 0 ? "" : order.stopLossPrice
+                    }
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const numericValue = inputValue.replace(/[^0-9]/g, "");
+                      setOrder({ ...order, stopLossPrice: numericValue });
+                      if (order.totalPrice && order.totalPrice !== "0") {
+                        setLossPercentage(
+                          ((+numericValue / +order.totalPrice) * 100)
+                            .toFixed(2)
+                            .toString()
+                        );
+                        setLossTotalValue(
+                          (+order.totalPrice - +numericValue).toString()
+                        );
+                      }
+                      if (e.target.value === "") {
+                        setLossPercentage("");
+                        setLossTotalValue("");
+                      }
+                    }}
+                    className="block w-full text-white text-md bg-transparent sm:text-sm border-b-solid border-b-[1px] border-b-white-bg-15 pb-1 "
+                    placeholder="Enter the amount"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-white text-sm">Loss percentage</label>
+                  <input
+                    id="lossPercentage"
+                    type="text"
+                    value={+lossPercentage === 0 ? "" : lossPercentage}
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const numericValue = inputValue.replace(/[^0-9]/g, "");
+                      setLossPercentage(numericValue);
+                      if (order.totalPrice && order.totalPrice !== "0") {
+                        setOrder({
+                          ...order,
+                          stopLossPrice: (
+                            (+numericValue / 100) *
+                            +order.totalPrice
+                          ).toString(),
+                        });
+
+                        setLossTotalValue(
+                          ((1 - +numericValue / 100) * +order.totalPrice)
+                            .toFixed(2)
+                            .toString()
+                        );
+                      }
+                      if (e.target.value === "") {
+                        setOrder({ ...order, stopLossPrice: "" });
+                        setLossTotalValue("");
+                      }
+                    }}
+                    className="block w-full text-white text-md bg-transparent sm:text-sm border-b-solid border-b-[1px] border-b-white-bg-15 pb-1 "
+                    placeholder="Enter the amount"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-white text-sm">Profit amount</label>
+                  <input
+                    id="profitTotal"
+                    type="text"
+                    value={+lossTotalValue === 0 ? "" : lossTotalValue}
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const numericValue = inputValue.replace(/[^0-9]/g, "");
+                      setLossTotalValue(numericValue);
+                      if (order.totalPrice && order.totalPrice !== "0") {
+                        setOrder({
+                          ...order,
+                          stopLossPrice: (
+                            +order.totalPrice - +numericValue
+                          ).toString(),
+                        });
+                        setLossPercentage(
+                          (
+                            ((+order.totalPrice - +numericValue) /
+                              +order.totalPrice) *
+                            100
+                          )
+                            .toFixed(2)
+                            .toString()
+                        );
+                      }
+                      if (e.target.value === "") {
+                        setLossPercentage("");
+                        setOrder({
+                          ...order,
+                          stopLossPrice: "",
+                        });
+                      }
+                    }}
+                    className="block w-full text-white text-md bg-transparent sm:text-sm border-b-solid border-b-[1px] border-b-white-bg-15 pb-1 "
+                    placeholder="Enter the amount"
+                  />
+                </div>
               </div>
             </div>
             {errors.stopLoss && (
