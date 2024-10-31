@@ -48,13 +48,14 @@ const LimitOrder: React.FC<Props> = ({
           htmlFor="limitPrice"
           className="block text-sm text-neutral-light font-medium "
         >
-          Limit Price
+          Limit Price{" "}
+          <span className="text-[12px] italic">(for each token unit)</span>
         </label>
         <input
           id="limitPrice"
           type="text"
           placeholder="Enter the limit price"
-          value={order.price === 0 ? "" : order.price.toString()}
+          value={order.price === "0" ? "" : order.price}
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
@@ -73,17 +74,26 @@ const LimitOrder: React.FC<Props> = ({
           htmlFor="amount"
           className="block text-sm text-neutral-light font-medium "
         >
-          Amount
+          Amount{" "}
+          <span className="text-[12px] italic">
+            (all the amount of token you needed)
+          </span>
         </label>
         <input
           id="amount"
           type="text"
-          value={order.amount}
+          value={order.amount === "0" ? "" : order.amount}
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
             if (regex.test(inputValue)) {
-              setOrder({ ...order, amount: inputValue });
+              setOrder({
+                ...order,
+                amount: inputValue,
+                totalPrice: order.price
+                  ? (+inputValue * +order.price).toString()
+                  : order.totalPrice,
+              });
             }
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -91,6 +101,40 @@ const LimitOrder: React.FC<Props> = ({
         />
         {errors.amount && (
           <p className="text-bad-situation text-sm py-1">{errors.amount}</p>
+        )}
+      </div>
+      <div className="mb-4">
+        <label
+          htmlFor="limitPrice"
+          className="block text-sm text-neutral-light font-medium "
+        >
+          Total Price{" "}
+          <span className="text-[12px] italic">
+            (total value for the order)
+          </span>
+        </label>
+        <input
+          id="totalPrice"
+          type="text"
+          placeholder="Enter the limit price"
+          value={order.totalPrice === "0" ? "" : order.totalPrice}
+          onChange={(e) => {
+            const inputValue = e.target.value;
+            const regex = /^[0-9]*\.?[0-9]*$/;
+            if (regex.test(inputValue)) {
+              setOrder({
+                ...order,
+                totalPrice: inputValue,
+                amount: order.price
+                  ? (+inputValue / +order.price).toString()
+                  : order.amount,
+              });
+            }
+          }}
+          className="mt-1 block w-full  px-4 py-3  rounded-2xl  text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+        {errors.price && (
+          <p className="text-bad-situation text-sm py-1">{errors.price}</p>
         )}
       </div>
       <div className="flex gap-1 border-neutral-light  mb-8">
@@ -145,14 +189,14 @@ const LimitOrder: React.FC<Props> = ({
                   id="amount"
                   type="text"
                   value={
-                    order.takeProfitPrice === 0
+                    +order.takeProfitPrice === 0
                       ? ""
                       : order.takeProfitPrice.toString()
                   }
                   onChange={(e) => {
                     const inputValue = e.target.value;
                     const numericValue = inputValue.replace(/[^0-9]/g, "");
-                    setOrder({ ...order, takeProfitPrice: +numericValue });
+                    setOrder({ ...order, takeProfitPrice: numericValue });
                   }}
                   className="block w-full text-white text-md bg-transparent sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="Enter the amount"
@@ -173,14 +217,14 @@ const LimitOrder: React.FC<Props> = ({
                   id="amount"
                   type="text"
                   value={
-                    order.stopLossPrice === 0
+                    order.stopLossPrice === "0"
                       ? ""
                       : order.stopLossPrice.toString()
                   }
                   onChange={(e) => {
                     const inputValue = e.target.value;
                     const numericValue = inputValue.replace(/[^0-9]/g, "");
-                    setOrder({ ...order, stopLossPrice: +numericValue });
+                    setOrder({ ...order, stopLossPrice: numericValue });
                   }}
                   className="block w-full text-white text-md bg-transparent sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="Enter amount"

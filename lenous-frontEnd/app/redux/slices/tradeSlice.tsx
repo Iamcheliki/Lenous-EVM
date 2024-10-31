@@ -5,6 +5,9 @@ const initialState = {
   selectedAsset: {
     ...data.tokens[0],
   },
+  prices: {
+    btc: 0,
+  },
 };
 
 const tradeSlice = createSlice({
@@ -14,8 +17,11 @@ const tradeSlice = createSlice({
     setSelectedAsset: (state, action) => {
       state.selectedAsset = { ...action.payload };
     },
+    setPrices: (state, action) => {
+      state.prices = { ...action.payload };
+    },
   },
 });
 
-export const { setSelectedAsset } = tradeSlice.actions;
+export const { setSelectedAsset, setPrices } = tradeSlice.actions;
 export default tradeSlice.reducer;

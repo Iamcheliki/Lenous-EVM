@@ -28,10 +28,11 @@ import { getTokensPrice } from "@/app/dataRequests/tokensDataRequests";
 
 const initialOrder: OrderToPlace = {
   type: Order_Type.Limit,
-  price: 0,
-  stopLossPrice: 0,
-  takeProfitPrice: 0,
-  amount: 0,
+  price: "0",
+  stopLossPrice: "0",
+  takeProfitPrice: "0",
+  amount: "0",
+  totalPrice: "0",
   isBuyOrder: true,
   hasTime: false,
   expiration: new Date(),
@@ -106,10 +107,10 @@ const PlaceOrder: React.FC = () => {
       await contract
         .placeLimitOrder(
           asset,
-          ethers.utils.parseUnits(price.toString(), "ether"),
-          stopLossPrice,
-          takeProfitPrice,
-          ethers.utils.parseUnits(amount.toString(), "ether"),
+          ethers.utils.parseUnits(price, "ether"),
+          parseFloat(stopLossPrice),
+          parseFloat(takeProfitPrice),
+          ethers.utils.parseUnits(amount, "ether"),
           isBuyOrder,
           expiration,
           leverage,
@@ -192,9 +193,9 @@ const PlaceOrder: React.FC = () => {
     let newErrors = { ...errors };
 
     //check amount
-    if (order.amount === 0) {
+    if (+order.amount === 0) {
       newErrors.amount = "Please enter a valid amount!";
-    } else if (order.amount < 0) {
+    } else if (+order.amount < 0) {
       newErrors.amount = "Please enter a positive amount!";
     } else {
       newErrors.amount = null;
@@ -203,9 +204,9 @@ const PlaceOrder: React.FC = () => {
     //check if limit
     if (order.type === Order_Type.Limit) {
       //check price
-      if (order.price === 0) {
+      if (+order.price === 0) {
         newErrors.price = "PLease enter a valid price!";
-      } else if (order.price < 0) {
+      } else if (+order.price < 0) {
         newErrors.price = "PLease enter a positive price!";
       } else {
         newErrors.price = null;

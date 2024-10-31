@@ -8,14 +8,35 @@ import {
   getAllOrdersByAddress,
 } from "@/app/dataRequests/orderDataRequests";
 import { useAccount } from "wagmi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setPrices } from "@/app/redux/slices/tradeSlice";
+
+interface Message {
+  messsage: string;
+}
 
 export default function TradeTabs() {
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(1);
   const [userOrder, setUserOrder] = useState<any[]>([]);
   const { address } = useAccount();
   const { selectedAsset } = useSelector((state: any) => state.trade);
   const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
+
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+
+  useEffect(() => {
+    const newSocket = new WebSocket("ws://195.248.240.173:8866");
+
+    newSocket.onopen = () => {
+      console.log("websocket connected");
+    };
+
+    newSocket.onmessage = (event: MessageEvent) => {
+      const message = JSON.parse(event.data);
+      dispatch(setPrices({ btcPrice: message.btc_usd_price }));
+    };
+  }, []);
 
   useEffect(() => {
     if (address) {

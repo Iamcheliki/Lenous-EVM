@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useSelector } from "react-redux";
 
 export interface orderToShow {
   id: string;
@@ -28,6 +29,8 @@ interface OrderMarket {
 }
 
 export default function OpenOrder({ order }: any) {
+  const { prices } = useSelector((state: any) => state.trade);
+
   const formatNumber = (price: number) => {
     return price.toLocaleString("en-US");
   };
@@ -36,7 +39,7 @@ export default function OpenOrder({ order }: any) {
     const pnl = marketPrice * order.amount - order.price / order.amount;
   };
 
-  const marketPrice = 0.000000004;
+  const marketPrice = prices.btcPrice;
   const pnl = marketPrice * order.amount - order.price / order.amount;
   const orderToShow: orderToShow = {
     id: order.orderId,
@@ -88,7 +91,9 @@ export default function OpenOrder({ order }: any) {
           {formatNumber(orderToShow.amount) + " " + orderToShow.unit}
         </td>
         <td className="py-4">{orderToShow.avgEntry}</td>
-        <td className="py-4">{formatNumber(orderToShow.markPrice)}</td>
+        <td className="py-4">
+          {orderToShow.markPrice ? formatNumber(orderToShow.markPrice) : "0"}
+        </td>
         <td className="text-yellow py-4">{orderToShow.liqPrice}</td>
         <td className="py-4">
           <div>

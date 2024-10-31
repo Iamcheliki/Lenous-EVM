@@ -10,10 +10,11 @@ export enum Order_Type {
   
 export interface OrderToPlace {
     type: Order_Type;
-    price: number;
-    stopLossPrice: number;
-    takeProfitPrice: number;
-    amount: number;
+    price: string;
+    stopLossPrice: string;
+    takeProfitPrice: string;
+    amount: string;
+    totalPrice:string;
     isBuyOrder: boolean;
     hasTime: boolean;
     expiration: any;

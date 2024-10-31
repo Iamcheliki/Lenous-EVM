@@ -6,8 +6,6 @@ const TradingViewWidget: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { selectedAsset } = useSelector((state: any) => state.trade);
 
-  console.log("selected asset", selectedAsset);
-
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
