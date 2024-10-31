@@ -26,25 +26,29 @@ export default function TradeTabs() {
   }, [address]);
 
   useEffect(() => {
-    if (address) {
-      getAllOrdersByAddress(address).then((res) => {
-        console.log("trade table list", res.data.orders);
-        const list = [...res.data.orders];
+    // if (address) {
+    //   getAllOrdersByAddress(address)
+    //     .then((res) => {
+    //       console.log("trade table list", res.data.orders);
+    //       const list = [...res.data.orders];
 
-        if (filteredByAsset) {
-          const filteredList = list.filter(
-            (x) => x.symbol === selectedAsset.address
-          );
-          setUserOrder([...filteredList]);
-        } else {
-          setUserOrder([...list]);
-        }
-      });
-    }
-    // getAllOrders().then((res) => {
-    //   console.log(res);
-    //   setUserOrder([...res.data.orders]);
-    // });
+    //       if (filteredByAsset) {
+    //         const filteredList = list.filter(
+    //           (x) => x.symbol === selectedAsset.address
+    //         );
+    //         setUserOrder([...filteredList]);
+    //       } else {
+    //         setUserOrder([...list]);
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // }
+    getAllOrders().then((res) => {
+      console.log(res);
+      setUserOrder([...res.data.orders]);
+    });
   }, [filteredByAsset, address]);
 
   const tabs = [

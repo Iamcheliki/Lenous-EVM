@@ -51,7 +51,7 @@ export default function DepositModal({
   const { address } = useAccount();
   const { data, error, isLoading } = useBalance({
     address: address, // Replace with your address
-    token: "0x5dEaC602762362FE5f135FA5904351916053cF70", // USDC token address on Base Sepolia
+    token: "0x66f7bab5E0351Dceca01a1B1f3fAFfE2d0c17e3A", // USDC token address on Base Sepolia
     chainId: baseSepolia.id,
   });
 
@@ -142,7 +142,7 @@ export default function DepositModal({
               setAmount(+numericValue);
             }}
             placeholder="Amount"
-            className="bg-transparent font-poppins italic flex-grow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="bg-transparent font-poppins italic flex-grow"
           />
           <span className="flex-shrink-0">USDC</span>
         </div>

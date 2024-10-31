@@ -47,5 +47,17 @@ export default function TokenList({ asset, setAsset }: Props) {
         setAsset({ name: value.label, address: value.value });
       }}
     />
+    // <select
+    //   className="w-full h-[44px] bg-transparent rounded-2xl"
+    //   onChange={(e) => {
+    //     setAsset({ name: "", value: e.target.value });
+    //   }}
+    // >
+    //   {tokens.map((item) => (
+    //     <option key={item.value} value={item.address}>
+    //       {item.label}
+    //     </option>
+    //   ))}
+    // </select>
   );
 }

@@ -11,10 +11,9 @@ import { useAccount, useWriteContract } from "wagmi";
 import { useEthersProvider, useEthersSigner } from "@/app/_libs/utils/ethers";
 import { ethers } from "ethers";
 import TradeABI from "../../_libs/ABIs/OrderBook.json";
-import StakeABI from "../../_libs/ABIs/StakingContract.json";
-import LiquidityPoolABI from "../../_libs/ABIs/LiquidityPool.json";
+import TokenABI from "../../_libs/ABIs/TokenContract.json";
 import {
-  LP_CONTRACT_ADDRESS,
+  TOKEN_CONTRACT_ADDRESS,
   ORDERBOOK_CONTRACT_ADDRESS,
 } from "@/app/_libs/utils/constants/contractAddresses";
 import TokenList from "./tokenList";
@@ -67,6 +66,7 @@ const PlaceOrder: React.FC = () => {
     stopLoss: null,
   });
   const [userBalance, setUserBalance] = useState<number>(0);
+  const [userFreeMargin, setUserFreeMargin] = useState<number>(0);
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
@@ -90,26 +90,26 @@ const PlaceOrder: React.FC = () => {
     const leverage = order.leverage;
     const marginType = order.margin === Margin_Type.Cross ? 0 : 1;
 
-    console.log(
+    console.log({
       asset,
-      price,
+      price: ethers.utils.parseUnits(price.toString(), "ether"),
       stopLossPrice,
       takeProfitPrice,
-      amount,
+      amount: ethers.utils.parseUnits(amount.toString(), "ether"),
       isBuyOrder,
       expiration,
       leverage,
-      marginType
-    );
+      marginType,
+    });
 
     if (order.type === Order_Type.Limit) {
       await contract
         .placeLimitOrder(
           asset,
-          price,
+          ethers.utils.parseUnits(price.toString(), "ether"),
           stopLossPrice,
           takeProfitPrice,
-          amount,
+          ethers.utils.parseUnits(amount.toString(), "ether"),
           isBuyOrder,
           expiration,
           leverage,
@@ -125,22 +125,44 @@ const PlaceOrder: React.FC = () => {
       //   leverage,
       //   marginType
       // );
-      const gasPrice = ethers.utils.parseUnits("0.00000000001", "ether");
-      const gasLimit = ethers.utils.parseUnits("0.00000000001", "ether");
+      const gasPrice = ethers.utils.parseUnits("1000", "gwei");
       await contract
-        .placeMarketOrder(asset, amount, isBuyOrder, leverage, marginType, {
-          gasLimit: gasLimit,
-          gasPrice: gasPrice,
-        })
+        .placeMarketOrder(
+          asset,
+          ethers.utils.parseUnits(amount.toString(), "ether"),
+          isBuyOrder,
+          leverage,
+          marginType,
+          {
+            gasLimit: 40000,
+            gasPrice: gasPrice,
+          }
+        )
         .then((res: any) => console.log(res))
         .catch((err: any) => console.log(err));
     }
   };
 
   const handleDeposit = async () => {
+    const gasPrice = ethers.utils.parseUnits("0.00000000001", "ether");
+    const gasLimit = ethers.utils.parseUnits("0.00000000001", "ether");
+
+    const tokenContract = new ethers.Contract(
+      TOKEN_CONTRACT_ADDRESS,
+      TokenABI,
+      signer
+    );
+
+    const approveTx = await tokenContract.approve(
+      ORDERBOOK_CONTRACT_ADDRESS,
+      depositAmount * 10 ** 6
+    );
+    await approveTx.wait();
+
     await contract
-      .deposit(200, {
-        gasLimit: 2000,
+      .deposit(depositAmount * 10 ** 6, {
+        gasLimit: gasLimit,
+        gasPrice: gasPrice,
       })
       .then((res: any) => console.log(res))
       .catch((err: any) => console.log(err));
@@ -214,6 +236,7 @@ const PlaceOrder: React.FC = () => {
     if (address) {
       getUserCredit(address.toString()).then((res) => {
         const balances = res.data.balances;
+        console.log("get user credit ", res);
         if (balances.length > 0) {
           setUserBalance(balances[0].total);
         }
@@ -237,7 +260,21 @@ const PlaceOrder: React.FC = () => {
           </div>
         </div>
       </div>
-
+      <div className="w-full h-0 border-white border-b mb-8 mt-6 opacity-10"></div>
+      <div className="">
+        <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
+          <h4>Total Balance:</h4>
+          <p>{userBalance} USD</p>
+        </div>
+        <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
+          <h4>Used Margin:</h4>
+          <p>{userBalance} USD</p>
+        </div>
+        <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
+          <h4>Free Margin:</h4>
+          <p>{userFreeMargin} USD</p>
+        </div>
+      </div>
       {/* Tab Pane */}
       <div className="mb-4">
         <OrderType
@@ -250,6 +287,7 @@ const PlaceOrder: React.FC = () => {
         {errors.asset && (
           <p className="text-bad-situation text-sm py-1">{errors.asset}</p>
         )} */}
+
         {order.type === Order_Type.Market && (
           <MarketOrder
             order={order}
@@ -264,7 +302,6 @@ const PlaceOrder: React.FC = () => {
             setOrder={setOrder}
             errors={errors}
             setErrors={setErrors}
-            balance={userBalance}
           />
         )}
       </div>

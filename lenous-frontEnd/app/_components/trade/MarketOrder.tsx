@@ -54,10 +54,6 @@ const MarketOrder: React.FC<Props> = ({
 
   return (
     <div className="mt-4">
-      <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
-        <h4>Available</h4>
-        <p>0 USDT</p>
-      </div>
       <div className="mb-4">
         <label
           htmlFor="amount"
@@ -68,11 +64,13 @@ const MarketOrder: React.FC<Props> = ({
         <input
           id="amount"
           type="text"
-          value={order.amount === 0 ? "" : order.amount.toString()}
+          value={order.amount}
           onChange={(e) => {
             const inputValue = e.target.value;
-            const numericValue = inputValue.replace(/[^0-9]/g, "");
-            setOrder({ ...order, amount: +numericValue });
+            const regex = /^[0-9]*\.?[0-9]*$/;
+            if (regex.test(inputValue)) {
+              setOrder({ ...order, amount: inputValue });
+            }
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="Enter the amount"
