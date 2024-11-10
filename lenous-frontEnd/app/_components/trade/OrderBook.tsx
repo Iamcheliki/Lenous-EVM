@@ -106,15 +106,15 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
   const [orderList, setOrderList] = useState<any[]>([]);
   const { selectedAsset } = useSelector((state: any) => state.trade);
 
-  useEffect(() => {
-    getAllOrders().then((res) => {
-      const newList = [...res.data.orders];
-      const filteredList = newList.filter(
-        (x) => x.symbol === selectedAsset.address
-      );
-      setOrderList([...filteredList]);
-    });
-  }, [selectedAsset]);
+  // useEffect(() => {
+  //   getAllOrders().then((res) => {
+  //     const newList = [...res.data.orders];
+  //     const filteredList = newList.filter(
+  //       (x) => x.symbol === selectedAsset.address
+  //     );
+  //     setOrderList([...filteredList]);
+  //   });
+  // }, [selectedAsset]);
 
   return (
     <div>

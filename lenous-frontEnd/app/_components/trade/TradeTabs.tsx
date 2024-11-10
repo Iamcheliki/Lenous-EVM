@@ -23,54 +23,54 @@ export default function TradeTabs() {
   const { selectedAsset } = useSelector((state: any) => state.trade);
   const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
 
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  // const [socket, setSocket] = useState<WebSocket | null>(null);
 
-  useEffect(() => {
-    const newSocket = new WebSocket("ws://195.248.240.173:8866");
+  // useEffect(() => {
+  //   const newSocket = new WebSocket("ws://195.248.240.173:8866");
 
-    newSocket.onopen = () => {
-      console.log("websocket connected");
-    };
+  //   newSocket.onopen = () => {
+  //     console.log("websocket connected");
+  //   };
 
-    newSocket.onmessage = (event: MessageEvent) => {
-      const message = JSON.parse(event.data);
-      dispatch(setPrices({ btcPrice: message.btc_usd_price }));
-    };
-  }, []);
+  //   newSocket.onmessage = (event: MessageEvent) => {
+  //     const message = JSON.parse(event.data);
+  //     dispatch(setPrices({ btcPrice: message.btc_usd_price }));
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    if (address) {
-      getAllOrdersByAddress(address).then((res) => {
-        console.log("trade table list", res.data.orders);
-      });
-    }
-  }, [address]);
+  // useEffect(() => {
+  //   if (address) {
+  //     getAllOrdersByAddress(address).then((res) => {
+  //       console.log("trade table list", res.data.orders);
+  //     });
+  //   }
+  // }, [address]);
 
-  useEffect(() => {
-    // if (address) {
-    //   getAllOrdersByAddress(address)
-    //     .then((res) => {
-    //       console.log("trade table list", res.data.orders);
-    //       const list = [...res.data.orders];
+  // useEffect(() => {
+  //   // if (address) {
+  //   //   getAllOrdersByAddress(address)
+  //   //     .then((res) => {
+  //   //       console.log("trade table list", res.data.orders);
+  //   //       const list = [...res.data.orders];
 
-    //       if (filteredByAsset) {
-    //         const filteredList = list.filter(
-    //           (x) => x.symbol === selectedAsset.address
-    //         );
-    //         setUserOrder([...filteredList]);
-    //       } else {
-    //         setUserOrder([...list]);
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // }
-    getAllOrders().then((res) => {
-      console.log(res);
-      setUserOrder([...res.data.orders]);
-    });
-  }, [filteredByAsset, address]);
+  //   //       if (filteredByAsset) {
+  //   //         const filteredList = list.filter(
+  //   //           (x) => x.symbol === selectedAsset.address
+  //   //         );
+  //   //         setUserOrder([...filteredList]);
+  //   //       } else {
+  //   //         setUserOrder([...list]);
+  //   //       }
+  //   //     })
+  //   //     .catch((err) => {
+  //   //       console.log(err);
+  //   //     });
+  //   // }
+  //   getAllOrders().then((res) => {
+  //     console.log(res);
+  //     setUserOrder([...res.data.orders]);
+  //   });
+  // }, [filteredByAsset, address]);
 
   const tabs = [
     {

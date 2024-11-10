@@ -106,7 +106,7 @@ const PlaceOrder: React.FC = () => {
     if (order.type === Order_Type.Limit) {
       await contract
         .placeLimitOrder(
-          asset,
+          "0x4256630000000000000000000000000000000000",
           ethers.utils.parseUnits(price, "ether"),
           parseFloat(stopLossPrice),
           parseFloat(takeProfitPrice),
@@ -126,18 +126,25 @@ const PlaceOrder: React.FC = () => {
       //   leverage,
       //   marginType
       // );
-      const gasPrice = ethers.utils.parseUnits("1000", "gwei");
+      const gasPrice = ethers.utils.parseUnits("100", "gwei");
+      console.log({
+        asset,
+        amount: ethers.utils.parseUnits(amount.toString(), "ether"),
+        isBuyOrder,
+        leverage,
+        marginType,
+      });
       await contract
         .placeMarketOrder(
-          asset,
+          "0x4256630000000000000000000000000000000000",
           ethers.utils.parseUnits(amount.toString(), "ether"),
           isBuyOrder,
           leverage,
-          marginType,
-          {
-            gasLimit: 40000,
-            gasPrice: gasPrice,
-          }
+          marginType
+          // {
+          //   gasLimit: 80000,
+          //   gasPrice: gasPrice,
+          // }
         )
         .then((res: any) => console.log(res))
         .catch((err: any) => console.log(err));
@@ -161,10 +168,7 @@ const PlaceOrder: React.FC = () => {
     await approveTx.wait();
 
     await contract
-      .deposit(depositAmount * 10 ** 6, {
-        gasLimit: gasLimit,
-        gasPrice: gasPrice,
-      })
+      .deposit(depositAmount * 10 ** 6)
       .then((res: any) => console.log(res))
       .catch((err: any) => console.log(err));
   };

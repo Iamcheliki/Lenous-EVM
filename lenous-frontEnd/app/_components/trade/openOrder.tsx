@@ -39,7 +39,8 @@ export default function OpenOrder({ order }: any) {
     const pnl = marketPrice * order.amount - order.price / order.amount;
   };
 
-  const marketPrice = prices.btcPrice;
+  // const marketPrice = prices.btcPrice;
+  const marketPrice = 72000;
   const pnl = marketPrice * order.amount - order.price / order.amount;
   const orderToShow: orderToShow = {
     id: order.orderId,

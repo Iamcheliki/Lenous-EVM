@@ -1,6 +1,11 @@
 {
     "tokens": [
         {
+            "address": "0x4256630000000000000000000000000000000000",
+            "symbol": "UNQ",
+            "name": "Unique Asset"
+        },
+        {
             "address": "0x4254430000000000000000000000000000000000",
             "symbol": "BTC",
             "name": "Bitcoin"
