@@ -68,6 +68,7 @@ const PlaceOrder: React.FC = () => {
   });
   const [userBalance, setUserBalance] = useState<number>(0);
   const [userFreeMargin, setUserFreeMargin] = useState<number>(0);
+  const [userUsedMargin, setUserUsedMargin] = useState<number>(0);
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
@@ -240,16 +241,30 @@ const PlaceOrder: React.FC = () => {
   useEffect(() => {
     if (address) {
       getUserCredit(address.toString()).then((res) => {
-        const balances = res.data.balances;
-        console.log("get user credit ", res);
-        if (balances.length > 0) {
-          setUserBalance(balances[0].total);
-        }
+        console.log(res.data);
+        setUserBalance(
+          Number(
+            BigInt(parseFloat(res.data.total_balance_usd) * 1e18) /
+              BigInt(10 ** 18)
+          )
+        );
+        setUserFreeMargin(
+          Number(
+            BigInt(parseFloat(res.data.free_margin) * 1e18) / BigInt(10 ** 18)
+          )
+        );
+        setUserUsedMargin(
+          Number(
+            BigInt(parseFloat(res.data.used_margin) * 1e18) / BigInt(10 ** 18)
+          )
+        );
       });
     } else {
       setUserBalance(0);
+      setUserFreeMargin(0);
+      setUserUsedMargin(0);
     }
-  }, []);
+  }, [address]);
 
   return (
     <div className="p-4">
@@ -273,7 +288,7 @@ const PlaceOrder: React.FC = () => {
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Used Margin:</h4>
-          <p>{userBalance} USD</p>
+          <p>{userUsedMargin} USD</p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Free Margin:</h4>

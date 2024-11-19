@@ -15,7 +15,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   trailingSlash: true,
-  output: "export",
+  // output: "export",
 
   webpack(config) {
     config.module.rules.push({
