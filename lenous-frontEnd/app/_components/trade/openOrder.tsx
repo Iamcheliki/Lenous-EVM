@@ -1,5 +1,18 @@
+import {
+  calculateAveEnt,
+  calculatePnl,
+  convertFrom12,
+  convertFrom18,
+} from "@/app/_libs/utils/calculator";
+import { ORDERBOOK_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
+import { tokenList } from "@/app/_libs/utils/constants/TokenList";
+import { useEthersSigner } from "@/app/_libs/utils/ethers";
+import { formatNumber } from "@/app/_libs/utils/formatter";
+import { ethers } from "ethers";
 import Image from "next/image";
 import { useSelector } from "react-redux";
+import { baseSepolia } from "viem/chains";
+import TradeABI from "../../_libs/ABIs/OrderBook.json";
 
 export interface orderToShow {
   id: string;
@@ -31,36 +44,54 @@ interface OrderMarket {
 export default function OpenOrder({ order }: any) {
   const { prices } = useSelector((state: any) => state.trade);
 
-  const formatNumber = (price: number) => {
-    return price.toLocaleString("en-US");
-  };
+  const signer = useEthersSigner({ chainId: baseSepolia.id });
 
-  const calculatePnl = (order: any) => {
-    const pnl = marketPrice * order.amount - order.price / order.amount;
+  const contract = new ethers.Contract(
+    ORDERBOOK_CONTRACT_ADDRESS,
+    TradeABI,
+    signer
+  );
+
+  const handleCloseOrder = async () => {
+    console.log(order.order_id, order.asset_id);
+    await contract
+      .cancelOrder(order.asset_id, order.order_id, {
+        gasPrice: ethers.utils.parseUnits("200", "gwei"),
+        gasLimit: ethers.utils.hexlify(50000),
+      })
+      .then((res: any) => console.log(res))
+      .catch((err: any) => {
+        console.log(err);
+      });
   };
 
   // const marketPrice = prices.btcPrice;
-  const marketPrice = 72000;
-  const pnl = marketPrice * order.amount - order.price / order.amount;
+  const marketPrice = prices.btcPrice;
+  const pnl = calculatePnl(
+    convertFrom18(order.amount),
+    marketPrice,
+    convertFrom18(order.price)
+  );
+
   const orderToShow: orderToShow = {
     id: order.orderId,
     market: {
-      logo: "/",
+      logo: tokenList[5].img,
       title: "Bitcoin",
       type: order.marginType === 0 ? "Cross" : "Isolated",
-      leverage: order.leverage,
+      leverage: +parseFloat(order.leverage).toFixed(1),
     },
     side: order.isBuyOrder === 1 ? "Long" : "Short",
-    amount: order.amount,
-    avgEntry: order.price / order.amount,
+    amount: convertFrom18(order.amount),
+    avgEntry: convertFrom18(order.price),
     markPrice: marketPrice,
     liqPrice:
       order.price / order.amount -
       ((1 / order.leverage) * order.price) / order.amount,
     marginPosition: 2000,
     marginRate: 20,
-    cmlPnl: pnl,
-    pnlPercentage: (pnl / order.amount) * 100,
+    cmlPnl: +pnl.toFixed(2),
+    pnlPercentage: +((pnl / order.amount) * 100).toFixed(2),
     liqRisk: 10,
     marginUnit: "USD",
     cmlUnit: "USD",
@@ -88,9 +119,7 @@ export default function OpenOrder({ order }: any) {
           </div>
         </td>
         <td className="py-4">{orderToShow.side}</td>
-        <td className="py-4">
-          {formatNumber(orderToShow.amount) + " " + orderToShow.unit}
-        </td>
+        <td className="py-4">{orderToShow.amount + " " + orderToShow.unit}</td>
         <td className="py-4">{orderToShow.avgEntry}</td>
         <td className="py-4">
           {orderToShow.markPrice ? formatNumber(orderToShow.markPrice) : "0"}
@@ -128,7 +157,10 @@ export default function OpenOrder({ order }: any) {
           </div>
         </td> */}
         <td className="text-primary py-4">{orderToShow.liqRisk}%</td>
-        <td className="text-bad-situation underline cursor-pointer py-4">
+        <td
+          onClick={handleCloseOrder}
+          className="text-bad-situation underline cursor-pointer py-4"
+        >
           <p>Close</p>
         </td>
       </tr>

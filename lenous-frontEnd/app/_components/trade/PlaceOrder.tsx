@@ -70,6 +70,27 @@ const PlaceOrder: React.FC = () => {
   const [userFreeMargin, setUserFreeMargin] = useState<number>(0);
   const [userUsedMargin, setUserUsedMargin] = useState<number>(0);
 
+  useEffect(() => {
+    const newSocket = new WebSocket(
+      `ws://195.248.240.173:8121/ws/trader/${address}`
+    );
+
+    newSocket.onopen = () => {
+      console.log("balance websocket connected");
+    };
+
+    newSocket.onmessage = (event: MessageEvent) => {
+      const message = JSON.parse(event.data);
+      setUserBalance(+(parseFloat(message.user_balance) / 10 ** 12).toFixed(2));
+      setUserFreeMargin(
+        +(parseFloat(message.free_margin) / 10 ** 12).toFixed(2)
+      );
+      setUserUsedMargin(
+        +(parseFloat(message.margin_used) / 10 ** 12).toFixed(2)
+      );
+    };
+  }, [address]);
+
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
   const contract = new ethers.Contract(
@@ -238,33 +259,33 @@ const PlaceOrder: React.FC = () => {
     }
   }, [order]);
 
-  useEffect(() => {
-    if (address) {
-      getUserCredit(address.toString()).then((res) => {
-        console.log(res.data);
-        setUserBalance(
-          Number(
-            BigInt(parseFloat(res.data.total_balance_usd) * 1e18) /
-              BigInt(10 ** 18)
-          )
-        );
-        setUserFreeMargin(
-          Number(
-            BigInt(parseFloat(res.data.free_margin) * 1e18) / BigInt(10 ** 18)
-          )
-        );
-        setUserUsedMargin(
-          Number(
-            BigInt(parseFloat(res.data.used_margin) * 1e18) / BigInt(10 ** 18)
-          )
-        );
-      });
-    } else {
-      setUserBalance(0);
-      setUserFreeMargin(0);
-      setUserUsedMargin(0);
-    }
-  }, [address]);
+  // useEffect(() => {
+  //   if (address) {
+  //     getUserCredit(address.toString()).then((res) => {
+  //       console.log(res.data);
+  //       setUserBalance(
+  //         Number(
+  //           BigInt(parseFloat(res.data.total_balance_usd) * 1e18) /
+  //             BigInt(10 ** 18)
+  //         )
+  //       );
+  //       setUserFreeMargin(
+  //         Number(
+  //           BigInt(parseFloat(res.data.free_margin) * 1e18) / BigInt(10 ** 18)
+  //         )
+  //       );
+  //       setUserUsedMargin(
+  //         Number(
+  //           BigInt(parseFloat(res.data.used_margin) * 1e18) / BigInt(10 ** 18)
+  //         )
+  //       );
+  //     });
+  //   } else {
+  //     setUserBalance(0);
+  //     setUserFreeMargin(0);
+  //     setUserUsedMargin(0);
+  //   }
+  // }, [address]);
 
   return (
     <div className="p-4">

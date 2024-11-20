@@ -34,7 +34,6 @@ export default function TradeTabs() {
 
     newSocket.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
-      console.log("price", message);
       dispatch(
         setPrices({
           btcPrice: message.prices.btc_usd_price,
