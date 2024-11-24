@@ -21,10 +21,11 @@ import { baseSepolia } from "@wagmi/core/chains";
 import ConfirmModal from "./comfirmModal";
 import DepositModal from "./depositModal";
 import WithdrawModal from "./withdrawModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/redux/store";
 import { getUserCredit } from "@/app/dataRequests/userDataRequests";
 import { getTokensPrice } from "@/app/dataRequests/tokensDataRequests";
+import { setBalances } from "@/app/redux/slices/tradeSlice";
 
 const initialOrder: OrderToPlace = {
   type: Order_Type.Limit,
@@ -46,9 +47,11 @@ export interface OrderErrors {
   time: string | null;
   takeProfit: string | null;
   stopLoss: string | null;
+  totalPrice: string | null;
 }
 
 const PlaceOrder: React.FC = () => {
+  const dispatch = useDispatch();
   const [check, setCheck] = useState<boolean>(false);
   const [order, setOrder] = useState<OrderToPlace>(initialOrder);
   const { openConnectModal } = useConnectModal();
@@ -65,10 +68,12 @@ const PlaceOrder: React.FC = () => {
     time: null,
     takeProfit: null,
     stopLoss: null,
+    totalPrice: null,
   });
-  const [userBalance, setUserBalance] = useState<number>(0);
-  const [userFreeMargin, setUserFreeMargin] = useState<number>(0);
-  const [userUsedMargin, setUserUsedMargin] = useState<number>(0);
+  // const [userBalance, setUserBalance] = useState<number>(0);
+  // const [userFreeMargin, setUserFreeMargin] = useState<number>(0);
+  // const [userUsedMargin, setUserUsedMargin] = useState<number>(0);
+  const { balances } = useSelector((state: any) => state.trade);
 
   useEffect(() => {
     const newSocket = new WebSocket(
@@ -82,13 +87,22 @@ const PlaceOrder: React.FC = () => {
     newSocket.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
       console.log("message balance", message);
-      setUserBalance(+(parseFloat(message.user_balance) / 10 ** 6).toFixed(2));
-      setUserFreeMargin(
-        +(parseFloat(message.free_margin) / 10 ** 12).toFixed(2)
+      dispatch(
+        setBalances({
+          usedMargin: +(parseFloat(message.user_balance) / 10 ** 6).toFixed(2),
+          freeMargin: +(parseFloat(message.free_margin) / 10 ** 12).toFixed(2),
+          totalBalance: +(parseFloat(message.margin_used) / 10 ** 12).toFixed(
+            2
+          ),
+        })
       );
-      setUserUsedMargin(
-        +(parseFloat(message.margin_used) / 10 ** 12).toFixed(2)
-      );
+      // setUserBalance(+(parseFloat(message.user_balance) / 10 ** 6).toFixed(2));
+      // setUserFreeMargin(
+      //   +(parseFloat(message.free_margin) / 10 ** 12).toFixed(2)
+      // );
+      // setUserUsedMargin(
+      //   +(parseFloat(message.margin_used) / 10 ** 12).toFixed(2)
+      // );
     };
   }, [address]);
 
@@ -213,6 +227,7 @@ const PlaceOrder: React.FC = () => {
       time: null,
       takeProfit: null,
       stopLoss: null,
+      totalPrice: null,
     });
   };
 
@@ -240,13 +255,23 @@ const PlaceOrder: React.FC = () => {
       }
     }
 
+    console.log(+order.totalPrice / +order.leverage);
+    console.log(balances.freeMargin);
+    if (+order.totalPrice / +order.leverage > balances.freeMargin) {
+      console.log("no margin");
+      newErrors.totalPrice = "Please enter an amount less than you free margin";
+    } else {
+      newErrors.totalPrice = null;
+    }
+
     setErrors({ ...newErrors });
     if (
       newErrors.amount === null &&
       newErrors.price === null &&
       newErrors.stopLoss === null &&
       newErrors.takeProfit === null &&
-      newErrors.time === null
+      newErrors.time === null &&
+      newErrors.totalPrice === null
     ) {
       return false;
     } else {
@@ -259,34 +284,6 @@ const PlaceOrder: React.FC = () => {
       handleCheckErrors();
     }
   }, [order]);
-
-  // useEffect(() => {
-  //   if (address) {
-  //     getUserCredit(address.toString()).then((res) => {
-  //       console.log(res.data);
-  //       setUserBalance(
-  //         Number(
-  //           BigInt(parseFloat(res.data.total_balance_usd) * 1e18) /
-  //             BigInt(10 ** 18)
-  //         )
-  //       );
-  //       setUserFreeMargin(
-  //         Number(
-  //           BigInt(parseFloat(res.data.free_margin) * 1e18) / BigInt(10 ** 18)
-  //         )
-  //       );
-  //       setUserUsedMargin(
-  //         Number(
-  //           BigInt(parseFloat(res.data.used_margin) * 1e18) / BigInt(10 ** 18)
-  //         )
-  //       );
-  //     });
-  //   } else {
-  //     setUserBalance(0);
-  //     setUserFreeMargin(0);
-  //     setUserUsedMargin(0);
-  //   }
-  // }, [address]);
 
   return (
     <div className="p-4">
@@ -306,15 +303,21 @@ const PlaceOrder: React.FC = () => {
       <div className="">
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Total Balance:</h4>
-          <p>{userBalance} USD</p>
+          <p>{balances.totalBalance} USD</p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Used Margin:</h4>
-          <p>{userUsedMargin} USD</p>
+          <p>{balances.usedMargin} USD</p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Free Margin:</h4>
-          <p>{userFreeMargin} USD</p>
+          <p
+            className={
+              balances.freeMargin > 0 ? "text-primary" : "text-bad-situation"
+            }
+          >
+            {balances.freeMargin} USD
+          </p>
         </div>
       </div>
       {/* Tab Pane */}

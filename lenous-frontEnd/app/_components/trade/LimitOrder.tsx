@@ -12,6 +12,7 @@ import { OrderToPlace } from "@/app/types/order";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { OrderErrors } from "./PlaceOrder";
+import { useSelector } from "react-redux";
 
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
@@ -31,11 +32,12 @@ const LimitOrder: React.FC<Props> = ({
   setErrors,
 }) => {
   const [TimeInForce, setTimeInforce] = useState<string>("Good Til Time");
-  const [percent, setPercent] = useState<number>(25);
+  const [percent, setPercent] = useState<number>(0);
   const [profitPercentage, setProfitPercentage] = useState<string>("");
   const [profitTotalValue, setProfitTotalValue] = useState<string>("");
   const [lossPercentage, setLossPercentage] = useState<string>("");
   const [lossTotalValue, setLossTotalValue] = useState<string>("");
+  const { balances } = useSelector((state: any) => state.trade);
 
   useEffect(() => {
     if (TimeInForce === "Good Til Time") {
@@ -59,7 +61,7 @@ const LimitOrder: React.FC<Props> = ({
           id="limitPrice"
           type="text"
           placeholder="Enter the limit price"
-          value={order.price === "0" ? "" : order.price}
+          value={order.price}
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
@@ -86,7 +88,7 @@ const LimitOrder: React.FC<Props> = ({
         <input
           id="amount"
           type="text"
-          value={order.amount === "0" ? "" : order.amount}
+          value={order.amount}
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
@@ -121,7 +123,7 @@ const LimitOrder: React.FC<Props> = ({
           id="totalPrice"
           type="text"
           placeholder="Enter the limit price"
-          value={order.totalPrice === "0" ? "" : order.totalPrice}
+          value={order.totalPrice}
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
@@ -137,26 +139,41 @@ const LimitOrder: React.FC<Props> = ({
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl  text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
-        {errors.price && (
-          <p className="text-bad-situation text-sm py-1">{errors.price}</p>
+        {errors.totalPrice && (
+          <p className="text-bad-situation text-sm py-1">{errors.totalPrice}</p>
         )}
       </div>
       <div className="flex gap-1 border-neutral-light  mb-8">
         {precentageList.map((item) => (
-          <div
+          <button
+            disabled={order.price === "0" || order.price === ""}
             key={item}
             onClick={() => {
               setPercent(item);
+              if (order.price) {
+                setOrder({
+                  ...order,
+                  totalPrice: (
+                    (percent * balances.freeMargin) /
+                    100
+                  ).toString(),
+                  amount: (
+                    (percent * balances.freeMargin) /
+                    100 /
+                    +order.price
+                  ).toString(),
+                });
+              }
             }}
             className={
-              "h-[36px] px-3 text-neutral-light rounded-[18px] flex-grow flex-shrink-0 flex items-center justify-center text-center cursor-pointer " +
+              "h-[36px] px-3 text-neutral-light rounded-[18px] flex-grow flex-shrink-0 flex items-center justify-center text-center cursor-pointer disabled:opacity-30 " +
               (item === percent
                 ? "bg-green-linear-gradient text-primary "
                 : "border-solid border-[1px] border-white-bg-15")
             }
           >
             <span>{item}%</span>
-          </div>
+          </button>
         ))}
       </div>
       <div className="w-full h-0 border-white border-b opacity-10"></div>
@@ -180,6 +197,7 @@ const LimitOrder: React.FC<Props> = ({
                 showTimeSelect
                 // filterTime={filterPassedTime}
                 dateFormat="MMMM d, yyyy h:mm aa"
+                minDate={new Date()}
               />
             </div>
           )}

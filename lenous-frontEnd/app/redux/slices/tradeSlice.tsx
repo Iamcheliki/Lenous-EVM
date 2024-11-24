@@ -8,6 +8,11 @@ const initialState = {
   prices: {
     btc: 0,
   },
+  balances: {
+    usedMargin: 0,
+    freeMargin: 0,
+    totalBalance: 0,
+  },
 };
 
 const tradeSlice = createSlice({
@@ -20,8 +25,11 @@ const tradeSlice = createSlice({
     setPrices: (state, action) => {
       state.prices = { ...action.payload };
     },
+    setBalances: (state, action) => {
+      state.balances = { ...action.payload };
+    },
   },
 });
 
-export const { setSelectedAsset, setPrices } = tradeSlice.actions;
+export const { setSelectedAsset, setPrices, setBalances } = tradeSlice.actions;
 export default tradeSlice.reducer;
