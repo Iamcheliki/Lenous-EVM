@@ -13,3 +13,12 @@ export const getAllOrdersByAddress = async (address: string) => {
     return res;
   });
 };
+
+export const getAllTraderInfo = async (address: string) => {
+  return axios
+    .get(`http://195.248.240.173:8120/api/trader/${address}`)
+    .then((res) => {
+      console.log(res);
+      return res;
+    });
+};

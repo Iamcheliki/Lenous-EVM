@@ -72,7 +72,7 @@ const PlaceOrder: React.FC = () => {
 
   useEffect(() => {
     const newSocket = new WebSocket(
-      `ws://195.248.240.173:8121/ws/trader/${address}`
+      `ws://195.248.240.173:8121/ws/balance/${address}`
     );
 
     newSocket.onopen = () => {
@@ -81,7 +81,8 @@ const PlaceOrder: React.FC = () => {
 
     newSocket.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
-      setUserBalance(+(parseFloat(message.user_balance) / 10 ** 12).toFixed(2));
+      console.log("message balance", message);
+      setUserBalance(+(parseFloat(message.user_balance) / 10 ** 6).toFixed(2));
       setUserFreeMargin(
         +(parseFloat(message.free_margin) / 10 ** 12).toFixed(2)
       );

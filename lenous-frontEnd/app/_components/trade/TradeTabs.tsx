@@ -6,6 +6,7 @@ import OpenOrderList from "./openOrderList";
 import {
   getAllOrders,
   getAllOrdersByAddress,
+  getAllTraderInfo,
 } from "@/app/dataRequests/orderDataRequests";
 import { useAccount } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +17,30 @@ interface Message {
 }
 
 export default function TradeTabs() {
+  const tabs = [
+    {
+      id: 1,
+      label: "positions",
+      content: "",
+    },
+    {
+      id: 2,
+      label: "History",
+      content: "",
+    },
+    {
+      id: 3,
+      label: "Strategy",
+      content: "",
+    },
+    {
+      id: 4,
+      label: "Assets",
+      content: "",
+    },
+  ];
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(1);
   const [userOrder, setUserOrder] = useState<any[]>([]);
   const { address } = useAccount();
@@ -46,48 +70,51 @@ export default function TradeTabs() {
 
   useEffect(() => {
     if (address) {
-      getAllOrdersByAddress(address)
-        .then((res) => {
-          console.log("trade table list", res.data.orders);
-          const list = [...res.data.orders];
+      setIsLoading(true);
+      if (activeTab === 2) {
+        getAllOrdersByAddress(address)
+          .then((res) => {
+            console.log("trade table list", res.data.orders);
+            const list = [...res.data.orders];
 
-          if (filteredByAsset) {
-            const filteredList = list.filter(
-              (x) => x.symbol === selectedAsset.address
-            );
-            setUserOrder([...filteredList]);
-          } else {
-            setUserOrder([...list]);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+            if (filteredByAsset) {
+              const filteredList = list.filter(
+                (x) => x.symbol === selectedAsset.address
+              );
+              setUserOrder([...filteredList]);
+            } else {
+              setUserOrder([...list]);
+            }
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setIsLoading(false);
+          });
+      } else if (activeTab === 1) {
+        getAllTraderInfo(address)
+          .then((res) => {
+            console.log("position list", res.data.positions);
+            const list = [...res.data.positions];
+
+            if (filteredByAsset) {
+              const filteredList = list.filter(
+                (x) => x.symbol === selectedAsset.address
+              );
+              setUserOrder([...filteredList]);
+            } else {
+              setUserOrder([...list]);
+              setIsLoading(false);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            setIsLoading(false);
+          });
+      }
     }
-  }, [filteredByAsset, address]);
+  }, [filteredByAsset, address, activeTab]);
 
-  const tabs = [
-    {
-      id: 1,
-      label: "positions",
-      content: "",
-    },
-    {
-      id: 2,
-      label: "History",
-      content: "",
-    },
-    {
-      id: 3,
-      label: "Strategy",
-      content: "",
-    },
-    {
-      id: 4,
-      label: "Assets",
-      content: "",
-    },
-  ];
   return (
     <div className="py-8 container">
       <div className="flex justify-between">
@@ -132,8 +159,16 @@ export default function TradeTabs() {
         </div>
       </div>
       <div className=" mt-12 min-h-[350px]">
+        {address ? (
+          isLoading ? (
+            <p className="text-white">Loading...</p>
+          ) : (
+            <OpenOrderList orders={userOrder} />
+          )
+        ) : (
+          <>Please connect your wallet</>
+        )}
         {/* {tabs.find((item) => item.id === activeTab)?.content} */}
-        <OpenOrderList orders={userOrder} />
       </div>
     </div>
   );
