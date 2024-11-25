@@ -257,12 +257,12 @@ const PlaceOrder: React.FC = () => {
 
     console.log(+order.totalPrice / +order.leverage);
     console.log(balances.freeMargin);
-    if (+order.totalPrice / +order.leverage > balances.freeMargin) {
-      console.log("no margin");
-      newErrors.totalPrice = "Please enter an amount less than you free margin";
-    } else {
-      newErrors.totalPrice = null;
-    }
+    // if (+order.totalPrice / +order.leverage > balances.freeMargin) {
+    //   console.log("no margin");
+    //   newErrors.totalPrice = "Please enter an amount less than you free margin";
+    // } else {
+    //   newErrors.totalPrice = null;
+    // }
 
     setErrors({ ...newErrors });
     if (

@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 import TransactionInfo from "./TransactionInfo";
 import { OrderToPlace } from "@/app/types/order";
 import { OrderErrors } from "./PlaceOrder";
+import { useSelector } from "react-redux";
 // import { ORDERBOOK_ADDRESS } from '@/app/_libs/utils/constants/contractAddresses';
 
 interface Props {
@@ -23,7 +24,9 @@ const MarketOrder: React.FC<Props> = ({
 }) => {
   const [amount, setAmount] = useState<string>("");
   const [percent, setPercent] = useState<number>(25);
+  const { prices } = useSelector((state: any) => state.trade);
 
+  console.log("prices", prices);
   // Initialize contract instance
   // const contract = new ethers.Contract(
   //   ORDERBOOK_ADDRESS,
@@ -69,7 +72,37 @@ const MarketOrder: React.FC<Props> = ({
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
             if (regex.test(inputValue)) {
-              setOrder({ ...order, amount: inputValue });
+              setOrder({
+                ...order,
+                amount: inputValue,
+                totalPrice: (prices.btcPrice * +inputValue).toFixed(2),
+              });
+            }
+          }}
+          className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          placeholder="Enter the amount"
+        />
+        {errors.amount && (
+          <p className="text-bad-situation text-sm py-1">{errors.amount}</p>
+        )}
+      </div>
+      <div className="mb-4">
+        <label
+          htmlFor="totalPrice"
+          className="block text-sm text-neutral-light font-medium "
+        >
+          Total Price
+        </label>
+        <input
+          id="totalPrice"
+          disabled
+          type="text"
+          value={order.totalPrice}
+          onChange={(e) => {
+            const inputValue = e.target.value;
+            const regex = /^[0-9]*\.?[0-9]*$/;
+            if (regex.test(inputValue)) {
+              setOrder({ ...order, totalPrice: inputValue });
             }
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
