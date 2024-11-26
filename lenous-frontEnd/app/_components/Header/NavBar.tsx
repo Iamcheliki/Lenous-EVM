@@ -5,7 +5,7 @@ import Link from "next/link";
 import RightNav from "./RightNav";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import FaucetModal from "../trade/faucetModal";
+import FaucetModal from "../faucet/faucetModal";
 
 const menuData = [
   {

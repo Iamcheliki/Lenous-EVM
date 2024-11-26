@@ -1,8 +1,13 @@
 import { tokenList } from "@/app/_libs/utils/constants/TokenList";
+import { useEthersSigner } from "@/app/_libs/utils/ethers";
+import { ethers } from "ethers";
 import Image from "next/image";
 import { useState } from "react";
 import Modal from "react-modal";
 import { useSelector } from "react-redux";
+import { baseSepolia } from "viem/chains";
+import TokenABI from "../../_libs/ABIs/TokenContract.json";
+import { TOKEN_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
 
 interface Props {
   visible: boolean;
@@ -36,8 +41,29 @@ export default function FaucetModal({ visible, handleClose }: Props) {
   const [address, setAddress] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
 
-  const handleFaucet = () => {
+  const signer = useEthersSigner({ chainId: baseSepolia.id });
+  const tokenContract = new ethers.Contract(
+    TOKEN_CONTRACT_ADDRESS,
+    TokenABI,
+    signer
+  );
+
+  const handleFaucet = async () => {
     console.log("Faucet");
+    handleClose();
+
+    await tokenContract
+      .mint(address, +amount * 10 ** 6)
+      .then((res: any) => {
+        console.log(res);
+        setAddress("");
+        setAmount("");
+      })
+      .catch((err: any) => {
+        console.log(err);
+        setAddress("");
+        setAmount("");
+      });
   };
 
   return (
@@ -60,6 +86,7 @@ export default function FaucetModal({ visible, handleClose }: Props) {
           onChange={(e) => {
             setAddress(e.target.value);
           }}
+          placeholder="Enter your target address"
           className="mb-4 mt-1 block w-full  px-4 py-3  rounded-2xl text-white bg-white-bg-15 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         <label className="font-poppins italic text-white mb-1 font-normal text-sm">
@@ -71,6 +98,7 @@ export default function FaucetModal({ visible, handleClose }: Props) {
           onChange={(e) => {
             setAmount(e.target.value);
           }}
+          placeholder="Enter your needed amount"
           className="mb-8 mt-1 block w-full  px-4 py-3  rounded-2xl text-white bg-white-bg-15 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         <button
