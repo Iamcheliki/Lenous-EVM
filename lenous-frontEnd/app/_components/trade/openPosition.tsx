@@ -41,7 +41,7 @@ interface OrderMarket {
   leverage: number;
 }
 
-export default function OpenOrder({ order }: any) {
+export default function OpenPosition({ order }: any) {
   const { prices } = useSelector((state: any) => state.trade);
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
@@ -67,13 +67,11 @@ export default function OpenOrder({ order }: any) {
 
   // const marketPrice = prices.btcPrice;
   const marketPrice = prices.btcPrice;
-  console.log(marketPrice);
   const pnl = calculatePnl(
     convertFrom18(order.amount),
     marketPrice,
     convertFrom18(order.price)
   );
-  console.log(pnl);
 
   const orderToShow: orderToShow = {
     id: order.orderId,
@@ -84,12 +82,12 @@ export default function OpenOrder({ order }: any) {
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
     side: order.isBuyOrder === 1 ? "Long" : "Short",
-    amount: convertFrom18(order.amount),
-    avgEntry: convertFrom18(order.price),
+    amount: convertFrom18(order.size),
+    avgEntry: convertFrom18(order.entry_price),
     markPrice: marketPrice,
     liqPrice:
-      order.price / order.amount -
-      ((1 / order.leverage) * order.price) / order.amount,
+      order.entry_price / order.size -
+      ((1 / order.leverage) * order.entry_price) / order.size,
     marginPosition: 2000,
     marginRate: 20,
     cmlPnl: +pnl.toFixed(2),

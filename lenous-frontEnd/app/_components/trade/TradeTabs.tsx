@@ -12,6 +12,7 @@ import { useAccount } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
 import { setPrices } from "@/app/redux/slices/tradeSlice";
 import { toast } from "react-toastify";
+import OpenPositionsList from "./openPositionsList";
 
 interface Message {
   messsage: string;
@@ -39,6 +40,7 @@ export default function TradeTabs() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(1);
   const [userOrder, setUserOrder] = useState<any[]>([]);
+  const [userPositions, setUserPositions] = useState<any[]>([]);
   const { address } = useAccount();
   const { selectedAsset } = useSelector((state: any) => state.trade);
   const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
@@ -49,11 +51,12 @@ export default function TradeTabs() {
     const newSocket = new WebSocket("ws://195.248.240.173:8866");
 
     newSocket.onopen = () => {
-      console.log("websocket connected");
+      console.log("price websocket connected");
     };
 
     newSocket.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
+      console.log("price message", message);
       dispatch(
         setPrices({
           btcPrice: message.prices.btc_usd_price,
@@ -61,6 +64,14 @@ export default function TradeTabs() {
           ethPrice: message.prices.eth_usd_price,
         })
       );
+    };
+
+    newSocket.onerror = (err: any) => {
+      console.log("error on price socket", err);
+    };
+
+    newSocket.onclose = () => {
+      console.log("price message closed");
     };
   }, []);
 
@@ -83,7 +94,7 @@ export default function TradeTabs() {
 
       newSocket.onmessage = (event: MessageEvent) => {
         const message = JSON.parse(event.data);
-        console.log("trade message", message);
+        // console.log("trade message", message);
         switch (message.event_type) {
           case "OrderPlaced":
             toast.success("Order placed successfully!");
@@ -120,6 +131,7 @@ export default function TradeTabs() {
 
   useEffect(() => {
     setUserOrder([]);
+    setUserPositions([]);
     if (address) {
       setIsLoading(true);
       if (activeTab === 1) {
@@ -152,9 +164,9 @@ export default function TradeTabs() {
               const filteredList = list.filter(
                 (x) => x.symbol === selectedAsset.address
               );
-              setUserOrder([...filteredList]);
+              setUserPositions([...filteredList]);
             } else {
-              setUserOrder([...list]);
+              setUserPositions([...list]);
               setIsLoading(false);
             }
           })
@@ -213,11 +225,13 @@ export default function TradeTabs() {
         {address ? (
           isLoading ? (
             <p className="text-white">Loading...</p>
-          ) : (
+          ) : activeTab === 1 ? (
             <OpenOrderList orders={userOrder} />
+          ) : (
+            <OpenPositionsList orders={userPositions} />
           )
         ) : (
-          <>Please connect your wallet</>
+          <p className="text-white">Please connect your wallet</p>
         )}
         {/* {tabs.find((item) => item.id === activeTab)?.content} */}
       </div>

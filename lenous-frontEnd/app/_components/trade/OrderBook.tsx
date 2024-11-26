@@ -127,7 +127,7 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
 
     newSocket.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
-      console.log("message order book", message);
+      // console.log("message order book", message);
       setOrderList([...message.orders]);
 
       // setUserBalance(+(parseFloat(message.user_balance) / 10 ** 6).toFixed(2));
