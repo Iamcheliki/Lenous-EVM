@@ -18,17 +18,17 @@ export default function OrderBookTable({ orders }: Props) {
             </td>
             <td className="w-[33%] text-right">
               <p>
-                Size
+                amount
                 <span className="bg-platform-bg-gradient rounded-xl py-1 px-2 inline-block ml-1">
-                  ETH
+                  BTC
                 </span>
               </p>
             </td>
             <td className="w-[33%] text-right">
               <p>
-                Total
+                Rema...
                 <span className="bg-platform-bg-gradient rounded-xl py-1 px-2 inline-block ml-1">
-                  ETH
+                  USD
                 </span>
               </p>
             </td>
@@ -37,11 +37,11 @@ export default function OrderBookTable({ orders }: Props) {
         <tbody className="text-white text-right">
           {orders.map((item) => (
             <tr>
+              <td className="p-2">{(+item.price / 10 ** 18).toFixed(4)}</td>
+              <td className="p-2">{(+item.amount / 10 ** 18).toFixed(4)}</td>
               <td className="p-2">
-                {(item.price / item.amount).toExponential()}
+                {(+item.remaining_amount / 10 ** 18).toFixed(4)}
               </td>
-              <td className="p-2">{item.amount.toExponential()}</td>
-              <td className="p-2">{item.price.toExponential()}</td>
             </tr>
           ))}
         </tbody>

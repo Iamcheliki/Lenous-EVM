@@ -32,8 +32,8 @@ const initialOrder: OrderToPlace = {
   price: "0",
   stopLossPrice: "0",
   takeProfitPrice: "0",
+  unit: "0",
   amount: "0",
-  totalPrice: "0",
   isBuyOrder: true,
   hasTime: false,
   expiration: new Date(),
@@ -42,12 +42,12 @@ const initialOrder: OrderToPlace = {
 };
 
 export interface OrderErrors {
-  amount: string | null;
+  unit: string | null;
   price: string | null;
   time: string | null;
   takeProfit: string | null;
   stopLoss: string | null;
-  totalPrice: string | null;
+  amount: string | null;
 }
 
 const PlaceOrder: React.FC = () => {
@@ -63,12 +63,12 @@ const PlaceOrder: React.FC = () => {
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
   const { selectedAsset } = useSelector((state: any) => state.trade);
   const [errors, setErrors] = useState<OrderErrors>({
-    amount: null,
+    unit: null,
     price: null,
     time: null,
     takeProfit: null,
     stopLoss: null,
-    totalPrice: null,
+    amount: null,
   });
   // const [userBalance, setUserBalance] = useState<number>(0);
   // const [userFreeMargin, setUserFreeMargin] = useState<number>(0);
@@ -86,7 +86,7 @@ const PlaceOrder: React.FC = () => {
 
     newSocket.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
-      console.log("message balance", message);
+      // console.log("message balance", message);
       dispatch(
         setBalances({
           usedMargin: +(parseFloat(message.user_balance) / 10 ** 6).toFixed(2),
@@ -120,7 +120,7 @@ const PlaceOrder: React.FC = () => {
     const price = order.price;
     const stopLossPrice = order.stopLossPrice;
     const takeProfitPrice = order.takeProfitPrice;
-    const amount = order.amount;
+    const unit = order.unit;
     const isBuyOrder = order.isBuyOrder;
     const expiration = order.hasTime
       ? new Date(order.expiration).getTime()
@@ -133,7 +133,7 @@ const PlaceOrder: React.FC = () => {
       price: ethers.utils.parseUnits(price.toString(), "ether"),
       stopLossPrice,
       takeProfitPrice,
-      amount: ethers.utils.parseUnits(amount.toString(), "ether"),
+      amount: ethers.utils.parseUnits(unit.toString(), "ether"),
       isBuyOrder,
       expiration,
       leverage,
@@ -147,7 +147,7 @@ const PlaceOrder: React.FC = () => {
           ethers.utils.parseUnits(price, "ether"),
           parseFloat(stopLossPrice),
           parseFloat(takeProfitPrice),
-          ethers.utils.parseUnits(amount, "ether"),
+          ethers.utils.parseUnits(unit, "ether"),
           isBuyOrder,
           expiration,
           leverage,
@@ -166,7 +166,7 @@ const PlaceOrder: React.FC = () => {
       const gasPrice = ethers.utils.parseUnits("100", "gwei");
       console.log({
         asset,
-        amount: ethers.utils.parseUnits(amount.toString(), "ether"),
+        amount: ethers.utils.parseUnits(unit.toString(), "ether"),
         isBuyOrder,
         leverage,
         marginType,
@@ -174,7 +174,7 @@ const PlaceOrder: React.FC = () => {
       await contract
         .placeMarketOrder(
           "0x4256630000000000000000000000000000000000",
-          ethers.utils.parseUnits(amount.toString(), "ether"),
+          ethers.utils.parseUnits(unit.toString(), "ether"),
           isBuyOrder,
           leverage,
           marginType
@@ -222,12 +222,12 @@ const PlaceOrder: React.FC = () => {
   const resetErrors = () => {
     setCheck(false);
     setErrors({
-      amount: null,
+      unit: null,
       price: null,
       time: null,
       takeProfit: null,
       stopLoss: null,
-      totalPrice: null,
+      amount: null,
     });
   };
 
@@ -235,12 +235,12 @@ const PlaceOrder: React.FC = () => {
     let newErrors = { ...errors };
 
     //check amount
-    if (+order.amount === 0) {
-      newErrors.amount = "Please enter a valid amount!";
-    } else if (+order.amount < 0) {
-      newErrors.amount = "Please enter a positive amount!";
+    if (+order.unit === 0) {
+      newErrors.unit = "Please enter a valid amount!";
+    } else if (+order.unit < 0) {
+      newErrors.unit = "Please enter a positive amount!";
     } else {
-      newErrors.amount = null;
+      newErrors.unit = null;
     }
 
     //check if limit
@@ -255,7 +255,7 @@ const PlaceOrder: React.FC = () => {
       }
     }
 
-    console.log(+order.totalPrice / +order.leverage);
+    console.log(+order.amount / +order.leverage);
     console.log(balances.freeMargin);
     // if (+order.totalPrice / +order.leverage > balances.freeMargin) {
     //   console.log("no margin");
@@ -266,12 +266,12 @@ const PlaceOrder: React.FC = () => {
 
     setErrors({ ...newErrors });
     if (
-      newErrors.amount === null &&
+      newErrors.unit === null &&
       newErrors.price === null &&
       newErrors.stopLoss === null &&
       newErrors.takeProfit === null &&
       newErrors.time === null &&
-      newErrors.totalPrice === null
+      newErrors.amount === null
     ) {
       return false;
     } else {

@@ -80,33 +80,33 @@ const LimitOrder: React.FC<Props> = ({
           htmlFor="amount"
           className="block text-sm text-neutral-light font-medium "
         >
-          Amount{" "}
+          Unit{" "}
           <span className="text-[12px] italic">
             (all the amount of token you needed)
           </span>
         </label>
         <input
-          id="amount"
+          id="unit"
           type="text"
-          value={order.amount}
+          value={order.unit}
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
             if (regex.test(inputValue)) {
               setOrder({
                 ...order,
-                amount: inputValue,
-                totalPrice: order.price
+                unit: inputValue,
+                amount: order.price
                   ? (+inputValue * +order.price).toString()
-                  : order.totalPrice,
+                  : order.amount,
               });
             }
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          placeholder="Enter the amount"
+          placeholder="Enter the unit amount"
         />
-        {errors.amount && (
-          <p className="text-bad-situation text-sm py-1">{errors.amount}</p>
+        {errors.unit && (
+          <p className="text-bad-situation text-sm py-1">{errors.unit}</p>
         )}
       </div>
       <div className="mb-4">
@@ -114,7 +114,7 @@ const LimitOrder: React.FC<Props> = ({
           htmlFor="limitPrice"
           className="block text-sm text-neutral-light font-medium "
         >
-          Total Price{" "}
+          Amount{" "}
           <span className="text-[12px] italic">
             (total value for the order)
           </span>
@@ -123,24 +123,24 @@ const LimitOrder: React.FC<Props> = ({
           id="totalPrice"
           type="text"
           placeholder="Enter the limit price"
-          value={order.totalPrice}
+          value={order.amount}
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
             if (regex.test(inputValue)) {
               setOrder({
                 ...order,
-                totalPrice: inputValue,
-                amount: order.price
+                amount: inputValue,
+                unit: order.price
                   ? (+inputValue / +order.price).toString()
-                  : order.amount,
+                  : order.unit,
               });
             }
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl  text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
-        {errors.totalPrice && (
-          <p className="text-bad-situation text-sm py-1">{errors.totalPrice}</p>
+        {errors.amount && (
+          <p className="text-bad-situation text-sm py-1">{errors.amount}</p>
         )}
       </div>
       <div className="flex gap-1 border-neutral-light  mb-8">
@@ -153,11 +153,8 @@ const LimitOrder: React.FC<Props> = ({
               if (order.price) {
                 setOrder({
                   ...order,
-                  totalPrice: (
-                    (percent * balances.freeMargin) /
-                    100
-                  ).toString(),
-                  amount: (
+                  amount: ((percent * balances.freeMargin) / 100).toString(),
+                  unit: (
                     (percent * balances.freeMargin) /
                     100 /
                     +order.price
@@ -219,14 +216,14 @@ const LimitOrder: React.FC<Props> = ({
                       const inputValue = e.target.value;
                       const numericValue = inputValue.replace(/[^0-9]/g, "");
                       setOrder({ ...order, takeProfitPrice: numericValue });
-                      if (order.totalPrice && order.totalPrice !== "0") {
+                      if (order.amount && order.amount !== "0") {
                         setProfitPercentage(
-                          ((+numericValue / +order.totalPrice) * 100)
+                          ((+numericValue / +order.amount) * 100)
                             .toFixed(2)
                             .toString()
                         );
                         setProfitTotalValue(
-                          (+numericValue + +order.totalPrice).toString()
+                          (+numericValue + +order.amount).toString()
                         );
                       }
                       if (e.target.value === "") {
@@ -250,17 +247,17 @@ const LimitOrder: React.FC<Props> = ({
                       const inputValue = e.target.value;
                       const numericValue = inputValue.replace(/[^0-9]/g, "");
                       setProfitPercentage(numericValue);
-                      if (order.totalPrice && order.totalPrice !== "0") {
+                      if (order.amount && order.amount !== "0") {
                         setOrder({
                           ...order,
                           takeProfitPrice: (
                             (+numericValue / 100) *
-                            +order.totalPrice
+                            +order.amount
                           ).toString(),
                         });
 
                         setProfitTotalValue(
-                          ((+numericValue / 100 + 1) * +order.totalPrice)
+                          ((+numericValue / 100 + 1) * +order.amount)
                             .toFixed(2)
                             .toString()
                         );
@@ -284,17 +281,16 @@ const LimitOrder: React.FC<Props> = ({
                       const inputValue = e.target.value;
                       const numericValue = inputValue.replace(/[^0-9]/g, "");
                       setProfitTotalValue(numericValue);
-                      if (order.totalPrice && order.totalPrice !== "0") {
+                      if (order.amount && order.amount !== "0") {
                         setOrder({
                           ...order,
                           takeProfitPrice: (
-                            +numericValue - +order.totalPrice
+                            +numericValue - +order.amount
                           ).toString(),
                         });
                         setProfitPercentage(
                           (
-                            ((+numericValue - +order.totalPrice) /
-                              +order.totalPrice) *
+                            ((+numericValue - +order.amount) / +order.amount) *
                             100
                           )
                             .toFixed(2)
@@ -337,14 +333,14 @@ const LimitOrder: React.FC<Props> = ({
                       const inputValue = e.target.value;
                       const numericValue = inputValue.replace(/[^0-9]/g, "");
                       setOrder({ ...order, stopLossPrice: numericValue });
-                      if (order.totalPrice && order.totalPrice !== "0") {
+                      if (order.amount && order.amount !== "0") {
                         setLossPercentage(
-                          ((+numericValue / +order.totalPrice) * 100)
+                          ((+numericValue / +order.amount) * 100)
                             .toFixed(2)
                             .toString()
                         );
                         setLossTotalValue(
-                          (+order.totalPrice - +numericValue).toString()
+                          (+order.amount - +numericValue).toString()
                         );
                       }
                       if (e.target.value === "") {
@@ -366,17 +362,17 @@ const LimitOrder: React.FC<Props> = ({
                       const inputValue = e.target.value;
                       const numericValue = inputValue.replace(/[^0-9]/g, "");
                       setLossPercentage(numericValue);
-                      if (order.totalPrice && order.totalPrice !== "0") {
+                      if (order.amount && order.amount !== "0") {
                         setOrder({
                           ...order,
                           stopLossPrice: (
                             (+numericValue / 100) *
-                            +order.totalPrice
+                            +order.amount
                           ).toString(),
                         });
 
                         setLossTotalValue(
-                          ((1 - +numericValue / 100) * +order.totalPrice)
+                          ((1 - +numericValue / 100) * +order.amount)
                             .toFixed(2)
                             .toString()
                         );
@@ -400,17 +396,16 @@ const LimitOrder: React.FC<Props> = ({
                       const inputValue = e.target.value;
                       const numericValue = inputValue.replace(/[^0-9]/g, "");
                       setLossTotalValue(numericValue);
-                      if (order.totalPrice && order.totalPrice !== "0") {
+                      if (order.amount && order.amount !== "0") {
                         setOrder({
                           ...order,
                           stopLossPrice: (
-                            +order.totalPrice - +numericValue
+                            +order.amount - +numericValue
                           ).toString(),
                         });
                         setLossPercentage(
                           (
-                            ((+order.totalPrice - +numericValue) /
-                              +order.totalPrice) *
+                            ((+order.amount - +numericValue) / +order.amount) *
                             100
                           )
                             .toFixed(2)

@@ -26,7 +26,6 @@ const MarketOrder: React.FC<Props> = ({
   const [percent, setPercent] = useState<number>(25);
   const { prices } = useSelector((state: any) => state.trade);
 
-  console.log("prices", prices);
   // Initialize contract instance
   // const contract = new ethers.Contract(
   //   ORDERBOOK_ADDRESS,
@@ -62,28 +61,28 @@ const MarketOrder: React.FC<Props> = ({
           htmlFor="amount"
           className="block text-sm text-neutral-light font-medium "
         >
-          Amount
+          Unit
         </label>
         <input
           id="amount"
           type="text"
-          value={order.amount}
+          value={order.unit}
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
             if (regex.test(inputValue)) {
               setOrder({
                 ...order,
-                amount: inputValue,
-                totalPrice: (prices.btcPrice * +inputValue).toFixed(2),
+                unit: inputValue,
+                amount: (prices.btcPrice * +inputValue).toFixed(2),
               });
             }
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="Enter the amount"
         />
-        {errors.amount && (
-          <p className="text-bad-situation text-sm py-1">{errors.amount}</p>
+        {errors.unit && (
+          <p className="text-bad-situation text-sm py-1">{errors.unit}</p>
         )}
       </div>
       <div className="mb-4">
@@ -91,18 +90,18 @@ const MarketOrder: React.FC<Props> = ({
           htmlFor="totalPrice"
           className="block text-sm text-neutral-light font-medium "
         >
-          Total Price
+          Amount
         </label>
         <input
           id="totalPrice"
           disabled
           type="text"
-          value={order.totalPrice}
+          value={order.amount}
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
             if (regex.test(inputValue)) {
-              setOrder({ ...order, totalPrice: inputValue });
+              setOrder({ ...order, amount: inputValue });
             }
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"

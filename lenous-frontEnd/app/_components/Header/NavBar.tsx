@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import RightNav from "./RightNav";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import FaucetModal from "../trade/faucetModal";
 
 const menuData = [
   {
@@ -25,6 +27,11 @@ const menuData = [
 ];
 
 const NavBar = () => {
+  const [showFaucetModal, setShowFaucetModal] = useState<boolean>(false);
+  const handleOpenFaucetModal = () => {
+    setShowFaucetModal(true);
+  };
+
   const pathName = usePathname();
   return (
     <div className="container flex justify-between items-center py-3">
@@ -41,19 +48,35 @@ const NavBar = () => {
               <li
                 key={item.href + item.name}
                 className={
-                  "p-4 " +
+                  "p-4 flex items-center " +
                   (pathName === item.href ? "text-primary" : "text-white")
                 }
               >
                 <Link href={item.href}>{item.name}</Link>
               </li>
             ))}
+            <li>
+              <li className="p-4 text-white">
+                <button
+                  onClick={handleOpenFaucetModal}
+                  className="bg-primary text-white py-1 px-3 rounded-2xl"
+                >
+                  Faucet
+                </button>
+              </li>
+            </li>
           </ul>
         </div>
       </div>
       <div className="headerRight ">
         <RightNav />
       </div>
+      <FaucetModal
+        visible={showFaucetModal}
+        handleClose={() => {
+          setShowFaucetModal(false);
+        }}
+      />
     </div>
   );
 };

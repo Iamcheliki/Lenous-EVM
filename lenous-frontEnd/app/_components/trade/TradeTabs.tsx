@@ -20,22 +20,17 @@ export default function TradeTabs() {
   const tabs = [
     {
       id: 1,
-      label: "positions",
+      label: "Orders",
       content: "",
     },
     {
       id: 2,
-      label: "History",
+      label: "Positions",
       content: "",
     },
     {
       id: 3,
-      label: "Strategy",
-      content: "",
-    },
-    {
-      id: 4,
-      label: "Assets",
+      label: "History",
       content: "",
     },
   ];
@@ -71,7 +66,7 @@ export default function TradeTabs() {
   useEffect(() => {
     if (address) {
       setIsLoading(true);
-      if (activeTab === 2) {
+      if (activeTab === 1) {
         getAllOrdersByAddress(address)
           .then((res) => {
             console.log("trade table list", res.data.orders);
@@ -91,7 +86,7 @@ export default function TradeTabs() {
             console.log(err);
             setIsLoading(false);
           });
-      } else if (activeTab === 1) {
+      } else if (activeTab === 2) {
         getAllTraderInfo(address)
           .then((res) => {
             console.log("position list", res.data.positions);
