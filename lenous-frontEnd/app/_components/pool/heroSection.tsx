@@ -3,15 +3,15 @@ export default function HeroSection({ openModal }: { openModal: () => void }) {
     <div className="flex justify-between h-[400px] py-[71px]">
       <div className="flex flex-col gap-[12px]">
         <h2 className="font-inter text-7xl font-thin text-white tracking-[-8px]">
-          Lenous Core System
+          Lenous Financail System
         </h2>
-        <h1 className="font-inter text-7xl font-thin text-[#4E8AFF] tracking-[-8px]">
-          USDC LIQUIDITY POOL
+        <h1 className="font-inter text-7xl font-thin text-primary tracking-[-8px]">
+          USDC Satking System to Earn Profit
         </h1>
         <p className="mt-auto text-xl text-white font-poppins">
-          a way to trade cryptocurrencies and tokens on a decentralized exchange
-          (DEX)
-          <br /> without the need for a central intermediary
+          a safe way to invest on different markets and
+          <br />
+          earn benefits
         </p>
       </div>
       <div className="flex flex-col justify-between items-end">
@@ -29,7 +29,7 @@ export default function HeroSection({ openModal }: { openModal: () => void }) {
           onClick={openModal}
           className="bg-[#4E8AFF33] text-white text-[24px] h-[56px] rounded-[20px] px-4 border-[3px] border-solid border-[#4E8AFF1a]"
         >
-          Add Liquidity
+          Stake
         </button>
       </div>
     </div>

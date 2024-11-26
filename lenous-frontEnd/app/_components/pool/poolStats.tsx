@@ -10,13 +10,13 @@ export default function PoolStats({ openModal }: { openModal: () => void }) {
     <div className="bg-[#ffffff26] rounded-[24px] flex flex-col p-[34px_31px] gap-[38px]">
       <div className="flex justify-between">
         <button className="bg-[#ffffff0d] rounded-[20px] h-[48px] w-[48%] flex-shrink-0 text-white text-[22px] font-poppins italic">
-          Swap
+          Stake
         </button>
         <button
           onClick={openModal}
           className="bg-[#ffffff0d] rounded-[20px] h-[48px] w-[48%] flex-shrink-0 text-white text-[22px] font-poppins italic"
         >
-          Add Liquidity
+          Withdraw
         </button>
       </div>
 
