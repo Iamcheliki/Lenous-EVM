@@ -116,6 +116,7 @@ const PlaceOrder: React.FC = () => {
   );
 
   const handlePlaceOrder = async () => {
+    setShowConfirmModal(false);
     //limit order args
     const asset = ethers.utils.getAddress(selectedAsset.address);
     const price = order.price;
@@ -192,6 +193,7 @@ const PlaceOrder: React.FC = () => {
   const handleDeposit = async () => {
     const gasPrice = ethers.utils.parseUnits("0.00000000001", "ether");
     const gasLimit = ethers.utils.parseUnits("0.00000000001", "ether");
+    setShowDepositModal(false);
 
     const tokenContract = new ethers.Contract(
       TOKEN_CONTRACT_ADDRESS,
@@ -203,6 +205,7 @@ const PlaceOrder: React.FC = () => {
       ORDERBOOK_CONTRACT_ADDRESS,
       depositAmount * 10 ** 6
     );
+
     await approveTx.wait();
 
     await contract
@@ -212,6 +215,7 @@ const PlaceOrder: React.FC = () => {
   };
 
   const handleWithdraw = async () => {
+    setShowWithdrawModal(false);
     await contract
       .withdraw(200, {
         gasLimit: 2000,

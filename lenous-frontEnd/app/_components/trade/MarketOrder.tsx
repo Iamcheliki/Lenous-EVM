@@ -25,6 +25,7 @@ const MarketOrder: React.FC<Props> = ({
   const [amount, setAmount] = useState<string>("");
   const [percent, setPercent] = useState<number>(25);
   const { prices } = useSelector((state: any) => state.trade);
+  const [lastFocus, setLastFoucs] = useState<number>(0);
 
   // Initialize contract instance
   // const contract = new ethers.Contract(
@@ -54,6 +55,8 @@ const MarketOrder: React.FC<Props> = ({
   //   }
   // };
 
+  console.log(lastFocus);
+
   return (
     <div className="mt-4">
       <div className="mb-4">
@@ -66,7 +69,11 @@ const MarketOrder: React.FC<Props> = ({
         <input
           id="amount"
           type="text"
-          value={order.unit}
+          value={
+            lastFocus === 0
+              ? order.unit
+              : (+order.amount / prices.btcPrice).toFixed(4)
+          }
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
@@ -77,6 +84,9 @@ const MarketOrder: React.FC<Props> = ({
                 amount: (prices.btcPrice * +inputValue).toFixed(2),
               });
             }
+          }}
+          onFocus={() => {
+            setLastFoucs(0);
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="Enter the amount"
@@ -94,15 +104,25 @@ const MarketOrder: React.FC<Props> = ({
         </label>
         <input
           id="totalPrice"
-          disabled
           type="text"
-          value={order.amount}
+          value={
+            lastFocus === 1
+              ? order.amount
+              : (prices.btcPrice * +order.unit).toFixed(4)
+          }
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
             if (regex.test(inputValue)) {
-              setOrder({ ...order, amount: inputValue });
+              setOrder({
+                ...order,
+                amount: inputValue,
+                unit: (+inputValue / prices.btcPrice).toFixed(4),
+              });
             }
+          }}
+          onFocus={() => {
+            setLastFoucs(1);
           }}
           className="mt-1 block w-full  px-4 py-3  rounded-2xl text-neutral-light bg-white-bg-05 sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="Enter the amount"
