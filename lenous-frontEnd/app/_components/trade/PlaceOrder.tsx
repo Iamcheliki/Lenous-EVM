@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Leverage from "./Leverage";
 import IsBuyOrSell from "./IsBuyOrSell";
 import OrderType from "./OrderType";
@@ -51,6 +51,7 @@ export interface OrderErrors {
 }
 
 const PlaceOrder: React.FC = () => {
+  const orderPartRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [check, setCheck] = useState<boolean>(false);
   const [order, setOrder] = useState<OrderToPlace>(initialOrder);
@@ -321,7 +322,7 @@ const PlaceOrder: React.FC = () => {
         </div>
       </div>
       {/* Tab Pane */}
-      <div className="mb-4">
+      <div className="mb-4" ref={orderPartRef}>
         <OrderType
           order={order}
           setOrder={setOrder}
@@ -357,6 +358,10 @@ const PlaceOrder: React.FC = () => {
               if (!handleCheckErrors()) {
                 setShowConfirmModal(true);
               } else {
+                orderPartRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
                 setCheck(true);
               }
             }}
