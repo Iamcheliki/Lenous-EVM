@@ -108,7 +108,7 @@ export default function OpenOrderList({ orders }: Props) {
         </thead>
         <tbody className="font-poppins italic text-white align-top">
           {orders.map((item) => (
-            <OpenOrder order={item} />
+            <OpenOrder key={item.order_id + item.position_id} order={item} />
           ))}
         </tbody>
       </table>

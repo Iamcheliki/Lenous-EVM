@@ -11,6 +11,7 @@ import {
 import { useAccount } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
 import { setPrices } from "@/app/redux/slices/tradeSlice";
+import { toast } from "react-toastify";
 
 interface Message {
   messsage: string;
@@ -64,6 +65,61 @@ export default function TradeTabs() {
   }, []);
 
   useEffect(() => {
+    if (address) {
+      const newSocket = new WebSocket("ws://195.248.240.173:8765");
+      const traderSocket = new WebSocket(
+        `ws://localhost:8120/ws/trader/${address}`
+      );
+
+      newSocket.onopen = () => {
+        console.log("trade websocket connected");
+        const authMessage = { user_id: address };
+        newSocket.send(JSON.stringify(authMessage));
+      };
+
+      traderSocket.onopen = () => {
+        console.log("trader websocket connected");
+      };
+
+      newSocket.onmessage = (event: MessageEvent) => {
+        const message = JSON.parse(event.data);
+        console.log("trade message", message);
+        switch (message.event_type) {
+          case "OrderPlaced":
+            toast.success("Order placed successfully!");
+            break;
+          case "OrderMatched":
+            toast.success("Order matched successfully!");
+            break;
+          case "OrderCancelled":
+            toast.warn("Order cenceled!");
+            break;
+          case "Deposit":
+            toast.success("Deposit successfull!");
+            break;
+        }
+      };
+
+      newSocket.onerror = (err) => {
+        console.log("trade socket error", err);
+      };
+
+      traderSocket.onerror = (err) => {
+        console.log("trader socket error", err);
+      };
+
+      newSocket.onclose = () => {
+        console.log("trade message close");
+      };
+
+      traderSocket.onclose = () => {
+        console.log("trader message close");
+      };
+    }
+  }, [address]);
+
+  useEffect(() => {
+    setUserOrder([]);
     if (address) {
       setIsLoading(true);
       if (activeTab === 1) {

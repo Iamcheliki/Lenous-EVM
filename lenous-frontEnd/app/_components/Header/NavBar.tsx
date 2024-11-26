@@ -59,15 +59,13 @@ const NavBar = () => {
                 <Link href={item.href}>{item.name}</Link>
               </li>
             ))}
-            <li>
-              <li className="p-4 text-white">
-                <button
-                  onClick={handleOpenFaucetModal}
-                  className="bg-primary text-white py-1 px-3 rounded-2xl"
-                >
-                  Faucet
-                </button>
-              </li>
+            <li className="p-4 text-white">
+              <button
+                onClick={handleOpenFaucetModal}
+                className="bg-primary text-white py-1 px-3 rounded-2xl"
+              >
+                Faucet
+              </button>
             </li>
           </ul>
         </div>
