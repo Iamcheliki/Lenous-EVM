@@ -153,9 +153,12 @@ const LimitOrder: React.FC<Props> = ({
               if (order.price) {
                 setOrder({
                   ...order,
-                  amount: ((percent * balances.freeMargin) / 100).toString(),
+                  amount: (
+                    (percent * balances.freeMargin * order.leverage) /
+                    100
+                  ).toString(),
                   unit: (
-                    (percent * balances.freeMargin) /
+                    (percent * balances.freeMargin * order.leverage) /
                     100 /
                     +order.price
                   ).toString(),
