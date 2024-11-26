@@ -409,7 +409,9 @@ const PlaceOrder: React.FC = () => {
       />
       <DepositModal
         visible={showDepositModal}
-        handleClose={() => setShowDepositModal(false)}
+        handleClose={() => {
+          setShowDepositModal(false);
+        }}
         handleDeposit={handleDeposit}
         amount={depositAmount}
         setAmount={setDepositAmount}

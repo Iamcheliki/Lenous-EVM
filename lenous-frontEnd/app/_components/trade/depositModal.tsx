@@ -2,7 +2,7 @@ import { tokenList } from "@/app/_libs/utils/constants/TokenList";
 import { Order_Type, OrderToPlace } from "@/app/types/order";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -55,7 +55,7 @@ export default function DepositModal({
     chainId: baseSepolia.id,
   });
 
-  const [percent, setPeercent] = useState<number | string>(25);
+  const [percent, setPercent] = useState<number | string>(0);
 
   const percentList: (string | number)[] = [25, 50, 75, "max"];
 
@@ -67,11 +67,21 @@ export default function DepositModal({
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    reset({
+      amount: 0,
+    });
+    setPercent(0);
+  }, [visible]);
+
+  console.log("amount", amount);
 
   return (
     <Modal
@@ -86,47 +96,7 @@ export default function DepositModal({
           USDC deposits from <Link href={"/"}>select chains</Link> have the
           lowest fees. Other deposits may have additional third-party fees.
         </p>
-        {/* <div className="flex flex-col items-center gap-3 mt-10 w-full">
-          <div className="flex items-center justify-between rounded-2xl bg-white-bg-05 py-5 px-8 w-full">
-            <div className="flex flex-col gap-2">
-              <h3 className="text-neutral-light text-md">Source</h3>
-              <div className="flex items-center gap-2">
-                <Image
-                  src={tokenList[0].img}
-                  alt={tokenList[0].name}
-                  width={100}
-                  height={100}
-                  className="w-9 h-9 object-contain"
-                />
-                <p className="text-white text-xl">Ethereum</p>
-              </div>
-            </div>
-            <div className="w-7 h-7 rounded-full bg-platform-bg-gradient flex items-center justify-center">
-              <span className="block w-3 h-3 bg-[url('/icons/arrowDown.svg')] bg-no-repeat bg-center bg-contain" />
-            </div>
-          </div>
-          <div className="flex items-center justify-between rounded-2xl bg-white-bg-05 py-5 px-8 w-full">
-            <div className="flex flex-col gap-2">
-              <h3 className="text-neutral-light text-md">Source</h3>
-              <div className="flex items-center gap-2">
-                <Image
-                  src={tokenList[1].img}
-                  alt={tokenList[1].name}
-                  width={100}
-                  height={100}
-                  className="w-9 h-9 object-contain"
-                />
-                <p className="text-white text-xl">USC Coins</p>
-                <p className="text-white px-3 py-1 rounded-2xl bg-platform-bg-gradient">
-                  USDC
-                </p>
-              </div>
-            </div>
-            <div className="w-7 h-7 rounded-full bg-platform-bg-gradient flex items-center justify-center">
-              <span className="block w-3 h-3 bg-[url('/icons/arrowDown.svg')] bg-no-repeat bg-center bg-contain" />
-            </div>
-          </div>
-        </div> */}
+
         <div className="flex items-center justify-between text-white mt-10 text-xl">
           <h3>Available</h3>
           {isLoading ? "..." : <p>{data ? data.formatted : "0"} USDC</p>}
@@ -156,16 +126,30 @@ export default function DepositModal({
         )}
         <div className="mt-3 flex items-center justify-between">
           {percentList.map((item: string | number) => (
-            <div
+            <button
               key={item}
-              className={`w-[24%] text-center h-9 rounded-2xl leading-9 text-neutral-light text-xl ${
+              onClick={() => {
+                if (data) {
+                  if (item === "max") {
+                    reset({
+                      amount: +data?.formatted,
+                    });
+                  } else {
+                    reset({
+                      amount: (+item * +data.formatted) / 100,
+                    });
+                  }
+                }
+                setPercent(item);
+              }}
+              className={`w-[24%] text-center h-9 rounded-2xl text-neutral-light text-xl ${
                 item === percent
                   ? "bg-green-linear-gradient border-none"
                   : "bg-transparent border-neutral-light border-solid border-[1px]"
               }`}
             >
               {item + (typeof item === "number" ? "%" : "")}
-            </div>
+            </button>
           ))}
         </div>
         <div className="mt-10 bg-white-bg-05 rounded-2xl py-4 px-8 flex flex-col gap-4">
@@ -217,8 +201,9 @@ export default function DepositModal({
         </div>
 
         <button
+          disabled={!data || amount > +data?.formatted}
           onClick={handleSubmit(handleDeposit)}
-          className="bg-platform-bg-gradient text-white text-2xl h-[60px] rounded-2xl font-poppins italic mt-3 font-bold"
+          className="bg-platform-bg-gradient text-white text-2xl h-[60px] rounded-2xl font-poppins italic mt-3 font-bold disabled:opacity-70"
         >
           Deposit Funds
         </button>

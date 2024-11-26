@@ -2,7 +2,7 @@ import { tokenList } from "@/app/_libs/utils/constants/TokenList";
 import { useEthersSigner } from "@/app/_libs/utils/ethers";
 import { ethers } from "ethers";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useSelector } from "react-redux";
 import { baseSepolia } from "viem/chains";
@@ -65,6 +65,11 @@ export default function FaucetModal({ visible, handleClose }: Props) {
         setAmount("");
       });
   };
+
+  useEffect(() => {
+    setAmount("");
+    setAddress("");
+  }, [visible]);
 
   return (
     <Modal
