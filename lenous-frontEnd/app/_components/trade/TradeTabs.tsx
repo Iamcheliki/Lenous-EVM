@@ -56,7 +56,6 @@ export default function TradeTabs() {
 
     newSocket.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
-      console.log("price message", message);
       dispatch(
         setPrices({
           btcPrice: message.prices.btc_usd_price,
@@ -79,7 +78,7 @@ export default function TradeTabs() {
     if (address) {
       const newSocket = new WebSocket("ws://195.248.240.173:8765");
       const traderSocket = new WebSocket(
-        `ws://localhost:8120/ws/trader/${address}`
+        `ws://195.248.240.173:8120/ws/trader/${address}`
       );
 
       newSocket.onopen = () => {
@@ -109,6 +108,11 @@ export default function TradeTabs() {
             toast.success("Deposit successfull!");
             break;
         }
+      };
+
+      traderSocket.onmessage = (event: MessageEvent) => {
+        const message = JSON.parse(event.data);
+        console.log("trader message ", message);
       };
 
       newSocket.onerror = (err) => {

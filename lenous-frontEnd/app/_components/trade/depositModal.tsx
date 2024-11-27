@@ -81,8 +81,6 @@ export default function DepositModal({
     setPercent(0);
   }, [visible]);
 
-  console.log("amount", amount);
-
   return (
     <Modal
       isOpen={visible}

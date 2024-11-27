@@ -83,11 +83,13 @@ const PlaceOrder: React.FC = () => {
 
     newSocket.onopen = () => {
       console.log("balance websocket connected");
+      const authMessage = { user_id: address };
+      newSocket.send(JSON.stringify(authMessage));
     };
 
     newSocket.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
-      // console.log("message balance", message);
+      console.log("message balance", message);
       dispatch(
         setBalances({
           usedMargin: +(parseFloat(message.user_balance) / 10 ** 6).toFixed(2),
@@ -97,13 +99,14 @@ const PlaceOrder: React.FC = () => {
           ),
         })
       );
-      // setUserBalance(+(parseFloat(message.user_balance) / 10 ** 6).toFixed(2));
-      // setUserFreeMargin(
-      //   +(parseFloat(message.free_margin) / 10 ** 12).toFixed(2)
-      // );
-      // setUserUsedMargin(
-      //   +(parseFloat(message.margin_used) / 10 ** 12).toFixed(2)
-      // );
+    };
+
+    newSocket.onerror = (err: any) => {
+      console.log("balance socket error", err);
+    };
+
+    newSocket.onclose = (err: any) => {
+      console.log("balance socket closed");
     };
   }, [address]);
 
