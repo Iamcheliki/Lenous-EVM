@@ -55,7 +55,7 @@ const MarketOrder: React.FC<Props> = ({
   //   }
   // };
 
-  console.log(lastFocus);
+  // console.log(lastFocus);
 
   return (
     <div className="mt-4">

@@ -1,19 +1,15 @@
-import {
-  LP_CONTRACT_ADDRESS,
-  TOKEN_CONTRACT_ADDRESS,
-} from "@/app/_libs/utils/constants/contractAddresses";
+import { STAKE_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
 import { useEthersSigner } from "@/app/_libs/utils/ethers";
 import { ethers } from "ethers";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { baseSepolia } from "viem/chains";
-import LpABI from "../../_libs/ABIs/LiquidityPool.json";
-import TokenABI from "../../_libs/ABIs/TokenContract.json";
+import StakeABI from "../../_libs/ABIs/StakingContract.json";
 
 interface Props {
   isOpen: boolean;
-  handleClose: () => void;
+  onClose: () => void;
 }
 
 interface Duration {
@@ -39,9 +35,9 @@ const durationList: Duration[] = [
   },
 ];
 
-export default function StakeModal({ isOpen, handleClose }: Props) {
+export default function StakeModal({ isOpen, onClose }: Props) {
   const [duration, setDuration] = useState<number>(2);
-  const [amount, setAmount] = useState<string>("");
+  const [amount, setAmount] = useState<number>(30);
   const [lpAmount, setLpAmount] = useState<number>(0);
   const customStyles = {
     content: {
@@ -69,48 +65,27 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
   const handleStake = async () => {
-    handleClose();
-    const contract = new ethers.Contract(LP_CONTRACT_ADDRESS, LpABI, signer);
-
-    const tokenContract = new ethers.Contract(
-      TOKEN_CONTRACT_ADDRESS,
-      TokenABI,
+    const contract = new ethers.Contract(
+      STAKE_CONTRACT_ADDRESS,
+      StakeABI.abi,
       signer
     );
 
-    const approveTx = await tokenContract.approve(
-      LP_CONTRACT_ADDRESS,
-      +amount * 10 ** 6
-    );
-
-    await approveTx.wait();
-
     await contract
-      .deposit(
-        ethers.utils.parseUnits(amount.toString(), "ether"),
-        duration * 24 * 60 * 60
-      )
-      .then((res: any) => {
-        console.log(res);
+      .stake(100, duration * 24 * 60 * 60, {
+        gasLimit: 2000,
       })
-      .catch((err: any) => {
-        console.log(err);
-      });
-
-    console.log("lp contract", contract);
+      .then((res: any) => console.log(res))
+      .catch((err: any) => console.log(err));
   };
 
   useEffect(() => {
-    setLpAmount(+amount * 0.1);
+    setLpAmount(amount * 0.1);
   }, [amount]);
-
-  useEffect(() => {
-    setAmount("");
-  }, [isOpen]);
 
   return (
     <Modal
-      onRequestClose={handleClose}
+      onRequestClose={onClose}
       isOpen={isOpen}
       ariaHideApp={false}
       style={customStyles}
@@ -124,15 +99,9 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
             <div>
               <p className="text-neutral-light text-md">USDC</p>
               <input
-                type="text"
+                type="number"
                 value={amount}
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  const regex = /^[0-9]*\.?[0-9]*$/;
-                  if (regex.test(inputValue)) {
-                    setAmount(inputValue);
-                  }
-                }}
+                onChange={(e) => setAmount(+e.target.value)}
                 placeholder="Amount"
                 className="bg-transparent text-white text-2xl font-poppins italic flex-grow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />

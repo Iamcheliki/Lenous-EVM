@@ -77,6 +77,7 @@ const PlaceOrder: React.FC = () => {
   const { balances } = useSelector((state: any) => state.trade);
 
   useEffect(() => {
+    console.log("address changed", address);
     const newSocket = new WebSocket(
       `ws://195.248.240.173:8121/ws/balance/${address}`
     );
@@ -89,14 +90,16 @@ const PlaceOrder: React.FC = () => {
 
     newSocket.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
-      console.log("message balance", message);
+      // console.log("message balance", message);
       dispatch(
         setBalances({
-          usedMargin: +(parseFloat(message.user_balance) / 10 ** 6).toFixed(2),
-          freeMargin: +(parseFloat(message.free_margin) / 10 ** 12).toFixed(2),
-          totalBalance: +(parseFloat(message.margin_used) / 10 ** 12).toFixed(
-            2
-          ),
+          usedMargin: +(parseFloat(message.margin_used) / 10 ** 6).toFixed(2),
+          freeMargin: +(parseFloat(message.free_margin) / 10 ** 13).toFixed(2),
+          reservedMargin: +(
+            parseFloat(message.margin_reserved) /
+            10 ** 13
+          ).toFixed(2),
+          totalBalance: +(parseFloat(message.balance) / 10 ** 6).toFixed(2),
         })
       );
     };
@@ -126,14 +129,14 @@ const PlaceOrder: React.FC = () => {
     const stopLossPrice = order.stopLossPrice;
     const takeProfitPrice = order.takeProfitPrice;
     const unit = order.unit;
-    const isBuyOrder = order.isBuyOrder;
+    const isBuyOrder = order.isBuyOrder ? 0 : 1;
     const expiration = order.hasTime
       ? new Date(order.expiration).getTime()
       : new Date().getTime();
     const leverage = order.leverage;
     const marginType = order.margin === Margin_Type.Cross ? 0 : 1;
 
-    console.log({
+    console.log("limit order", {
       asset,
       price: ethers.utils.parseUnits(price.toString(), "ether"),
       stopLossPrice,
@@ -265,12 +268,12 @@ const PlaceOrder: React.FC = () => {
 
     console.log(+order.amount / +order.leverage);
     console.log(balances.freeMargin);
-    if (+order.amount / +order.leverage > balances.freeMargin) {
-      console.log("no margin");
-      newErrors.amount = "Please enter an amount less than you free margin";
-    } else {
-      newErrors.amount = null;
-    }
+    // if (+order.amount / +order.leverage > balances.freeMargin) {
+    //   console.log("no margin");
+    //   newErrors.amount = "Please enter an amount less than you free margin";
+    // } else {
+    //   newErrors.amount = null;
+    // }
 
     setErrors({ ...newErrors });
     if (
@@ -312,6 +315,10 @@ const PlaceOrder: React.FC = () => {
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Total Balance:</h4>
           <p>{balances.totalBalance} USD</p>
+        </div>
+        <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
+          <h4>Reserved Margin:</h4>
+          <p>{balances.reservedMargin} USD</p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Used Margin:</h4>

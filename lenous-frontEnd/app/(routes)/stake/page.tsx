@@ -1,8 +1,8 @@
 "use client";
 
-import HeroSection from "@/app/_components/pool/heroSection";
-import PoolSection from "@/app/_components/pool/poolSection";
-import StakeModal from "@/app/_components/pool/stakeModal";
+import HeroSection from "@/app/_components/stake/heroSection";
+import PoolSection from "@/app/_components/stake/poolSection";
+import StakeModal from "@/app/_components/stake/stakeModal";
 import { LP_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
 import { useEthersSigner } from "@/app/_libs/utils/ethers";
 import { ethers } from "ethers";

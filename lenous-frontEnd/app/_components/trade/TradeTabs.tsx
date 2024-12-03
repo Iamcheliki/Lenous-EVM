@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPrices } from "@/app/redux/slices/tradeSlice";
 import { toast } from "react-toastify";
 import OpenPositionsList from "./openPositionsList";
+import { io } from "socket.io-client";
 
 interface Message {
   messsage: string;
@@ -44,6 +45,7 @@ export default function TradeTabs() {
   const { address } = useAccount();
   const { selectedAsset } = useSelector((state: any) => state.trade);
   const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
+  const [newSocket, setNewSocket] = useState<any>();
 
   // const [socket, setSocket] = useState<WebSocket | null>(null);
 
@@ -93,7 +95,7 @@ export default function TradeTabs() {
 
       newSocket.onmessage = (event: MessageEvent) => {
         const message = JSON.parse(event.data);
-        // console.log("trade message", message);
+        // console.log("trade event message", message);
         switch (message.event_type) {
           case "OrderPlaced":
             toast.success("Order placed successfully!");
@@ -112,7 +114,7 @@ export default function TradeTabs() {
 
       traderSocket.onmessage = (event: MessageEvent) => {
         const message = JSON.parse(event.data);
-        console.log("trader message ", message);
+        // console.log("trader message ", message);
       };
 
       newSocket.onerror = (err) => {
@@ -132,6 +134,26 @@ export default function TradeTabs() {
       };
     }
   }, [address]);
+
+  useEffect(() => {
+    const socket = io("http://localhost:3000");
+    setNewSocket(socket);
+
+    socket.on("connect", () => {
+      console.log("connected to socket");
+    });
+
+    // Listen for the 'message' event from the server
+    socket.on("deposit", (data) => {
+      console.log("Message received from new socket", data);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (address && newSocket) {
+      newSocket.emit("register_wallet", address);
+    }
+  }, [address, newSocket]);
 
   useEffect(() => {
     setUserOrder([]);

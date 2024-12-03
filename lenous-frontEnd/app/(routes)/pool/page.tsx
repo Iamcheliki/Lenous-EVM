@@ -16,18 +16,13 @@ export default function Pool() {
     setShowModal(true);
   };
 
-  const signer = useEthersSigner({ chainId: baseSepolia.id });
-
-  const contract = new ethers.Contract(LP_CONTRACT_ADDRESS, LPABI, signer);
-  console.log("lp contract", contract);
-
   return (
     <section className="px-[160px] pb-[172px]">
       <HeroSection openModal={openModal} />
       <PoolSection openModal={openModal} />
       <StakeModal
         isOpen={showModal}
-        onClose={() => {
+        handleClose={() => {
           setShowModal(false);
         }}
       />
