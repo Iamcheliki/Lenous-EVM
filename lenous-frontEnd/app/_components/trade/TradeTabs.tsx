@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // import PositionTable from './positions/PositionTable';
 import Icon from "../UI/icon";
 import OpenOrderList from "./openOrderList";
@@ -10,7 +10,7 @@ import {
 } from "@/app/dataRequests/orderDataRequests";
 import { useAccount } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
-import { setPrices } from "@/app/redux/slices/tradeSlice";
+import { setBalances, setPrices } from "@/app/redux/slices/tradeSlice";
 import { toast } from "react-toastify";
 import OpenPositionsList from "./openPositionsList";
 import { io } from "socket.io-client";
@@ -18,6 +18,8 @@ import { io } from "socket.io-client";
 interface Message {
   messsage: string;
 }
+
+const SOCKET_URL = "http://localhost:3000"; // Replace with your Socket.IO server URL
 
 export default function TradeTabs() {
   const tabs = [
@@ -37,172 +39,59 @@ export default function TradeTabs() {
       content: "",
     },
   ];
-  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(1);
   const [userOrder, setUserOrder] = useState<any[]>([]);
   const [userPositions, setUserPositions] = useState<any[]>([]);
   const { address } = useAccount();
-  const { selectedAsset } = useSelector((state: any) => state.trade);
   const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
-  const [newSocket, setNewSocket] = useState<any>();
-
-  // const [socket, setSocket] = useState<WebSocket | null>(null);
+  const socketRef = useRef<any>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const newSocket = new WebSocket("ws://195.248.240.173:8866");
+    if (!socketRef.current) {
+      socketRef.current = io("http://localhost:3000");
+      socketRef.current.on("connect", () => {
+        console.log("connected to socket");
 
-    newSocket.onopen = () => {
-      console.log("price websocket connected");
-    };
+        if (address) {
+          console.log("hello");
+          socketRef.current.emit("register_wallet", address);
+        }
+      });
 
-    newSocket.onmessage = (event: MessageEvent) => {
-      const message = JSON.parse(event.data);
-      dispatch(
-        setPrices({
-          btcPrice: message.prices.btc_usd_price,
-          solPrice: message.prices.sol_usd_price,
-          ethPrice: message.prices.eth_usd_price,
-        })
-      );
-    };
+      socketRef.current.on("disconnect", () => {
+        socketRef.current = null;
+      });
 
-    newSocket.onerror = (err: any) => {
-      console.log("error on price socket", err);
-    };
+      // Listen for the 'message' event from the server
+      socketRef.current.on("deposit", (data: any) => {
+        console.log("Deposit message received from new socket", data);
+        toast.success(`You deposited $${+data.amount / 10 ** 6} successfully`);
+      });
 
-    newSocket.onclose = () => {
-      console.log("price message closed");
-    };
+      socketRef.current.on("balance_update", (data: any) => {
+        console.log("Balance message received from new socket", data);
+        dispatch(
+          setBalances({
+            totalBalance: +data.totalBalance / 10 ** 6,
+            usedMargin: +data.usedMargin / 10 ** 6,
+            freeMargin: +data.freeMargin / 10 ** 6,
+            totalPnl: +data.totalPnl / 10 ** 6,
+            totalCommision: +data.totalCommision / 10 ** 6,
+          })
+        );
+      });
+    }
   }, []);
 
   useEffect(() => {
     if (address) {
-      const newSocket = new WebSocket("ws://195.248.240.173:8765");
-      const traderSocket = new WebSocket(
-        `ws://195.248.240.173:8120/ws/trader/${address}`
-      );
-
-      newSocket.onopen = () => {
-        console.log("trade websocket connected");
-        const authMessage = { user_id: address };
-        newSocket.send(JSON.stringify(authMessage));
-      };
-
-      traderSocket.onopen = () => {
-        console.log("trader websocket connected");
-      };
-
-      newSocket.onmessage = (event: MessageEvent) => {
-        const message = JSON.parse(event.data);
-        // console.log("trade event message", message);
-        switch (message.event_type) {
-          case "OrderPlaced":
-            toast.success("Order placed successfully!");
-            break;
-          case "OrderMatched":
-            toast.success("Order matched successfully!");
-            break;
-          case "OrderCancelled":
-            toast.warn("Order cenceled!");
-            break;
-          case "Deposit":
-            toast.success("Deposit successfull!");
-            break;
-        }
-      };
-
-      traderSocket.onmessage = (event: MessageEvent) => {
-        const message = JSON.parse(event.data);
-        // console.log("trader message ", message);
-      };
-
-      newSocket.onerror = (err) => {
-        console.log("trade socket error", err);
-      };
-
-      traderSocket.onerror = (err) => {
-        console.log("trader socket error", err);
-      };
-
-      newSocket.onclose = () => {
-        console.log("trade message close");
-      };
-
-      traderSocket.onclose = () => {
-        console.log("trader message close");
-      };
+      socketRef.current.emit("register_wallet", address);
     }
   }, [address]);
 
-  useEffect(() => {
-    const socket = io("http://localhost:3000");
-    setNewSocket(socket);
-
-    socket.on("connect", () => {
-      console.log("connected to socket");
-    });
-
-    // Listen for the 'message' event from the server
-    socket.on("deposit", (data) => {
-      console.log("Message received from new socket", data);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (address && newSocket) {
-      newSocket.emit("register_wallet", address);
-    }
-  }, [address, newSocket]);
-
-  useEffect(() => {
-    setUserOrder([]);
-    setUserPositions([]);
-    if (address) {
-      setIsLoading(true);
-      if (activeTab === 1) {
-        getAllOrdersByAddress(address)
-          .then((res) => {
-            console.log("trade table list", res.data.orders);
-            const list = [...res.data.orders];
-
-            if (filteredByAsset) {
-              const filteredList = list.filter(
-                (x) => x.symbol === selectedAsset.address
-              );
-              setUserOrder([...filteredList]);
-            } else {
-              setUserOrder([...list]);
-            }
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            console.log(err);
-            setIsLoading(false);
-          });
-      } else if (activeTab === 2) {
-        getAllTraderInfo(address)
-          .then((res) => {
-            console.log("position list", res.data.positions);
-            const list = [...res.data.positions];
-
-            if (filteredByAsset) {
-              const filteredList = list.filter(
-                (x) => x.symbol === selectedAsset.address
-              );
-              setUserPositions([...filteredList]);
-            } else {
-              setUserPositions([...list]);
-              setIsLoading(false);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            setIsLoading(false);
-          });
-      }
-    }
-  }, [filteredByAsset, address, activeTab]);
+  console.log(socketRef.current);
 
   return (
     <div className="py-8 container">

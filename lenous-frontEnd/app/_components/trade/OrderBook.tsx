@@ -116,30 +116,6 @@ const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
   //   });
   // }, [selectedAsset]);
 
-  useEffect(() => {
-    const newSocket = new WebSocket(
-      `ws://195.248.240.173:8000/ws/orderbook/0x4256630000000000000000000000000000000000`
-    );
-
-    newSocket.onopen = () => {
-      console.log("order book websocket connected");
-    };
-
-    newSocket.onmessage = (event: MessageEvent) => {
-      const message = JSON.parse(event.data);
-      // console.log("message order book", message);
-      setOrderList([...message.orders]);
-
-      // setUserBalance(+(parseFloat(message.user_balance) / 10 ** 6).toFixed(2));
-      // setUserFreeMargin(
-      //   +(parseFloat(message.free_margin) / 10 ** 12).toFixed(2)
-      // );
-      // setUserUsedMargin(
-      //   +(parseFloat(message.margin_used) / 10 ** 12).toFixed(2)
-      // );
-    };
-  }, [selectedAsset]);
-
   return (
     <div>
       <div>

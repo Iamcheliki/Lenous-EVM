@@ -12,6 +12,8 @@ const initialState = {
     usedMargin: 0,
     freeMargin: 0,
     totalBalance: 0,
+    totalPnl: 0,
+    totalCommision: 0,
   },
 };
 

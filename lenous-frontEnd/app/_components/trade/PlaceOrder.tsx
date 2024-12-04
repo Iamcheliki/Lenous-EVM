@@ -76,43 +76,6 @@ const PlaceOrder: React.FC = () => {
   // const [userUsedMargin, setUserUsedMargin] = useState<number>(0);
   const { balances } = useSelector((state: any) => state.trade);
 
-  useEffect(() => {
-    console.log("address changed", address);
-    const newSocket = new WebSocket(
-      `ws://195.248.240.173:8121/ws/balance/${address}`
-    );
-
-    newSocket.onopen = () => {
-      console.log("balance websocket connected");
-      const authMessage = { user_id: address };
-      newSocket.send(JSON.stringify(authMessage));
-    };
-
-    newSocket.onmessage = (event: MessageEvent) => {
-      const message = JSON.parse(event.data);
-      // console.log("message balance", message);
-      dispatch(
-        setBalances({
-          usedMargin: +(parseFloat(message.margin_used) / 10 ** 6).toFixed(2),
-          freeMargin: +(parseFloat(message.free_margin) / 10 ** 13).toFixed(2),
-          reservedMargin: +(
-            parseFloat(message.margin_reserved) /
-            10 ** 13
-          ).toFixed(2),
-          totalBalance: +(parseFloat(message.balance) / 10 ** 6).toFixed(2),
-        })
-      );
-    };
-
-    newSocket.onerror = (err: any) => {
-      console.log("balance socket error", err);
-    };
-
-    newSocket.onclose = (err: any) => {
-      console.log("balance socket closed");
-    };
-  }, [address]);
-
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
   const contract = new ethers.Contract(
