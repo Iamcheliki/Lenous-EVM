@@ -6,7 +6,7 @@ const initialState = {
     ...data.tokens[0],
   },
   prices: {
-    btc: 0,
+    btc: 92000,
   },
   balances: {
     usedMargin: 0,

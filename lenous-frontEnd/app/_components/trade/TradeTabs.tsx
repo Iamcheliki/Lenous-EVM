@@ -67,18 +67,27 @@ export default function TradeTabs() {
       // Listen for the 'message' event from the server
       socketRef.current.on("deposit", (data: any) => {
         console.log("Deposit message received from new socket", data);
-        toast.success(`You deposited $${+data.amount / 10 ** 6} successfully`);
+        toast.success(`You deposited $${+data.amount / 10 ** 18} successfully`);
+      });
+
+      socketRef.current.on("orderPlaced", (data: any) => {
+        console.log("Order message received from new socket", data);
+        toast.success(
+          `You placed a ${data.type} with the amount of ${
+            +data.amount / 10 ** 18
+          } and the price $${(+data.price / 10 ** 18).toFixed(2)}`
+        );
       });
 
       socketRef.current.on("balance_update", (data: any) => {
         console.log("Balance message received from new socket", data);
         dispatch(
           setBalances({
-            totalBalance: +data.totalBalance / 10 ** 6,
-            usedMargin: +data.usedMargin / 10 ** 6,
-            freeMargin: +data.freeMargin / 10 ** 6,
-            totalPnl: +data.totalPnl / 10 ** 6,
-            totalCommision: +data.totalCommision / 10 ** 6,
+            totalBalance: +data.totalBalance / 10 ** 18,
+            usedMargin: +data.usedMargin / 10 ** 18,
+            freeMargin: +data.freeMargin / 10 ** 18,
+            totalPnl: +data.totalPnl / 10 ** 18,
+            totalCommision: +data.totalCommision / 10 ** 18,
           })
         );
       });

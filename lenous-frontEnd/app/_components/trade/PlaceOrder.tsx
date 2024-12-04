@@ -277,15 +277,11 @@ const PlaceOrder: React.FC = () => {
       <div className="">
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Total Balance:</h4>
-          <p>{balances.totalBalance} USD</p>
-        </div>
-        <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
-          <h4>Reserved Margin:</h4>
-          <p>{balances.reservedMargin} USD</p>
+          <p>{balances.totalBalance.toFixed(2)} USD</p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Used Margin:</h4>
-          <p>{balances.usedMargin} USD</p>
+          <p>{balances.usedMargin.toFixed(2)} USD</p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Free Margin:</h4>
@@ -294,8 +290,26 @@ const PlaceOrder: React.FC = () => {
               balances.freeMargin > 0 ? "text-primary" : "text-bad-situation"
             }
           >
-            {balances.freeMargin} USD
+            {balances.freeMargin.toFixed(2)} USD
           </p>
+        </div>
+        <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
+          <h4>Total Pnl:</h4>
+          <p
+            className={
+              balances.totalPnl > 0
+                ? "text-primary"
+                : balances.totalPnl < 0
+                ? "text-bad-situation"
+                : "text-neutral-light"
+            }
+          >
+            {balances.totalPnl.toFixed(2)} USD
+          </p>
+        </div>
+        <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
+          <h4>Total Commision:</h4>
+          <p>{balances.totalCommision.toFixed(2)} USD</p>
         </div>
       </div>
       {/* Tab Pane */}

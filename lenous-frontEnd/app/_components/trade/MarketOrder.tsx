@@ -70,9 +70,7 @@ const MarketOrder: React.FC<Props> = ({
           id="amount"
           type="text"
           value={
-            lastFocus === 0
-              ? order.unit
-              : (+order.amount / prices.btcPrice).toFixed(4)
+            lastFocus === 0 ? order.unit : (+order.amount / 92000).toFixed(4)
           }
           onChange={(e) => {
             const inputValue = e.target.value;
@@ -81,7 +79,7 @@ const MarketOrder: React.FC<Props> = ({
               setOrder({
                 ...order,
                 unit: inputValue,
-                amount: (prices.btcPrice * +inputValue).toFixed(2),
+                amount: (92000 * +inputValue).toFixed(2),
               });
             }
           }}
@@ -106,9 +104,7 @@ const MarketOrder: React.FC<Props> = ({
           id="totalPrice"
           type="text"
           value={
-            lastFocus === 1
-              ? order.amount
-              : (prices.btcPrice * +order.unit).toFixed(4)
+            lastFocus === 1 ? order.amount : (92000 * +order.unit).toFixed(4)
           }
           onChange={(e) => {
             const inputValue = e.target.value;
@@ -117,7 +113,7 @@ const MarketOrder: React.FC<Props> = ({
               setOrder({
                 ...order,
                 amount: inputValue,
-                unit: (+inputValue / prices.btcPrice).toFixed(4),
+                unit: (+inputValue / 92000).toFixed(4),
               });
             }
           }}
