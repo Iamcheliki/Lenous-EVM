@@ -5,8 +5,7 @@ import Icon from "../UI/icon";
 import OpenOrderList from "./openOrderList";
 import {
   getAllOrders,
-  getAllOrdersByAddress,
-  getAllTraderInfo,
+  getAllPositions,
 } from "@/app/dataRequests/orderDataRequests";
 import { useAccount } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
@@ -77,6 +76,33 @@ export default function TradeTabs() {
             +data.amount / 10 ** 18
           } and the price $${(+data.price / 10 ** 18).toFixed(2)}`
         );
+        if (address) {
+          getAllOrders(address?.toString())
+            .then((res) => {
+              console.log(res);
+              setUserOrder([...res.data.orders]);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      });
+
+      socketRef.current.on("orderMatched", (data: any) => {
+        console.log("Match message received from new socket", data);
+        toast.success(
+          `Your Order with id ${data.orderId} matched with another order`
+        );
+        if (address) {
+          getAllPositions(address?.toString())
+            .then((res) => {
+              console.log(res);
+              setUserOrder([...res.data.orders]);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
       });
 
       socketRef.current.on("balance_update", (data: any) => {
@@ -99,6 +125,31 @@ export default function TradeTabs() {
       socketRef.current.emit("register_wallet", address);
     }
   }, [address]);
+
+  useEffect(() => {
+    if (address) {
+      if (activeTab === 1) {
+        getAllOrders(address?.toString())
+          .then((res) => {
+            console.log(res);
+            setUserOrder([...res.data.orders]);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else if (activeTab === 2) {
+        setUserOrder([]);
+        getAllPositions(address?.toString())
+          .then((res) => {
+            console.log(res);
+            setUserOrder([...res.data.orders]);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
+  }, [activeTab, address]);
 
   console.log(socketRef.current);
 

@@ -94,6 +94,7 @@ interface Props {
 }
 
 export default function OpenOrderList({ orders }: Props) {
+  console.log(orders);
   return (
     <div className="w-full">
       <table className="w-full">
