@@ -99,7 +99,7 @@ const PlaceOrder: React.FC = () => {
     const leverage = order.leverage;
     const marginType = order.margin === Margin_Type.Cross ? 0 : 1;
 
-    console.log("limit order", {
+    console.log("order", {
       asset,
       price: ethers.utils.parseUnits(price.toString(), "ether"),
       stopLossPrice,
@@ -134,7 +134,7 @@ const PlaceOrder: React.FC = () => {
       //   leverage,
       //   marginType
       // );
-      const gasPrice = ethers.utils.parseUnits("100", "gwei");
+      const gasPrice = ethers.utils.parseUnits("10", "gwei");
       console.log({
         asset,
         amount: ethers.utils.parseUnits(unit.toString(), "ether"),
@@ -150,7 +150,7 @@ const PlaceOrder: React.FC = () => {
           leverage,
           marginType
           // {
-          //   gasLimit: 80000,
+          //   gasLimit: 21000,
           //   gasPrice: gasPrice,
           // }
         )
@@ -231,12 +231,12 @@ const PlaceOrder: React.FC = () => {
 
     console.log(+order.amount / +order.leverage);
     console.log(balances.freeMargin);
-    // if (+order.amount / +order.leverage > balances.freeMargin) {
-    //   console.log("no margin");
-    //   newErrors.amount = "Please enter an amount less than you free margin";
-    // } else {
-    //   newErrors.amount = null;
-    // }
+    if (+order.amount / +order.leverage > balances.freeMargin) {
+      console.log("no margin");
+      newErrors.amount = "Please enter an amount less than you free margin";
+    } else {
+      newErrors.amount = null;
+    }
 
     setErrors({ ...newErrors });
     if (
@@ -277,11 +277,11 @@ const PlaceOrder: React.FC = () => {
       <div className="">
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Total Balance:</h4>
-          <p>{balances.totalBalance.toFixed(2)} USD</p>
+          <p>{balances.totalBalance.toFixed(4)} USD</p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Used Margin:</h4>
-          <p>{balances.usedMargin.toFixed(2)} USD</p>
+          <p>{balances.usedMargin.toFixed(4)} USD</p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Free Margin:</h4>
@@ -290,7 +290,7 @@ const PlaceOrder: React.FC = () => {
               balances.freeMargin > 0 ? "text-primary" : "text-bad-situation"
             }
           >
-            {balances.freeMargin.toFixed(2)} USD
+            {balances.freeMargin.toFixed(4)} USD
           </p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
@@ -304,12 +304,12 @@ const PlaceOrder: React.FC = () => {
                 : "text-neutral-light"
             }
           >
-            {balances.totalPnl.toFixed(2)} USD
+            {balances.totalPnl.toFixed(6)} USD
           </p>
         </div>
         <div className="text-md font-poppins italic text-neutral-light flex items-center justify-between mb-4">
           <h4>Total Commision:</h4>
-          <p>{balances.totalCommision.toFixed(2)} USD</p>
+          <p>{balances.totalCommision.toFixed(4)} USD</p>
         </div>
       </div>
       {/* Tab Pane */}

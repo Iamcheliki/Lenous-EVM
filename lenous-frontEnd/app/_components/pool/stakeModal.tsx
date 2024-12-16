@@ -10,6 +10,9 @@ import Modal from "react-modal";
 import { baseSepolia } from "viem/chains";
 import LpABI from "../../_libs/ABIs/LiquidityPool.json";
 import TokenABI from "../../_libs/ABIs/TokenContract.json";
+import { handleGetNonce } from "@/app/dataRequests/userDataRequests";
+import { useAccount } from "wagmi";
+import { handleGetSignatureForDeposit } from "@/app/dataRequests/lpDataRequests";
 
 interface Props {
   isOpen: boolean;
@@ -40,6 +43,7 @@ const durationList: Duration[] = [
 ];
 
 export default function StakeModal({ isOpen, handleClose }: Props) {
+  const { address } = useAccount();
   const [duration, setDuration] = useState<number>(2);
   const [amount, setAmount] = useState<string>("");
   const [lpAmount, setLpAmount] = useState<number>(0);
@@ -69,35 +73,63 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
   const handleStake = async () => {
-    handleClose();
-    const contract = new ethers.Contract(LP_CONTRACT_ADDRESS, LpABI, signer);
+    console.log("add liq");
+    if (address) {
+      handleClose();
+      const contract = new ethers.Contract(LP_CONTRACT_ADDRESS, LpABI, signer);
 
-    const tokenContract = new ethers.Contract(
-      TOKEN_CONTRACT_ADDRESS,
-      TokenABI,
-      signer
-    );
+      const tokenContract = new ethers.Contract(
+        TOKEN_CONTRACT_ADDRESS,
+        TokenABI,
+        signer
+      );
+      let nonce;
+      const deadline = new Date().getTime() + 5 * 60 * 1000;
+      let signature;
+      await handleGetNonce(address?.toString())
+        .then((res: any) => {
+          console.log("nonce res", res);
+          nonce = res.data.nonce;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-    const approveTx = await tokenContract.approve(
-      LP_CONTRACT_ADDRESS,
-      +amount * 10 ** 6
-    );
+      if (nonce) {
+        await handleGetSignatureForDeposit(
+          +amount,
+          1,
+          deadline,
+          address.toString()
+        ).then((res) => {
+          console.log("sign request", res);
+          signature = res.data.signature;
+        });
+        console.log("signature", signature);
+        if (signature) {
+          const approveTx = await tokenContract.approve(
+            LP_CONTRACT_ADDRESS,
+            +amount * 10 ** 6
+          );
 
-    await approveTx.wait();
+          await approveTx.wait();
 
-    await contract
-      .deposit(
-        ethers.utils.parseUnits(amount.toString(), "ether"),
-        duration * 24 * 60 * 60
-      )
-      .then((res: any) => {
-        console.log(res);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-
-    console.log("lp contract", contract);
+          await contract
+            .deposit(
+              ethers.utils.parseUnits(amount.toString(), "ether"),
+              BigInt(1),
+              deadline,
+              signature
+            )
+            .then((res: any) => {
+              console.log(res);
+            })
+            .catch((err: any) => {
+              console.log(err);
+            });
+        }
+      }
+    }
   };
 
   useEffect(() => {

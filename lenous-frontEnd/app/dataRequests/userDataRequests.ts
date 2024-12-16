@@ -8,3 +8,10 @@ export const getUserCredit = async (address: string) => {
       return res;
     });
 };
+
+export const handleGetNonce = async (address: string) => {
+  console.log("get nonce");
+  return await axios
+    .get(`${BASE_URL}/user/get-nonce/${address}`)
+    .then((res) => res);
+};

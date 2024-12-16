@@ -3,6 +3,7 @@ import {
   calculatePnl,
   convertFrom12,
   convertFrom18,
+  convertToNumber,
 } from "@/app/_libs/utils/calculator";
 import { ORDERBOOK_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
 import { tokenList } from "@/app/_libs/utils/constants/TokenList";
@@ -53,7 +54,7 @@ export default function OpenPosition({ order }: any) {
   );
 
   const handleCloseOrder = async () => {
-    console.log(order.order_id, order.asset_id);
+    // console.log(order.order_id, order.asset_id);
     await contract
       .cancelOrder(order.asset_id, order.order_id, {
         gasPrice: ethers.utils.parseUnits("200", "gwei"),
@@ -67,11 +68,7 @@ export default function OpenPosition({ order }: any) {
 
   // const marketPrice = prices.btcPrice;
   const marketPrice = prices.btcPrice;
-  const pnl = calculatePnl(
-    convertFrom18(order.amount),
-    marketPrice,
-    convertFrom18(order.price)
-  );
+  const pnl = +order.unrealizedPnl;
 
   const orderToShow: orderToShow = {
     id: order.orderId,
@@ -82,15 +79,15 @@ export default function OpenPosition({ order }: any) {
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
     side: order.isBuyOrder === 1 ? "Long" : "Short",
-    amount: convertFrom18(order.size),
-    avgEntry: convertFrom18(order.entry_price),
+    amount: convertToNumber(order.amount),
+    avgEntry: convertToNumber(order.price),
     markPrice: marketPrice,
     liqPrice:
       order.entry_price / order.size -
       ((1 / order.leverage) * order.entry_price) / order.size,
     marginPosition: 2000,
     marginRate: 20,
-    cmlPnl: +pnl.toFixed(2),
+    cmlPnl: +pnl.toFixed(4),
     pnlPercentage: +((pnl / order.amount) * 100).toFixed(2),
     liqRisk: 10,
     marginUnit: "USD",
@@ -112,15 +109,15 @@ export default function OpenPosition({ order }: any) {
             <div>
               <h3>{orderToShow.market.title}</h3>
               <div className="flex items-center gap-1">
-                <p>{orderToShow.market.type}</p>
-                <p>{orderToShow.market.leverage}x</p>
+                <p>????</p>
+                <p>??x</p>
               </div>
             </div>
           </div>
         </td>
-        <td className="py-4">{orderToShow.side}</td>
+        <td className="py-4">????</td>
         <td className="py-4">{orderToShow.amount + " " + orderToShow.unit}</td>
-        <td className="py-4">{orderToShow.avgEntry}</td>
+        <td className="py-4">{orderToShow.avgEntry.toFixed(4)}</td>
         <td className="py-4">
           {orderToShow.markPrice ? formatNumber(orderToShow.markPrice) : "0"}
         </td>

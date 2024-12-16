@@ -17,3 +17,8 @@ export const convertFrom12 = (number: number) => {
 export const calculateAveEnt = (amount: number, totalPrice: number) => {
   return totalPrice / amount;
 };
+
+export const convertToNumber = (number: string | number) => {
+  const decimal = BigInt(10) ** BigInt(18);
+  return Number(BigInt(number)) / Number(decimal);
+};

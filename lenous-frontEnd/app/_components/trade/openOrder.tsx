@@ -3,6 +3,7 @@ import {
   calculatePnl,
   convertFrom12,
   convertFrom18,
+  convertToNumber,
 } from "@/app/_libs/utils/calculator";
 import { ORDERBOOK_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
 import { tokenList } from "@/app/_libs/utils/constants/TokenList";
@@ -82,7 +83,7 @@ export default function OpenOrder({ order }: any) {
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
     side: order.isBuyOrder === 1 ? "Long" : "Short",
-    amount: convertFrom18(order.amount),
+    amount: convertToNumber(order.amount),
     avgEntry: convertFrom18(order.price),
     markPrice: marketPrice,
     liqPrice:
@@ -112,13 +113,13 @@ export default function OpenOrder({ order }: any) {
             <div>
               <h3>{orderToShow.market.title}</h3>
               <div className="flex items-center gap-1">
-                <p>{orderToShow.market.type}</p>
-                <p>{orderToShow.market.leverage}x</p>
+                <p>??????</p>
+                <p>??x</p>
               </div>
             </div>
           </div>
         </td>
-        <td className="py-4">{orderToShow.side}</td>
+        <td className="py-4">????</td>
         <td className="py-4">{orderToShow.amount + " " + orderToShow.unit}</td>
         <td className="py-4">{orderToShow.avgEntry}</td>
         <td className="py-4">

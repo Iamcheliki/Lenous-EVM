@@ -44,6 +44,7 @@ export default function TradeTabs() {
   const [userPositions, setUserPositions] = useState<any[]>([]);
   const { address } = useAccount();
   const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
+  const [connected, setConnected] = useState<boolean>(false);
   const socketRef = useRef<any>(null);
   const dispatch = useDispatch();
 
@@ -52,15 +53,21 @@ export default function TradeTabs() {
       socketRef.current = io("http://localhost:3000");
       socketRef.current.on("connect", () => {
         console.log("connected to socket");
-
-        if (address) {
-          console.log("hello");
-          socketRef.current.emit("register_wallet", address);
-        }
+        console.log(address);
+        setConnected(true);
+        // if (address) {
+        //   console.log("hello");
+        //   socketRef.current.emit("register_wallet", address);
+        // }
       });
 
       socketRef.current.on("disconnect", () => {
-        socketRef.current = null;
+        console.log("disconnect");
+        setConnected(false);
+      });
+
+      socketRef.current.on("error", () => {
+        console.log("error for socket");
       });
 
       // Listen for the 'message' event from the server
@@ -106,25 +113,31 @@ export default function TradeTabs() {
       });
 
       socketRef.current.on("balance_update", (data: any) => {
-        console.log("Balance message received from new socket", data);
+        // console.log("Balance message received from new socket", data);
         dispatch(
           setBalances({
             totalBalance: +data.totalBalance / 10 ** 18,
             usedMargin: +data.usedMargin / 10 ** 18,
             freeMargin: +data.freeMargin / 10 ** 18,
-            totalPnl: +data.totalPnl / 10 ** 18,
+            totalPnl: +data.totalPnl,
             totalCommision: +data.totalCommision / 10 ** 18,
           })
         );
+      });
+
+      socketRef.current.on("live_positions", (data: any) => {
+        // console.log("Position message received from new socket", data);
+        setUserPositions([...data.positions]);
       });
     }
   }, []);
 
   useEffect(() => {
-    if (address) {
+    console.log("here should work", address, socketRef.current, connected);
+    if (address && connected) {
       socketRef.current.emit("register_wallet", address);
     }
-  }, [address]);
+  }, [address, connected]);
 
   useEffect(() => {
     if (address) {
@@ -139,19 +152,9 @@ export default function TradeTabs() {
           });
       } else if (activeTab === 2) {
         setUserOrder([]);
-        getAllPositions(address?.toString())
-          .then((res) => {
-            console.log(res);
-            setUserOrder([...res.data.orders]);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
     }
   }, [activeTab, address]);
-
-  console.log(socketRef.current);
 
   return (
     <div className="py-8 container">
