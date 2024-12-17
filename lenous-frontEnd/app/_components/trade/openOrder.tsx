@@ -79,10 +79,10 @@ export default function OpenOrder({ order }: any) {
     market: {
       logo: tokenList[5].img,
       title: "Bitcoin",
-      type: order.marginType === 0 ? "Cross" : "Isolated",
+      type: order.marginType,
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
-    side: order.isBuyOrder === 1 ? "Long" : "Short",
+    side: order.isBuyOrder ? "Long" : "Short",
     amount: convertToNumber(order.amount),
     avgEntry: convertFrom18(order.price),
     markPrice: marketPrice,
@@ -113,13 +113,13 @@ export default function OpenOrder({ order }: any) {
             <div>
               <h3>{orderToShow.market.title}</h3>
               <div className="flex items-center gap-1">
-                <p>??????</p>
-                <p>??x</p>
+                <p>{orderToShow.market.type}</p>
+                <p>{orderToShow.market.leverage}x</p>
               </div>
             </div>
           </div>
         </td>
-        <td className="py-4">????</td>
+        <td className="py-4">{orderToShow.side}</td>
         <td className="py-4">{orderToShow.amount + " " + orderToShow.unit}</td>
         <td className="py-4">{orderToShow.avgEntry}</td>
         <td className="py-4">

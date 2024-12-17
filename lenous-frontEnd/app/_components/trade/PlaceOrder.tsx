@@ -85,6 +85,7 @@ const PlaceOrder: React.FC = () => {
   );
 
   const handlePlaceOrder = async () => {
+    console.log("contract", contract);
     setShowConfirmModal(false);
     //limit order args
     const asset = ethers.utils.getAddress(selectedAsset.address);
@@ -92,7 +93,7 @@ const PlaceOrder: React.FC = () => {
     const stopLossPrice = order.stopLossPrice;
     const takeProfitPrice = order.takeProfitPrice;
     const unit = order.unit;
-    const isBuyOrder = order.isBuyOrder ? 0 : 1;
+    const isBuyOrder = order.isBuyOrder ? 1 : 0;
     const expiration = order.hasTime
       ? new Date(order.expiration).getTime()
       : new Date().getTime();
@@ -114,7 +115,7 @@ const PlaceOrder: React.FC = () => {
     if (order.type === Order_Type.Limit) {
       await contract
         .placeLimitOrder(
-          "0x4256630000000000000000000000000000000000",
+          "0x4554480000000000000000000000000000000000",
           ethers.utils.parseUnits(price, "ether"),
           parseFloat(stopLossPrice),
           parseFloat(takeProfitPrice),
@@ -144,7 +145,7 @@ const PlaceOrder: React.FC = () => {
       });
       await contract
         .placeMarketOrder(
-          "0x4256630000000000000000000000000000000000",
+          "0x4554480000000000000000000000000000000000",
           ethers.utils.parseUnits(unit.toString(), "ether"),
           isBuyOrder,
           leverage,

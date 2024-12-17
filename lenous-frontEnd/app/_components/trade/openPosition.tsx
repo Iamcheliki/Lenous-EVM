@@ -78,7 +78,7 @@ export default function OpenPosition({ order }: any) {
       type: order.marginType === 0 ? "Cross" : "Isolated",
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
-    side: order.isBuyOrder === 1 ? "Long" : "Short",
+    side: order.isBuyOrder ? "Long" : "Short",
     amount: convertToNumber(order.amount),
     avgEntry: convertToNumber(order.price),
     markPrice: marketPrice,
@@ -109,13 +109,13 @@ export default function OpenPosition({ order }: any) {
             <div>
               <h3>{orderToShow.market.title}</h3>
               <div className="flex items-center gap-1">
-                <p>????</p>
-                <p>??x</p>
+                <p>{orderToShow.market.type}</p>
+                <p>{orderToShow.market.leverage}x</p>
               </div>
             </div>
           </div>
         </td>
-        <td className="py-4">????</td>
+        <td className="py-4">{orderToShow.side}</td>
         <td className="py-4">{orderToShow.amount + " " + orderToShow.unit}</td>
         <td className="py-4">{orderToShow.avgEntry.toFixed(4)}</td>
         <td className="py-4">
