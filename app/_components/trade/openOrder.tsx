@@ -13,7 +13,7 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { baseSepolia } from "viem/chains";
-import TradeABI from "../../_libs/ABIs/OrderBook.json";
+import TradeABI from "../../_libs/ABIs/order-book.json";
 
 export interface orderToShow {
   id: string;

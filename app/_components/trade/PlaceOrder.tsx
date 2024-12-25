@@ -10,7 +10,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount, useWriteContract } from "wagmi";
 import { useEthersProvider, useEthersSigner } from "@/app/_libs/utils/ethers";
 import { ethers } from "ethers";
-import TradeABI from "../../_libs/ABIs/OrderBook.json";
+import TradeABI from "../../_libs/ABIs/order-book.json";
 import TokenABI from "../../_libs/ABIs/TokenContract.json";
 import {
   TOKEN_CONTRACT_ADDRESS,
