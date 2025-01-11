@@ -77,6 +77,7 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
     if (address) {
       handleClose();
       const contract = new ethers.Contract(LP_CONTRACT_ADDRESS, LpABI, signer);
+      console.log(contract);
 
       const tokenContract = new ethers.Contract(
         TOKEN_CONTRACT_ADDRESS,
@@ -116,8 +117,8 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
 
           await contract
             .deposit(
-              ethers.utils.parseUnits(amount.toString(), "ether"),
-              BigInt(1),
+              ethers.utils.parseUnits(amount.toString(), 6),
+              ethers.utils.parseUnits("1", 18).toString(),
               deadline,
               signature
             )
