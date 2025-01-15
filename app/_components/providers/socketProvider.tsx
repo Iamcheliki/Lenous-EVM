@@ -146,7 +146,7 @@ export default function SocketProvider({
         console.log("Deposit message received from socket", data);
         toast.success(
           `You deposited $${
-            +data.amount / 10 ** 18
+            +data.usdcAmount / 10 ** 18
           } successfully and received ${+data.lpTokenMinted / 10 ** 18} token`
         );
       });
