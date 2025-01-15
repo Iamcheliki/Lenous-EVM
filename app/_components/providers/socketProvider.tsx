@@ -14,6 +14,7 @@ import {
   setUserOrders,
   setUserPositions,
 } from "@/app/redux/slices/tradeSlice";
+import { SOCKET_URL } from "@/app/dataRequests/constants";
 
 export default function SocketProvider({
   children,
@@ -27,7 +28,7 @@ export default function SocketProvider({
 
   useEffect(() => {
     if (!socketRef.current) {
-      socketRef.current = io("http://localhost:3000");
+      socketRef.current = io(SOCKET_URL);
       socketRef.current.on("connect", () => {
         console.log("connected to socket");
         console.log(address);
