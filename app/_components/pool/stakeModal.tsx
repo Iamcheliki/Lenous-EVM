@@ -87,48 +87,38 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
       let nonce;
       const deadline = new Date().getTime() + 5 * 60 * 1000;
       let signature;
-      await handleGetNonce(address?.toString())
-        .then((res: any) => {
-          console.log("nonce res", res);
-          nonce = res.data.nonce;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
 
-      if (nonce) {
-        await handleGetSignatureForDeposit(
-          +amount,
-          1,
-          deadline,
-          address.toString()
-        ).then((res) => {
-          console.log("sign request", res);
-          signature = res.data.signature;
-        });
-        console.log("signature", signature);
-        if (signature) {
-          const approveTx = await tokenContract.approve(
-            LP_CONTRACT_ADDRESS,
-            +amount * 10 ** 6
-          );
+      await handleGetSignatureForDeposit(
+        +amount,
+        1,
+        deadline,
+        address.toString()
+      ).then((res) => {
+        console.log("sign request", res);
+        signature = res.data.signature;
+      });
+      console.log("signature", signature);
+      if (signature) {
+        const approveTx = await tokenContract.approve(
+          LP_CONTRACT_ADDRESS,
+          +amount * 10 ** 6
+        );
 
-          await approveTx.wait();
+        await approveTx.wait();
 
-          await contract
-            .deposit(
-              ethers.utils.parseUnits(amount.toString(), 6),
-              ethers.utils.parseUnits("1", 18).toString(),
-              deadline,
-              signature
-            )
-            .then((res: any) => {
-              console.log(res);
-            })
-            .catch((err: any) => {
-              console.log(err);
-            });
-        }
+        await contract
+          .deposit(
+            ethers.utils.parseUnits(amount.toString(), 6),
+            ethers.utils.parseUnits("1", 18).toString(),
+            deadline,
+            signature
+          )
+          .then((res: any) => {
+            console.log(res);
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
       }
     }
   };
