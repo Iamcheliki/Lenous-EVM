@@ -9,14 +9,9 @@ import {
 } from "@/app/dataRequests/orderDataRequests";
 import { useAccount } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
-import { setBalances, setPrices } from "@/app/redux/slices/tradeSlice";
+import { setUserOrders } from "@/app/redux/slices/tradeSlice";
 import { toast } from "react-toastify";
 import OpenPositionsList from "./openPositionsList";
-import { io } from "socket.io-client";
-
-interface Message {
-  messsage: string;
-}
 
 const SOCKET_URL = "http://localhost:3000"; // Replace with your Socket.IO server URL
 
@@ -40,104 +35,12 @@ export default function TradeTabs() {
   ];
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(1);
-  const [userOrder, setUserOrder] = useState<any[]>([]);
-  const [userPositions, setUserPositions] = useState<any[]>([]);
   const { address } = useAccount();
-  const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
-  const [connected, setConnected] = useState<boolean>(false);
-  const socketRef = useRef<any>(null);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (!socketRef.current) {
-      socketRef.current = io("http://localhost:3000");
-      socketRef.current.on("connect", () => {
-        console.log("connected to socket");
-        console.log(address);
-        setConnected(true);
-        // if (address) {
-        //   console.log("hello");
-        //   socketRef.current.emit("register_wallet", address);
-        // }
-      });
-
-      socketRef.current.on("disconnect", () => {
-        console.log("disconnect");
-        setConnected(false);
-      });
-
-      socketRef.current.on("error", () => {
-        console.log("error for socket");
-      });
-
-      // Listen for the 'message' event from the server
-      socketRef.current.on("deposit", (data: any) => {
-        console.log("Deposit message received from new socket", data);
-        toast.success(`You deposited $${+data.amount / 10 ** 18} successfully`);
-      });
-
-      socketRef.current.on("orderPlaced", (data: any) => {
-        console.log("Order message received from new socket", data);
-        toast.success(
-          `You placed a ${data.type} with the amount of ${
-            +data.amount / 10 ** 18
-          } and the price $${(+data.price / 10 ** 18).toFixed(2)}`
-        );
-        if (address) {
-          getAllOrders(address?.toString())
-            .then((res) => {
-              console.log(res);
-              setUserOrder([...res.data.orders]);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
-      });
-
-      socketRef.current.on("orderMatched", (data: any) => {
-        console.log("Match message received from new socket", data);
-        toast.success(
-          `Your Order with id ${data.orderId} matched with another order`
-        );
-        if (address) {
-          getAllPositions(address?.toString())
-            .then((res) => {
-              console.log(res);
-              setUserOrder([...res.data.orders]);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
-      });
-
-      socketRef.current.on("balance_update", (data: any) => {
-        // console.log("Balance message received from new socket", data);
-        dispatch(
-          setBalances({
-            totalBalance: +data.totalBalance / 10 ** 18,
-            usedMargin: +data.usedMargin / 10 ** 18,
-            freeMargin: +data.freeMargin / 10 ** 18,
-            totalPnl: +data.totalPnl,
-            totalCommision: +data.totalCommision / 10 ** 18,
-          })
-        );
-      });
-
-      socketRef.current.on("live_positions", (data: any) => {
-        // console.log("Position message received from new socket", data);
-        setUserPositions([...data.positions]);
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log("here should work", address, socketRef.current, connected);
-    if (address && connected) {
-      socketRef.current.emit("register_wallet", address);
-    }
-  }, [address, connected]);
+  const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
+  const { userOrders, userPositions } = useSelector(
+    (state: any) => state.trade
+  );
 
   useEffect(() => {
     if (address) {
@@ -145,13 +48,13 @@ export default function TradeTabs() {
         getAllOrders(address?.toString())
           .then((res) => {
             console.log(res);
-            setUserOrder([...res.data.orders]);
+            dispatch(setUserOrders([...res.data.orders]));
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (activeTab === 2) {
-        setUserOrder([]);
+        dispatch(setUserOrders([]));
       }
     }
   }, [activeTab, address]);
@@ -204,7 +107,7 @@ export default function TradeTabs() {
           isLoading ? (
             <p className="text-white">Loading...</p>
           ) : activeTab === 1 ? (
-            <OpenOrderList orders={userOrder} />
+            <OpenOrderList orders={userOrders} />
           ) : (
             <OpenPositionsList orders={userPositions} />
           )

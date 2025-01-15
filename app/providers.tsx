@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
 import { config } from "./_libs/config";
+import SocketProvider from "./_components/providers/socketProvider";
 
 const queryClient = new QueryClient();
 
@@ -24,7 +25,9 @@ export default function Providers({ children, cookie }: Props) {
     <WagmiProvider config={config} initialState={initialState}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <Provider store={store}>{children}</Provider>
+          <Provider store={store}>
+            <SocketProvider>{children}</SocketProvider>
+          </Provider>
         </RainbowKitProvider>
       </QueryClientProvider>
       <ToastContainer position="top-right" autoClose={5000} />
