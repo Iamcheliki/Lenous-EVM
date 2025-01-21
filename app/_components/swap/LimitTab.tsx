@@ -1,14 +1,14 @@
-'use client';
-import React from 'react';
-import { useState, ChangeEvent, useEffect } from 'react';
-import { tokenList } from '@/app/_libs/utils/constants/TokenList';
-import SwapInput from './SwapInput';
-import Icon from '../UI/icon';
-import ModalTokensList from './ModalTokensList';
-import SwapButton from './SwapButton';
-import RatioInput from './RatioInput';
-import CustomRatioChoices from './CustomRatioChoices';
-import SwapLimitExpiry from './SwapLimitExpiry';
+"use client";
+import React from "react";
+import { useState, ChangeEvent, useEffect } from "react";
+import { tokenList } from "@/app/_libs/utils/constants/TokenList";
+import SwapInput from "./SwapInput";
+import Icon from "../UI/icon";
+import ModalTokensList from "./ModalTokensList";
+import SwapButton from "./SwapButton";
+import RatioInput from "./RatioInput";
+import CustomRatioChoices from "./CustomRatioChoices";
+import SwapLimitExpiry from "./SwapLimitExpiry";
 
 interface Token {
   id: string;
@@ -30,14 +30,14 @@ type Expiry = {
 const LimitTab = () => {
   const [tokenOne, setTokenOne] = useState<Token>(tokenList[0]);
   const [tokenTwo, setTokenTwo] = useState<Token>(tokenList[1]);
-  const [tokenOneAmount, setTokenOneAmount] = useState<number | string>('');
-  const [tokenTwoAmount, setTokenTwoAmount] = useState<number | string>('');
+  const [tokenOneAmount, setTokenOneAmount] = useState<number | string>("");
+  const [tokenTwoAmount, setTokenTwoAmount] = useState<number | string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [changeToken, setChangeToken] = useState<number>(1);
   const [prices, setPrices] = useState<any>({});
-  const [customRatio, setCustomRatio] = useState<number | string>('');
+  const [customRatio, setCustomRatio] = useState<number | string>("");
   const [selectedRatio, setSelectedRatio] = useState<CustomRatio | null>(null);
-  const [expiry, setExpiry] = useState<Expiry>({ title: '1 Week', value: 7 });
+  const [expiry, setExpiry] = useState<Expiry>({ title: "1 Week", value: 7 });
 
   const fetchPrices = async () => {
     try {
@@ -62,10 +62,10 @@ const LimitTab = () => {
         setPrices(usdPrices);
         // updateTokenTwoAmount(tokenOneAmount, usdPrices);
       } else {
-        console.warn('TokenTwo price is zero, skipping ratio calculation');
+        console.warn("TokenTwo price is zero, skipping ratio calculation");
       }
     } catch (error) {
-      console.error('Error fetching token prices:', error);
+      console.error("Error fetching token prices:", error);
     }
   };
 
@@ -73,11 +73,11 @@ const LimitTab = () => {
     fetchPrices();
 
     const ws = new WebSocket(
-      'wss://ws.coincap.io/prices?assets=' + tokenOne.id + ',' + tokenTwo.id
+      "wss://ws.coincap.io/prices?assets=" + tokenOne.id + "," + tokenTwo.id
     );
 
     ws.onopen = () => {
-      console.log('WebSocket connected');
+      console.log("WebSocket connected");
     };
 
     ws.onmessage = (event) => {
@@ -104,11 +104,11 @@ const LimitTab = () => {
     };
 
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error("WebSocket error:", error);
     };
 
     ws.onclose = () => {
-      console.log('WebSocket connection closed');
+      console.log("WebSocket connection closed");
     };
 
     return () => {
@@ -118,7 +118,7 @@ const LimitTab = () => {
 
   useEffect(() => {
     if (
-      tokenOneAmount !== '' &&
+      tokenOneAmount !== "" &&
       prices &&
       customRatio !== undefined &&
       parseFloat(customRatio) !== 0
@@ -128,7 +128,7 @@ const LimitTab = () => {
         (amountNumber * parseFloat(customRatio)).toFixed(6).toString()
       );
     } else {
-      setTokenTwoAmount('');
+      setTokenTwoAmount("");
     }
   }, [tokenOneAmount, prices, tokenOne, customRatio]);
 
@@ -136,7 +136,7 @@ const LimitTab = () => {
     let amount = e.target.value;
     const re = /^[0-9]*\.?[0-9]*$/;
 
-    if (amount === '' || re.test(amount)) {
+    if (amount === "" || re.test(amount)) {
       setTokenOneAmount(amount);
     }
   };
@@ -164,14 +164,14 @@ const LimitTab = () => {
   };
 
   const clearTokenInput = () => {
-    setTokenOneAmount('');
-    setTokenTwoAmount('');
+    setTokenOneAmount("");
+    setTokenTwoAmount("");
   };
   const changeRatioInput = (e: ChangeEvent<HTMLInputElement>) => {
     let ratio = e.target.value;
     const re = /^[0-9]*\.?[0-9]*$/;
 
-    if (ratio === '' || re.test(ratio)) {
+    if (ratio === "" || re.test(ratio)) {
       setCustomRatio(ratio);
     }
   };

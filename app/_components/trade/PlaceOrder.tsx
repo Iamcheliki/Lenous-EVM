@@ -115,7 +115,7 @@ const PlaceOrder: React.FC = () => {
     if (order.type === Order_Type.Limit) {
       await contract
         .placeLimitOrder(
-          "0x4554480000000000000000000000000000000000",
+          selectedAsset.address,
           ethers.utils.parseUnits(price, "ether"),
           parseFloat(stopLossPrice),
           parseFloat(takeProfitPrice),

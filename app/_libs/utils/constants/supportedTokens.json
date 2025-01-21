@@ -1,24 +1,14 @@
 {
-    "tokens": [
-        {
-            "address": "0x4256630000000000000000000000000000000000",
-            "symbol": "UNQ",
-            "name": "Unique Asset"
-        },
-        {
-            "address": "0x4254430000000000000000000000000000000000",
-            "symbol": "BTC",
-            "name": "Bitcoin"
-        },
-        {
-            "address": "0x4ffC43a60e009B551865A93d232E33Fce9f01507",
-            "symbol": "SOL",
-            "name": "Solana"
-        },
-        {
-            "address": "0x694AA1769357215DE4FAC081bf1f309aDC325306",
-            "symbol": "ETH",
-            "name": "Ethereum"
-        }
-    ]
+  "tokens": [
+    {
+      "address": "0x4254430000000000000000000000000000000000",
+      "symbol": "BTC",
+      "name": "Bitcoin"
+    },
+    {
+      "address": "0x4554480000000000000000000000000000000000",
+      "symbol": "ETH",
+      "name": "Ethereum"
+    }
+  ]
 }

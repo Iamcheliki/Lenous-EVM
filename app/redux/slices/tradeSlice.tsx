@@ -4,7 +4,9 @@ import data from "../../_libs/utils/constants/supportedTokens.json";
 interface State {
   selectedAsset: any;
   prices: {
-    btc: number;
+    btcPrice: number;
+    ethPrice: number;
+    solPrice: number;
   };
   balances: {
     usedMargin: number;
@@ -23,7 +25,9 @@ const initialState: State = {
     ...data.tokens[0],
   },
   prices: {
-    btc: 92000,
+    btcPrice: 0,
+    ethPrice: 0,
+    solPrice: 0,
   },
   balances: {
     usedMargin: 0,

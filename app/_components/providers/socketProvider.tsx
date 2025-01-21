@@ -11,6 +11,7 @@ import {
 } from "@/app/dataRequests/orderDataRequests";
 import {
   setBalances,
+  setPrices,
   setUserOrders,
   setUserPositions,
 } from "@/app/redux/slices/tradeSlice";
@@ -52,6 +53,11 @@ export default function SocketProvider({
       socketRef.current.on("deposit", (data: any) => {
         console.log("Deposit message received from new socket", data);
         toast.success(`You deposited $${+data.amount / 10 ** 18} successfully`);
+      });
+
+      socketRef.current.on("price", (data: any) => {
+        console.log("Price message received from new socket", data);
+        dispatch(setPrices(data.tokenPrice));
       });
 
       socketRef.current.on("orderPlaced", (data: any) => {

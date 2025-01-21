@@ -24,8 +24,8 @@ const MarketOrder: React.FC<Props> = ({
 }) => {
   const [amount, setAmount] = useState<string>("");
   const [percent, setPercent] = useState<number>(25);
-  const { prices } = useSelector((state: any) => state.trade);
   const [lastFocus, setLastFoucs] = useState<number>(0);
+  const { selectedAsset, prices } = useSelector((state: any) => state.trade);
 
   // Initialize contract instance
   // const contract = new ethers.Contract(
@@ -55,8 +55,6 @@ const MarketOrder: React.FC<Props> = ({
   //   }
   // };
 
-  // console.log(lastFocus);
-
   return (
     <div className="mt-4">
       <div className="mb-4">
@@ -70,16 +68,41 @@ const MarketOrder: React.FC<Props> = ({
           id="amount"
           type="text"
           value={
-            lastFocus === 0 ? order.unit : (+order.amount / 92000).toFixed(4)
+            lastFocus === 0
+              ? order.unit
+              : (
+                  +order.amount /
+                  (selectedAsset.name === "Bitcoin"
+                    ? prices.btcPrice
+                    : selectedAsset.name === "Ethereum"
+                    ? prices.ethPrice
+                    : prices.solPrice)
+                ).toFixed(4)
           }
           onChange={(e) => {
             const inputValue = e.target.value;
             const regex = /^[0-9]*\.?[0-9]*$/;
             if (regex.test(inputValue)) {
+              console.log(
+                (
+                  (selectedAsset.name === "Bitcoin"
+                    ? prices.btcPrice
+                    : selectedAsset.name === "Ethereum"
+                    ? prices.ethPrice
+                    : prices.solPrice) * +inputValue
+                ).toFixed(2)
+              );
+              console.log(inputValue);
               setOrder({
                 ...order,
                 unit: inputValue,
-                amount: (92000 * +inputValue).toFixed(2),
+                amount: (
+                  (selectedAsset.name === "Bitcoin"
+                    ? prices.btcPrice
+                    : selectedAsset.name === "Ethereum"
+                    ? prices.ethPrice
+                    : prices.solPrice) * +inputValue
+                ).toFixed(2),
               });
             }
           }}
@@ -104,7 +127,15 @@ const MarketOrder: React.FC<Props> = ({
           id="totalPrice"
           type="text"
           value={
-            lastFocus === 1 ? order.amount : (92000 * +order.unit).toFixed(4)
+            lastFocus === 1
+              ? order.amount
+              : (
+                  (selectedAsset.name === "Bitcoin"
+                    ? prices.btcPrice
+                    : selectedAsset.name === "Ethereum"
+                    ? prices.ethPrice
+                    : prices.solPrice) * +order.unit
+                ).toFixed(4)
           }
           onChange={(e) => {
             const inputValue = e.target.value;
@@ -113,7 +144,14 @@ const MarketOrder: React.FC<Props> = ({
               setOrder({
                 ...order,
                 amount: inputValue,
-                unit: (+inputValue / 92000).toFixed(4),
+                unit: (
+                  +inputValue /
+                  (selectedAsset.name === "Bitcoin"
+                    ? prices.btcPrice
+                    : selectedAsset.name === "Ethereum"
+                    ? prices.ethPrice
+                    : prices.solPrice)
+                ).toFixed(4),
               });
             }
           }}
