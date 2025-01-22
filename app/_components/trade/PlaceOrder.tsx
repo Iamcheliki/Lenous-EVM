@@ -98,7 +98,7 @@ const PlaceOrder: React.FC = () => {
       ? new Date(order.expiration).getTime()
       : new Date().getTime();
     const leverage = order.leverage;
-    const marginType = order.margin === Margin_Type.Cross ? 0 : 1;
+    const marginType = order.margin === Margin_Type.Cross ? 1 : 0;
 
     console.log("order", {
       asset,

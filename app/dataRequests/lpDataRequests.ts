@@ -19,3 +19,7 @@ export const handleGetSignatureForDeposit = async (
       return res;
     });
 };
+
+export const getTokenPrice = async () => {
+  return axios.get(`${BASE_URL}/lp/get-token-price`).then((res) => res);
+};

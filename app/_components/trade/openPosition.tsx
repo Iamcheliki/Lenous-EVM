@@ -79,8 +79,8 @@ export default function OpenPosition({ order }: any) {
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
     side: order.isBuyOrder ? "Long" : "Short",
-    amount: convertToNumber(order.amount),
-    avgEntry: convertToNumber(order.price),
+    amount: order.amount,
+    avgEntry: order.price,
     markPrice: marketPrice,
     liqPrice:
       order.entry_price / order.size -
