@@ -14,6 +14,7 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 import { baseSepolia } from "viem/chains";
 import TradeABI from "../../_libs/ABIs/order-book.json";
+import data from "../../_libs/utils/constants/supportedTokens.json";
 
 export interface orderToShow {
   id: string;
@@ -27,12 +28,8 @@ export interface orderToShow {
   marginPosition: number;
   marginUnit: string;
   marginRate: number;
-  cmlPnl: number;
-  cmlUnit: string;
-  pnlPercentage: number;
-  // tp: any;
-  // sl: any;
-  liqRisk: number;
+  tp: number;
+  sl: number;
 }
 
 interface OrderMarket {
@@ -54,11 +51,13 @@ export default function OpenOrder({ order }: any) {
   );
 
   const handleCloseOrder = async () => {
-    console.log(order.order_id, order.asset_id);
+    console.log(contract);
+    console.log(order);
+    console.log(order.asset, order.id);
     await contract
-      .cancelOrder(order.asset_id, order.order_id, {
+      .cancelOrder(order.asset, order.id, {
         gasPrice: ethers.utils.parseUnits("200", "gwei"),
-        gasLimit: ethers.utils.hexlify(50000),
+        gasLimit: 10000,
       })
       .then((res: any) => console.log(res))
       .catch((err: any) => {
@@ -67,36 +66,50 @@ export default function OpenOrder({ order }: any) {
   };
 
   // const marketPrice = prices.btcPrice;
-  const marketPrice = prices.btcPrice;
-  const pnl = calculatePnl(
-    convertFrom18(order.amount),
-    marketPrice,
-    convertFrom18(order.price)
-  );
+  const marketPrice =
+    order.asset === data.tokens[0].address
+      ? prices.btcPrice
+      : order.asset === data.tokens[1].address
+      ? prices.ethPrice
+      : prices.solPrice;
 
   const orderToShow: orderToShow = {
     id: order.orderId,
     market: {
-      logo: tokenList[5].img,
-      title: "Bitcoin",
+      logo:
+        order.asset === data.tokens[0].address
+          ? tokenList[5].img
+          : order.asset === data.tokens[1].address
+          ? tokenList[0].img
+          : tokenList[1].img,
+      title:
+        order.asset === data.tokens[0].address
+          ? "Bitcoin"
+          : order.asset === data.tokens[1].address
+          ? "Ethereum"
+          : "Solona",
       type: order.marginType,
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
     side: order.isBuyOrder ? "Long" : "Short",
-    amount: convertToNumber(order.amount),
-    avgEntry: convertFrom18(order.price),
+    amount: order.amount,
+    avgEntry: order.price,
     markPrice: marketPrice,
     liqPrice:
       order.price / order.amount -
       ((1 / order.leverage) * order.price) / order.amount,
     marginPosition: 2000,
     marginRate: 20,
-    cmlPnl: +pnl.toFixed(2),
-    pnlPercentage: +((pnl / order.amount) * 100).toFixed(2),
-    liqRisk: 10,
     marginUnit: "USD",
-    cmlUnit: "USD",
-    unit: "BTC",
+    unit:
+      order.asset === data.tokens[0].address
+        ? "BTC"
+        : order.asset === data.tokens[1].address
+        ? "ETH"
+        : "SOL",
+
+    tp: order.tp,
+    sl: order.sl,
   };
   return (
     <>
@@ -136,28 +149,12 @@ export default function OpenOrder({ order }: any) {
             <p>{orderToShow.marginRate + "%"}</p>
           </div>
         </td>
+
         <td className="py-4">
-          <div className="text-primary">
-            <p>
-              {(orderToShow.cmlPnl > 0 ? "+" : "") +
-                orderToShow.cmlPnl +
-                " " +
-                orderToShow.cmlUnit}
-            </p>
-            <p>
-              {(orderToShow.pnlPercentage > 0 ? "+" : "") +
-                orderToShow.pnlPercentage +
-                "%"}
-            </p>
+          <div>
+            <p>{orderToShow.tp + " / " + orderToShow.sl}</p>
           </div>
         </td>
-        {/* <td className="py-4">
-          <div>
-            <p>{orderToShow.tp}</p>
-            <p>{orderToShow.sl}</p>
-          </div>
-        </td> */}
-        <td className="text-primary py-4">{orderToShow.liqRisk}%</td>
         <td
           onClick={handleCloseOrder}
           className="text-bad-situation underline cursor-pointer py-4"

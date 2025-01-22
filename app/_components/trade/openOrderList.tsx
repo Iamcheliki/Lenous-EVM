@@ -83,9 +83,7 @@ const tableTitleList = [
   "Mark Price",
   " Liq. Price",
   "Position Margin / Margin Rate",
-  "Cml. PNL / PNL%",
-  // "TP /SL",
-  "Liq. Risk%",
+  "TP /SL",
   "Close",
 ];
 

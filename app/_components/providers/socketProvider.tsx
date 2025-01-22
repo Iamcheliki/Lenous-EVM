@@ -52,7 +52,7 @@ export default function SocketProvider({
       // Listen for the 'message' event from the server
       socketRef.current.on("deposit", (data: any) => {
         console.log("Deposit message received from new socket", data);
-        toast.success(`You deposited $${+data.amount / 10 ** 18} successfully`);
+        toast.success(`You deposited $${data.amount} successfully`);
       });
 
       socketRef.current.on("price", (data: any) => {
@@ -64,8 +64,8 @@ export default function SocketProvider({
         console.log("Order message received from new socket", data);
         toast.success(
           `You placed a ${data.type} with the amount of ${
-            +data.amount / 10 ** 18
-          } and the price $${(+data.price / 10 ** 18).toFixed(2)}`
+            data.amount
+          } and the price $${data.price.toFixed(2)}`
         );
         if (address) {
           getAllOrders(address?.toString())
@@ -100,11 +100,11 @@ export default function SocketProvider({
         // console.log("Balance message received from new socket", data);
         dispatch(
           setBalances({
-            totalBalance: +data.totalBalance / 10 ** 18,
-            usedMargin: +data.usedMargin / 10 ** 18,
-            freeMargin: +data.freeMargin / 10 ** 18,
-            totalPnl: +data.totalPnl,
-            totalCommision: +data.totalCommision / 10 ** 18,
+            totalBalance: data.totalBalance,
+            usedMargin: data.usedMargin,
+            freeMargin: data.freeMargin,
+            totalPnl: data.totalPnl,
+            totalCommision: data.totalCommision,
           })
         );
       });
@@ -151,9 +151,7 @@ export default function SocketProvider({
       socketRef.current.on("lpDeposit", (data: any) => {
         console.log("Deposit message received from socket", data);
         toast.success(
-          `You deposited $${
-            +data.usdcAmount / 10 ** 18
-          } successfully and received ${+data.lpTokenMinted / 10 ** 18} token`
+          `You deposited $${data.usdcAmount} successfully and received ${data.lpTokenMinted} token`
         );
       });
     }
