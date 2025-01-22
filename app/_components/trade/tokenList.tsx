@@ -36,6 +36,8 @@ export default function TokenList({ asset, setAsset }: Props) {
     handleTokenSet();
   }, []);
 
+  console.log(asset);
+
   return (
     <Select
       classNamePrefix="select"
@@ -43,6 +45,7 @@ export default function TokenList({ asset, setAsset }: Props) {
       isSearchable={true}
       name="Token"
       options={tokens}
+      value={{ label: asset.name, value: asset.address }}
       onChange={(value) => {
         setAsset({ name: value.label, address: value.value });
       }}
