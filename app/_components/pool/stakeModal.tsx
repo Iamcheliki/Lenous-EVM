@@ -12,7 +12,10 @@ import LpABI from "../../_libs/ABIs/LiquidityPool.json";
 import TokenABI from "../../_libs/ABIs/TokenContract.json";
 import { handleGetNonce } from "@/app/dataRequests/userDataRequests";
 import { useAccount } from "wagmi";
-import { handleGetSignatureForDeposit } from "@/app/dataRequests/lpDataRequests";
+import {
+  getTokenPrice,
+  handleGetSignatureForDeposit,
+} from "@/app/dataRequests/lpDataRequests";
 
 interface Props {
   isOpen: boolean;
@@ -47,6 +50,19 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
   const [duration, setDuration] = useState<number>(2);
   const [amount, setAmount] = useState<string>("");
   const [lpAmount, setLpAmount] = useState<number>(0);
+  const [tokenAmount, setTokenAmount] = useState<number>(0);
+
+  useEffect(() => {
+    setTimeout(() => {
+      getTokenPrice()
+        .then((res) => {
+          setTokenAmount(+amount / res.data.tokenPrice);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }, 100);
+  }, [amount]);
   const customStyles = {
     content: {
       top: "50%",
@@ -84,13 +100,12 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
         TokenABI,
         signer
       );
-      let nonce;
       const deadline = new Date().getTime() + 5 * 60 * 1000;
       let signature;
 
       await handleGetSignatureForDeposit(
         +amount,
-        1,
+        +tokenAmount,
         deadline,
         address.toString()
       ).then((res) => {
@@ -109,7 +124,7 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
         await contract
           .deposit(
             ethers.utils.parseUnits(amount.toString(), 6),
-            ethers.utils.parseUnits("1", 18).toString(),
+            ethers.utils.parseUnits(tokenAmount.toString(), 18).toString(),
             deadline,
             signature
           )
@@ -175,7 +190,7 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
             <div>
               <p className="text-neutral-light text-md">LP Token</p>
               <p className="text-neutral-light text-2xl">
-                {lpAmount.toFixed(2)}
+                {tokenAmount.toFixed(2)}
               </p>
             </div>
           </div>

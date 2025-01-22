@@ -56,7 +56,6 @@ export default function SocketProvider({
       });
 
       socketRef.current.on("price", (data: any) => {
-        console.log("Price message received from new socket", data);
         dispatch(setPrices(data.tokenPrice));
       });
 
