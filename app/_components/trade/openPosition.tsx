@@ -14,6 +14,7 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 import { baseSepolia } from "viem/chains";
 import TradeABI from "../../_libs/ABIs/order-book.json";
+import data from "../../_libs/utils/constants/supportedTokens.json";
 
 export interface orderToShow {
   id: string;
@@ -30,8 +31,8 @@ export interface orderToShow {
   cmlPnl: number;
   cmlUnit: string;
   pnlPercentage: number;
-  // tp: any;
-  // sl: any;
+  tp: any;
+  sl: any;
   liqRisk: number;
 }
 
@@ -67,15 +68,30 @@ export default function OpenPosition({ order }: any) {
   };
 
   // const marketPrice = prices.btcPrice;
-  const marketPrice = prices.btcPrice;
-  const pnl = +order.unrealizedPnl;
+  const marketPrice =
+    order.asset === data.tokens[0].address
+      ? prices.btcPrice
+      : order.asset === data.tokens[1].address
+      ? prices.ethPrice
+      : prices.solPrice;
+  const pnl = order.unrealizedPnl;
 
   const orderToShow: orderToShow = {
     id: order.orderId,
     market: {
-      logo: tokenList[5].img,
-      title: "Bitcoin",
-      type: order.marginType === 0 ? "Cross" : "Isolated",
+      logo:
+        order.asset === data.tokens[0].address
+          ? tokenList[5].img
+          : order.asset === data.tokens[1].address
+          ? tokenList[0].img
+          : tokenList[1].img,
+      title:
+        order.asset === data.tokens[0].address
+          ? "Bitcoin"
+          : order.asset === data.tokens[1].address
+          ? "Ethereum"
+          : "Solona",
+      type: order.marginType,
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
     side: order.isBuyOrder ? "Long" : "Short",
@@ -83,16 +99,24 @@ export default function OpenPosition({ order }: any) {
     avgEntry: order.price,
     markPrice: marketPrice,
     liqPrice:
-      order.entry_price / order.size -
-      ((1 / order.leverage) * order.entry_price) / order.size,
-    marginPosition: 2000,
-    marginRate: 20,
+      order.price / order.amount -
+      ((1 / order.leverage) * order.price) / order.amount,
+    marginPosition: order.usedMargin,
+    marginRate: 1 / order.leverage,
     cmlPnl: +pnl.toFixed(4),
     pnlPercentage: +((pnl / order.amount) * 100).toFixed(2),
     liqRisk: 10,
     marginUnit: "USD",
     cmlUnit: "USD",
-    unit: "BTC",
+    unit:
+      order.asset === data.tokens[0].address
+        ? "BTC"
+        : order.asset === data.tokens[1].address
+        ? "ETH"
+        : "SOL",
+
+    tp: order.tp,
+    sl: order.sl,
   };
   return (
     <>
@@ -147,12 +171,11 @@ export default function OpenPosition({ order }: any) {
             </p>
           </div>
         </td>
-        {/* <td className="py-4">
+        <td className="py-4">
           <div>
-            <p>{orderToShow.tp}</p>
-            <p>{orderToShow.sl}</p>
+            <p>{orderToShow.tp + " / " + orderToShow.sl}</p>
           </div>
-        </td> */}
+        </td>
         <td className="text-primary py-4">{orderToShow.liqRisk}%</td>
         <td
           onClick={handleCloseOrder}
