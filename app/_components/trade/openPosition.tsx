@@ -45,6 +45,7 @@ interface OrderMarket {
 
 export default function OpenPosition({ order }: any) {
   const { prices } = useSelector((state: any) => state.trade);
+  console.log(order.isBuyOrder);
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
@@ -94,7 +95,7 @@ export default function OpenPosition({ order }: any) {
       type: order.marginType,
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
-    side: order.isBuyOrder ? "Long" : "Short",
+    side: order.isBuyOrder === "true" ? "Long" : "Short",
     amount: order.amount,
     avgEntry: order.price,
     markPrice: marketPrice,
@@ -104,7 +105,7 @@ export default function OpenPosition({ order }: any) {
     marginPosition: order.usedMargin,
     marginRate: 1 / order.leverage,
     cmlPnl: +pnl.toFixed(4),
-    pnlPercentage: +((pnl / order.amount) * 100).toFixed(2),
+    pnlPercentage: +((pnl / order.usedMargin) * 100).toFixed(2),
     liqRisk: 10,
     marginUnit: "USD",
     cmlUnit: "USD",
@@ -118,6 +119,8 @@ export default function OpenPosition({ order }: any) {
     tp: order.tp,
     sl: order.sl,
   };
+
+  console.log(orderToShow.side);
   return (
     <>
       <tr>
@@ -157,7 +160,11 @@ export default function OpenPosition({ order }: any) {
           </div>
         </td>
         <td className="py-4">
-          <div className="text-primary">
+          <div
+            className={
+              orderToShow.cmlPnl > 0 ? "text-primary" : "text-bad-situation"
+            }
+          >
             <p>
               {(orderToShow.cmlPnl > 0 ? "+" : "") +
                 orderToShow.cmlPnl +

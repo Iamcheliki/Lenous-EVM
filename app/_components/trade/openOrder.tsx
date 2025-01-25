@@ -91,7 +91,7 @@ export default function OpenOrder({ order }: any) {
       type: order.marginType,
       leverage: +parseFloat(order.leverage).toFixed(1),
     },
-    side: order.isBuyOrder ? "Long" : "Short",
+    side: order.isBuyOrder === "true" ? "Long" : "Short",
     amount: order.amount,
     avgEntry: order.price,
     markPrice: marketPrice,
