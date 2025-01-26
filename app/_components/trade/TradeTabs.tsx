@@ -63,8 +63,6 @@ export default function TradeTabs() {
     }
   }, [activeTab, address]);
 
-  console.log(ordersHistory);
-
   return (
     <div className="py-8 container">
       <div className="flex justify-between">
