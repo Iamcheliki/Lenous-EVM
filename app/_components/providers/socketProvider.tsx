@@ -5,10 +5,7 @@ import { useDispatch } from "react-redux";
 import { useAccount } from "wagmi";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
-import {
-  getAllOrders,
-  getAllPositions,
-} from "@/app/dataRequests/orderDataRequests";
+import { getAllOrders } from "@/app/dataRequests/orderDataRequests";
 import {
   setBalances,
   setPrices,
@@ -83,16 +80,6 @@ export default function SocketProvider({
         toast.success(
           `Your Order with id ${data.orderId} matched with another order`
         );
-        if (address) {
-          getAllPositions(address?.toString())
-            .then((res) => {
-              console.log(res);
-              dispatch(setUserOrders([...res.data.orders]));
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
       });
 
       socketRef.current.on("balance_update", (data: any) => {
@@ -118,16 +105,6 @@ export default function SocketProvider({
         toast.success(
           `Your Order with id ${data.orderId} liquided by margin call system`
         );
-        if (address) {
-          getAllPositions(address?.toString())
-            .then((res) => {
-              console.log(res);
-              dispatch(setUserOrders([...res.data.orders]));
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
       });
 
       socketRef.current.on("orderSlTpClose", (data: any) => {
@@ -135,16 +112,6 @@ export default function SocketProvider({
         toast.success(
           `Your Order with id ${data.orderId} close becuase of Sl/Tp limit hit`
         );
-        if (address) {
-          getAllPositions(address?.toString())
-            .then((res) => {
-              console.log(res);
-              dispatch(setUserOrders([...res.data.orders]));
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
       });
 
       socketRef.current.on("lpDeposit", (data: any) => {

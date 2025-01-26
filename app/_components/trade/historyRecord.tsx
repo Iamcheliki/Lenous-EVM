@@ -43,8 +43,9 @@ interface OrderMarket {
   leverage: number;
 }
 
-export default function OpenPosition({ order }: any) {
+export default function HistoryRecord({ order }: any) {
   const { prices } = useSelector((state: any) => state.trade);
+  console.log(order.isBuyOrder);
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
@@ -56,11 +57,10 @@ export default function OpenPosition({ order }: any) {
 
   const handleCloseOrder = async () => {
     // console.log(order.order_id, order.asset_id);
-    console.log(order);
     await contract
-      .cancelOrder(order.asset, order.id, {
-        gasPrice: ethers.utils.parseUnits("50", "gwei"),
-        gasLimit: 28000,
+      .cancelOrder(order.asset_id, order.order_id, {
+        gasPrice: ethers.utils.parseUnits("200", "gwei"),
+        gasLimit: ethers.utils.hexlify(50000),
       })
       .then((res: any) => console.log(res))
       .catch((err: any) => {
@@ -120,6 +120,7 @@ export default function OpenPosition({ order }: any) {
     sl: order.sl,
   };
 
+  console.log(orderToShow.side);
   return (
     <>
       <tr>

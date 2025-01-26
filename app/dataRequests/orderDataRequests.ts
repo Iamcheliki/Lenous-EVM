@@ -7,8 +7,8 @@ export const getAllOrders = async (address: string) => {
   });
 };
 
-export const getAllPositions = async (address: string) => {
-  return axios.get(`${BASE_URL}/orders/positions/${address}`).then((res) => {
+export const getAllHistory = async (address: string) => {
+  return axios.get(`${BASE_URL}/orders/history/${address}`).then((res) => {
     return res;
   });
 };

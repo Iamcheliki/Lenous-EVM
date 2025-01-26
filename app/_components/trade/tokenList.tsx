@@ -36,8 +36,6 @@ export default function TokenList({ asset, setAsset }: Props) {
     handleTokenSet();
   }, []);
 
-  console.log(asset);
-
   return (
     <Select
       classNamePrefix="select"
