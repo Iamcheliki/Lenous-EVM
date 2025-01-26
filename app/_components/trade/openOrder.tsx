@@ -50,6 +50,7 @@ export default function OpenOrder({ order }: any) {
     signer
   );
 
+  //Cheliki look here
   const handleCloseOrder = async () => {
     console.log(contract);
     console.log(order);

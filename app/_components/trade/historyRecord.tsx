@@ -24,7 +24,6 @@ export interface orderToShow {
   unit: string;
   avgEntry: number;
   markPrice: number;
-  liqPrice: number;
   marginPosition: number;
   marginUnit: string;
   marginRate: number;
@@ -33,7 +32,8 @@ export interface orderToShow {
   pnlPercentage: number;
   tp: any;
   sl: any;
-  liqRisk: number;
+  date: string;
+  status: string;
 }
 
 interface OrderMarket {
@@ -43,8 +43,9 @@ interface OrderMarket {
   leverage: number;
 }
 
-export default function OpenPosition({ order }: any) {
+export default function HistoryRecord({ order }: any) {
   const { prices } = useSelector((state: any) => state.trade);
+  console.log(order.isBuyOrder);
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
@@ -56,11 +57,10 @@ export default function OpenPosition({ order }: any) {
 
   const handleCloseOrder = async () => {
     // console.log(order.order_id, order.asset_id);
-    console.log(order);
     await contract
-      .cancelOrder(order.asset, order.id, {
-        gasPrice: ethers.utils.parseUnits("50", "gwei"),
-        gasLimit: 28000,
+      .cancelOrder(order.asset_id, order.order_id, {
+        gasPrice: ethers.utils.parseUnits("200", "gwei"),
+        gasLimit: ethers.utils.hexlify(50000),
       })
       .then((res: any) => console.log(res))
       .catch((err: any) => {
@@ -75,7 +75,7 @@ export default function OpenPosition({ order }: any) {
       : order.asset === data.tokens[1].address
       ? prices.ethPrice
       : prices.solPrice;
-  const pnl = order.unrealizedPnl;
+  const pnl = order.realizedPnl;
 
   const orderToShow: orderToShow = {
     id: order.orderId,
@@ -99,14 +99,10 @@ export default function OpenPosition({ order }: any) {
     amount: order.amount,
     avgEntry: order.price,
     markPrice: marketPrice,
-    liqPrice:
-      order.price / order.amount -
-      ((1 / order.leverage) * order.price) / order.amount,
     marginPosition: order.usedMargin,
     marginRate: 1 / order.leverage,
     cmlPnl: +pnl.toFixed(4),
     pnlPercentage: +((pnl / order.usedMargin) * 100).toFixed(2),
-    liqRisk: 10,
     marginUnit: "USD",
     cmlUnit: "USD",
     unit:
@@ -118,8 +114,11 @@ export default function OpenPosition({ order }: any) {
 
     tp: order.tp,
     sl: order.sl,
+    status: order.status,
+    date: order.date,
   };
 
+  console.log(orderToShow.side);
   return (
     <>
       <tr>
@@ -147,7 +146,6 @@ export default function OpenPosition({ order }: any) {
         <td className="py-4">
           {orderToShow.markPrice ? formatNumber(orderToShow.markPrice) : "0"}
         </td>
-        <td className="text-yellow py-4">{orderToShow.liqPrice}</td>
         <td className="py-4">
           <div>
             <p>
@@ -182,12 +180,11 @@ export default function OpenPosition({ order }: any) {
             <p>{orderToShow.tp + " / " + orderToShow.sl}</p>
           </div>
         </td>
-        <td className="text-primary py-4">{orderToShow.liqRisk}%</td>
-        <td
-          onClick={handleCloseOrder}
-          className="text-bad-situation underline cursor-pointer py-4"
-        >
-          <p>Close</p>
+        <td className="py-4">
+          <p>{new Date(orderToShow.date).toLocaleString()}</p>
+        </td>
+        <td className="py-4">
+          <p>{orderToShow.status}</p>
         </td>
       </tr>
     </>

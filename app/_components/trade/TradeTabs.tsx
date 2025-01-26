@@ -4,14 +4,15 @@ import React, { useEffect, useRef, useState } from "react";
 import Icon from "../UI/icon";
 import OpenOrderList from "./openOrderList";
 import {
+  getAllHistory,
   getAllOrders,
-  getAllPositions,
 } from "@/app/dataRequests/orderDataRequests";
 import { useAccount } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserOrders } from "@/app/redux/slices/tradeSlice";
+import { setOrdersHistory, setUserOrders } from "@/app/redux/slices/tradeSlice";
 import { toast } from "react-toastify";
 import OpenPositionsList from "./openPositionsList";
+import OrdersHistoryList from "./ordersHistoryList";
 
 const SOCKET_URL = "http://localhost:3000"; // Replace with your Socket.IO server URL
 
@@ -38,7 +39,7 @@ export default function TradeTabs() {
   const { address } = useAccount();
   const dispatch = useDispatch();
   const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
-  const { userOrders, userPositions } = useSelector(
+  const { userOrders, userPositions, ordersHistory } = useSelector(
     (state: any) => state.trade
   );
 
@@ -53,11 +54,16 @@ export default function TradeTabs() {
           .catch((err) => {
             console.log(err);
           });
-      } else if (activeTab === 2) {
-        dispatch(setUserOrders([]));
+      } else if (activeTab === 3) {
+        getAllHistory(address?.toString()).then((res) => {
+          console.log(res);
+          dispatch(setOrdersHistory([...res.data.orders]));
+        });
       }
     }
   }, [activeTab, address]);
+
+  console.log(ordersHistory);
 
   return (
     <div className="py-8 container">
@@ -108,8 +114,10 @@ export default function TradeTabs() {
             <p className="text-white">Loading...</p>
           ) : activeTab === 1 ? (
             <OpenOrderList orders={userOrders} />
-          ) : (
+          ) : activeTab === 2 ? (
             <OpenPositionsList orders={userPositions} />
+          ) : (
+            <OrdersHistoryList orders={ordersHistory} />
           )
         ) : (
           <p className="text-white">Please connect your wallet</p>

@@ -18,6 +18,7 @@ interface State {
 
   userOrders: any[];
   userPositions: any[];
+  ordersHistory: any[];
 }
 
 const initialState: State = {
@@ -39,6 +40,7 @@ const initialState: State = {
 
   userOrders: [],
   userPositions: [],
+  ordersHistory: [],
 };
 
 const tradeSlice = createSlice({
@@ -60,6 +62,9 @@ const tradeSlice = createSlice({
     setUserPositions: (state, action) => {
       state.userPositions = [...action.payload];
     },
+    setOrdersHistory: (state, action) => {
+      state.ordersHistory = [...action.payload];
+    },
   },
 });
 
@@ -69,5 +74,6 @@ export const {
   setBalances,
   setUserOrders,
   setUserPositions,
+  setOrdersHistory,
 } = tradeSlice.actions;
 export default tradeSlice.reducer;
