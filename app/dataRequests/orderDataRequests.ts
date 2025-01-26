@@ -2,7 +2,7 @@ import axios from "axios";
 import { BASE_URL } from "./constants";
 
 export const getAllOrders = async (address: string) => {
-  return axios.get(`${BASE_URL}/orders/${address}`).then((res) => {
+  return axios.get(`${BASE_URL}/orders/all/${address}`).then((res) => {
     return res;
   });
 };

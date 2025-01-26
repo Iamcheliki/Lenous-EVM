@@ -9,7 +9,7 @@ import {
 } from "@/app/dataRequests/orderDataRequests";
 import { useAccount } from "wagmi";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserOrders } from "@/app/redux/slices/tradeSlice";
+import { setOrdersHistory, setUserOrders } from "@/app/redux/slices/tradeSlice";
 import { toast } from "react-toastify";
 import OpenPositionsList from "./openPositionsList";
 import OrdersHistoryList from "./ordersHistoryList";
@@ -55,13 +55,15 @@ export default function TradeTabs() {
             console.log(err);
           });
       } else if (activeTab === 3) {
-        console.log("call here");
         getAllHistory(address?.toString()).then((res) => {
           console.log(res);
+          dispatch(setOrdersHistory([...res.data.orders]));
         });
       }
     }
   }, [activeTab, address]);
+
+  console.log(ordersHistory);
 
   return (
     <div className="py-8 container">

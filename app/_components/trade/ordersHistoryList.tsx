@@ -6,12 +6,11 @@ const tableTitleList = [
   "Amount",
   "Avg. Entry",
   "Mark Price",
-  " Liq. Price",
   "Position Margin / Margin Rate",
   "Cml. PNL / PNL%",
   "TP /SL",
-  "Liq. Risk%",
-  "Close",
+  "Date",
+  "Status",
 ];
 
 interface Props {
