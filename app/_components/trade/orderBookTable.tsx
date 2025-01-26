@@ -19,17 +19,17 @@ export default function OrderBookTable({ orders }: Props) {
             <td className="w-[33%] text-right">
               <p>
                 amount
-                <span className="bg-platform-bg-gradient rounded-xl py-1 px-2 inline-block ml-1">
-                  BTC
-                </span>
+                {/* <span className="bg-platform-bg-gradient rounded-xl py-1 px-2 inline-block ml-1">
+                  {}
+                </span> */}
               </p>
             </td>
             <td className="w-[33%] text-right">
               <p>
-                Rema...
-                <span className="bg-platform-bg-gradient rounded-xl py-1 px-2 inline-block ml-1">
+                Type
+                {/* <span className="bg-platform-bg-gradient rounded-xl py-1 px-2 inline-block ml-1">
                   USD
-                </span>
+                </span> */}
               </p>
             </td>
           </tr>
@@ -37,10 +37,10 @@ export default function OrderBookTable({ orders }: Props) {
         <tbody className="text-white text-right">
           {orders.map((item) => (
             <tr>
-              <td className="p-2">{(+item.price / 10 ** 18).toFixed(4)}</td>
-              <td className="p-2">{(+item.amount / 10 ** 18).toFixed(4)}</td>
+              <td className="p-2">{item.price.toFixed(4)}</td>
+              <td className="p-2">{item.amount.toFixed(4)}</td>
               <td className="p-2">
-                {(+item.remaining_amount / 10 ** 18).toFixed(4)}
+                {item.isBuyOrder === "true" ? "Long" : "Short"}
               </td>
             </tr>
           ))}

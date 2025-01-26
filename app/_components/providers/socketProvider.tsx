@@ -7,6 +7,7 @@ import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import { getAllOrders } from "@/app/dataRequests/orderDataRequests";
 import {
+  setAllPositions,
   setBalances,
   setPrices,
   setUserOrders,
@@ -98,6 +99,11 @@ export default function SocketProvider({
       socketRef.current.on("live_positions", (data: any) => {
         // console.log("Position message received from new socket", data);
         dispatch(setUserPositions([...data.positions]));
+      });
+
+      socketRef.current.on("all_positions", (data: any) => {
+        // console.log("Position list message received from new socket", data);
+        dispatch(setAllPositions([...data.positions]));
       });
 
       socketRef.current.on("orderLiquided", (data: any) => {
